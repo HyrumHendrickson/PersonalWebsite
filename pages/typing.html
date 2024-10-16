@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hyrum's Website</title>
     <link rel="stylesheet" href="../styles/default.css">
-    <link rel="stylesheet" href="../styles/[PAGENAME].css">
+    <link rel="stylesheet" href="../styles/script.css">
+    <script src="../js/typing.js"></script>
 </head>
 <body>
     <header>
@@ -18,9 +19,25 @@
         </div>
     </header>
     <main>
-        <div id = "selfie_div">
-            <img src="../assets/selfie.jpg" alt="selfie of Hyrum" id="selfie">
-        </div>
+        <form>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name">
+        </form>
+
+        <form>
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="4" cols="50"></textarea>
+        </form>
+
+        <form>
+            <label for="myTextbox">Enter Text:</label>
+            <input type="text" id="myTextbox" name="myTextbox" placeholder="Type something here...">
+        </form>
+        
+        <button type="button" onclick="changeText('it worked')">Change Text</button>
+        
+        
+        
     </main>
     
 
