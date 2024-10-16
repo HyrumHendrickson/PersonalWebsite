@@ -1,0 +1,18 @@
+body {
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+}
+#top_bar {
+    background-color: rgb(200, 100, 0);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    border: 3px solid black;
+}
+#title_bar {
+    background-color: rgb(53, 128, 227);
+    border: 3px solid black;
+    margin-top: -2px;
+    text-align: center;
+}
