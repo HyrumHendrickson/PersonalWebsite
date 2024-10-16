@@ -1,5 +1,6 @@
-function changeText(newText) {
-    var textbox = document.getElementById("myTextbox");
-    textbox.value = newText;
-    
-  }
+
+
+function changeText(getTextFrom, sendTextTo) {
+  var textbox = document.getElementById(sendTextTo);
+  textbox.value = document.getElementById(getTextFrom).value;
+}
