@@ -11,8 +11,6 @@ body {
     margin-right: 0px;
     margin-top: 0px;
     background-color: var(--gray);
-   
-    
 }
 main {
     color: var(--white);
@@ -23,7 +21,6 @@ main {
     padding: 10px;
     text-align: center;
     border: 3px solid var(--black);
-    
 }
 #top_bar a {
     margin: 10px;
@@ -38,7 +35,12 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--blue);
+    background-color: var(--purple);
     border: 3px solid var(--black);
     margin-bottom: -10px;
+}    
+#bottom_bar img {
+    width: 50px;
+    margin: 25px;
+    border-radius: 100%;
 }
