@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="../styles/default.css">
     <link rel="stylesheet" href="../styles/typing.css">
     <script src="../js/typing.js"></script>
+    <div id = 'data' hidden></div>
+    <div id = 'empty' hidden></div>
 </head>
 <body>
     <header>
@@ -19,22 +21,19 @@
         </div>
     </header>
     <main>
+
         <form>
-            <label for="name">Name:</label>
+            <label for="name">Input:</label>
             <input type="text" id="name" name="name" value="cool text">
         </form>
 
-        <form>
-            <label for="message">Message:</label>
-            <textarea id="message" name="message" rows="4" cols="50"></textarea>
-        </form>
+        <button type="button" onclick="changeText('name', 'input', 'data', 'div')">Save Input</button>
+        <button type="button" onclick="addText('data', 'div', 'output', 'div', end = '<br>')">Send Input</button>
+        <button type="button" onclick="changeText('empty', 'div', 'output', 'div')">Clear</button>
 
-        <form>
-            <label for="myTextbox">Enter Text:</label>
-            <input type="text" id="myTextbox" name="myTextbox" placeholder="Type something here...">
-        </form>
+        <div id = "output"></div>
         
-        <button type="button" onclick="changeText('name', 'myTextbox')">Change Text</button>
+
         
         
         
