@@ -4,43 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../styles/default.css">
     <link rel="stylesheet" href="../styles/faq.css">
-    <link rel="" href="">
+    <link rel="stylesheet" href="../default/default.css">
+    <script src="../default/default.js"></script>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
 <body>
-    <header>
-        <div id="top_bar">
-            <a href="../index.html"> To Main Page </a> 
-        </div>
-        <div id="title_bar">
-            <h1>Welcome to Hyrum's Website</h1>
-            <p>This is a sample website created for educational purposes.</p>
-        </div>
-    </header>
-    
-    
+
+
+    <div id="header"><!--header is filled by default.js--></div>
+
     <main>
         <div>
+            <div id="mapid"></div>
+            <script src="../js/faq.js"></script> <!--script must be after the mapid div--> 
             words to test the text properties
         </div>
     </main>
        
-    <footer>
-        <div id="bottom_bar">
-            <a href="https://facebook.com" target="_blank" rel="noopener">
-                <img src="../assets/facebook.png" alt="fb icon">
-            </a>
-            <a href="https://github.com" target="_blank" rel="noopener">
-                <img src="../assets/github.png" alt="github icon">
-            </a>
-            <a href="https://www.linkedin.com" target="_blank" rel="noopener">
-                <img src="../assets/linkedin.jpg" alt="linkedin icon">
-            </a>
-        </div>
-    </footer>
+    <div id="footer"><!--footer is filled by default.js--></div>
     
-
+    <script>
+        
+    </script>
 
 </body>
 </html>
