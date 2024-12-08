@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axis - AI Assistant</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="icon" href="logo.png">
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo"><a href="index.html"><img src="logo.png" alt="Epic Logo"></a></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="axis.html">Axis</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="chat-container">
+            <div id="chatbox" class="chatbox"></div>
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="Ask me something..." onkeydown="if(event.key === 'Enter'){sendMessage()}">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 Hyrum Hendrickson. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const chatbox = document.getElementById("chatbox");
+        let conversationHistory = []; // Array to store the conversation history
+
+        // Initialize the default message typing animation
+        window.onload = function() {
+            const defaultMessage = "Hey there! My name is Axis, Nice to meet you. I heard you wanted to know more about my friend Hyrum! What can I tell you?";
+            appendToHistory(defaultMessage, "ai");
+            displayMessage(defaultMessage, "ai");
+        };
+
+        async function sendMessage() {
+            const userInput = document.getElementById("userInput");
+            const message = userInput.value.trim(); // Trim whitespace
+            userInput.value = ''; // Clear the input field after sending the message
+            if (message === "") return;
+
+            // Display user's message
+            appendToHistory(message, "user");
+            displayMessage(message, "user");
+
+            // Prepare data for the API
+            const formattedHistory = formatHistoryForAPI(conversationHistory, message);
+
+            let aiResponse = "Loading..."; // Default value while waiting for backend response
+
+            try {
+                const response = await fetch('https://hyrumhendrickson.com:3000/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': "application/json"
+                    },
+                    body: JSON.stringify({ question: formattedHistory })
+                });
+
+                aiResponse = await response.text();
+
+                if (!aiResponse) {
+                    aiResponse = "Error: No response from backend";
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                aiResponse = "Error fetching AI response"; // Handle error fetching backend response
+            }
+
+            // Append AI response to history and animate it
+            appendToHistory(aiResponse, "ai");
+            displayMessage(aiResponse, "ai");
+        }
+
+        function displayMessage(message, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add(sender);
+            chatbox.appendChild(messageDiv);
+
+            animateTyping(message, messageDiv);
+        }
+
+        function animateTyping(text, element) {
+            element.textContent = ""; // Clear any existing content
+            let index = 0;
+            const interval = setInterval(() => {
+                element.textContent += text[index];
+                index++;
+                if (index === text.length) clearInterval(interval);
+            }, 50); // Adjust speed of typing here
+        }
+
+        function appendToHistory(message, sender) {
+            conversationHistory.push({ sender: sender, message: message });
+            console.log(conversationHistory); // For debugging purposes
+        }
+
+        // Format the last 2 exchanges and the question for the API
+        function formatHistoryForAPI(history, question) {
+            // Get the last 2 exchanges
+            const recentHistory = history.slice(-2);
+
+            let formattedHistory = "This is the history:\n";
+            recentHistory.forEach(entry => {
+                formattedHistory += `${entry.sender.toUpperCase()}: ${entry.message}\n`;
+            });
+            formattedHistory += "This is the question:\n";
+            formattedHistory += `USER: ${question}`;
+            return formattedHistory;
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+

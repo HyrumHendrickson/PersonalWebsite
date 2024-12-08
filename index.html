@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyrum Hendrickson - Portfolio</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="icon" href="logo.png">
+    
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo"><a href="index.html"><img src="logo.png" alt="Epic Logo"></a></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="axis.html">Axis</a> 
+                <a href=""></a>
+                
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h1>Hyrum Hendrickson</h1>
+            <h2>Data Scientist</h2>
+            <h3>Brigham Young University - Idaho</h3>
+            <p>
+                I'm a Data Science major with minor in Statistics. My areas of focus are Analytics, 
+                Visualization, Machine Learning, Data Engineering, and Database Managment. If you have
+                any questions, reach out! Thanks for visiting my website!!
+            </p>
+            <div class="buttons">
+                <button onclick="window.open('https\://github.com/HyrumHendrickson', 'blank')">Visit my GitHub</button>
+                <button onclick="window.open('https\://www.linkedin.com/in/hyrum-hendrickson-3ab56532b/', 'blank')">Visit my LinkedIn</button>
+            </div>
+            <div class="particle-container" id="particleContainer"></div>
+        </section>
+
+        <section id="projects" class="section">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <h3> Private SQL Server</h3>
+                    <p>
+                        Designed and runs a private SQL server on homemade server. 
+                        Runs machine learning algorithms remotely. 
+                    </p>
+                    <div class="tags">
+                        <span class="tag">Linux OS</span>
+                        <span class="tag">C++</span>
+                        <span class="tag">Bash Scripting</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3>Weather Analytics for WECC</h3>
+                    <p>
+                        Collected and compiled weather data, cleaned and 
+                        procsessed data, used visualization and predicitive modeling. 
+                    </p>
+                    <div class="tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Webscraping</span>
+                        <span class="tag">Power BI</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3>WiFi Room Occupancy</h3>
+                    <p>
+                        During a 24hr challenge, participated in a team of 4 to 
+                        design and create a full stack web application.
+                    </p>
+                    <div class="tags">
+                        <span class="tag">ArcGIS</span>
+                        <span class="tag">HTML/CSS</span>
+                        <span class="tag">Networking</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="section">
+            <h2 class="section-title">Skills</h2>
+            <div class="skills">
+                <div class="skill-category">
+                    <h3>Selected Languages</h3>
+                    <ul class="skill-list">
+                        <li>Python / Javascript</li>
+                        <li>C / C# / C++</li>
+                        <li>MySQL / R Studio</li>
+                    </ul>
+                </div>
+                <div class="skill-category">
+                    <h3>Selected Data Tools</h3>
+                    <ul class="skill-list">
+                        <li>Jupyter Notebook</li>
+                        <li>TensorFlow / PyTorch</li>
+                        <li>Power BI / Tableau</li>
+                    </ul>
+                </div>
+                <div class="skill-category">
+                    <h3>Selected Cloud Tools</h3>
+                    <ul class="skill-list">
+                        <li>Amazon Web Services</li>
+                        <li>Docker</li>
+                        <li>Linux / Bash</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section"> <!-- add another element-->
+            <h2 class="section-title">Get In Touch</h2>
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <input id = "name" type="text" placeholder="Name" required>
+                </div>
+                <div class="form-group">
+                    <input id = "subject" type="text" placeholder="Subject" required>
+                </div>
+                <div class="form-group">
+                    <textarea id = "message" placeholder="Message" rows="5" required></textarea>
+                </div>
+                <button type="submit">Send Message</button>
+            </form>
+            
+           
+            
+            
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 Hyrum Hendrickson. All rights reserved.</p>
+    </footer>
+
+    <script> 
+            // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Form submission handling
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Add form submission logic here
+
+            const name = document.querySelector('#name').value;
+            const subject = document.querySelector('#subject').value;
+            const message = document.querySelector('#message').value;
+            console.log("test")
+            const body = encodeURIComponent(`${message}`);
+
+            const mailtoLink = `mailto:${'hendrickson.hyrum.apple@gmail.com'}?subject=${subject + " - " + name}&body=${body}`;
+
+            window.open(mailtoLink, '_blank');
+
+            // end of logic
+            this.reset();
+        });
+
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        // Apply fade-in animation to sections
+        document.querySelectorAll('.section').forEach((section) => {
+            section.style.opacity = 0;
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(section);
+        });
+
+
+        // Particle Generator
+        let particlesEnabled = false;
+        let particles = [];
+        const particleContainer = document.getElementById('particleContainer'); 
+        setInterval(createParticle, 100); 
+        function createParticle() {
+            if (window.innerWidth <= 768) return;
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = Math.random() * 10 + 5;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            
+            const startX = Math.random() * particleContainer.offsetWidth;
+            particle.style.left = startX + 'px';
+            particle.style.top = particleContainer.offsetHeight + 'px';
+            
+            const animation = particle.animate([
+                { transform: 'translateY(0)', opacity: 1 },
+                { transform: 'translateY(-' + particleContainer.offsetHeight + 'px)', opacity: 0 }
+            ], {
+                duration: Math.random() * 2000 + 1000,
+                easing: 'linear'
+            });
+            
+            particleContainer.appendChild(particle);
+            
+            animation.onfinish = () => particle.remove();
+        }
+
+    </script>
+</body>
+</html>
