@@ -107,7 +107,7 @@
         // Format the last 2 exchanges and the question for the API
         function formatHistoryForAPI(history, question) {
             // Get the last 2 exchanges
-            const recentHistory = history.slice(-2);
+            const recentHistory = history.slice(-3);
 
             let formattedHistory = "This is the history:\n";
             recentHistory.forEach(entry => {
