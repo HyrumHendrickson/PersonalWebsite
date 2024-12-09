@@ -423,17 +423,23 @@ button:hover {
 
 
 
-@media (max-width: 768px) {
+@media (max-width: 767px){
     html {
         scroll-behavior: smooth;
+        width: 300px;
     }
     body {
     	margin-top: 100px;
+        width: 100%;
+    }
+    main {
+        max-width: 100%;
     }
     .hero {
          display: block; /* Turn off grid layout for small screens */
          margin-top: 0px; /* Adjust top margin */
          padding-top: 0px; /* Adjust padding */
+         width: 100%;
     }
     .hero h1 {
         font-size: 48px;
