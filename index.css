@@ -166,6 +166,9 @@ main {
     color: var(--accent);
 }
 
+#projects {
+    padding-bottom: 50px;
+}
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -198,6 +201,10 @@ main {
     flex-wrap: wrap;
 }
 
+.tag:hover {
+    background-color: var(--text-secondary);
+}
+
 .tag {
     background-color: var(--hover);
     color: var(--accent);
@@ -206,34 +213,110 @@ main {
     font-size: 14px;
 }
 
-.skills {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 32px;
+
+
+  
+
+.carousel-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+.carousel-track {
+    display: flex;
+    transition: transform 1.5s ease;
+    height: 250px;
+}
+.carousel-item {
+    flex: 0 0 300px;
+    margin: 0 10px;
+    height: 200px;
+    background-color: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    border-radius: 10px;
+    
 }
 
-.skill-category h3 {
-    color: var(--accent);
-    margin-bottom: 16px;
+
+
+
+  
+#service {
+    padding-bottom: 100px;
+}
+.accordion-container {
+    background-color: var(--bg-primary);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+.accordion {
+    width: 100%;
+    text-align: left;
+    padding: 15px 20px;
+    border: none;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.accordion:hover {
+    background-color: var(--bg-secondary);
+}
+.accordion::after {
+    content: '▼';
+    font-size: 0.7em;
+    transition: transform 0.3s ease;
+}
+.accordion.active::after {
+    transform: rotate(180deg);
+}
+.panel {
+    background-color: var(--bg-primary);
+    padding: 0 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+.panel.show {
+    max-height: 500px;
+    padding: 15px 20px;
 }
 
-.skill-list {
-    list-style: none;
-    color: var(--text-secondary);
-}
 
-.skill-list li {
-    margin-bottom: 8px;
-}
 
+
+
+
+
+
+
+
+
+#contact-main {
+    width: 100%;
+    margin-top: 100px;
+}
 #contact {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 0.1fr 1fr;
 }
-
+#contact-box {
+    margin: 150px;
+    max-width: 80%;
+    
+}
 .contact-form {
-    max-width: 600px;
+    max-width: 100%;
     grid-column: 1/2;
     grid-row: 2/3;
 }

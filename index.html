@@ -15,7 +15,7 @@
             <div class="nav-links">
                 <a href="index.html">Home</a>
                 <a href="axis.html">Axis</a> 
-                <a href=""></a>
+                <a href="contact.html">Contact</a>
                 
             </div>
         </div>
@@ -29,7 +29,7 @@
             <p>
                 I'm a Data Science major with minor in Statistics. My areas of focus are Analytics, 
                 Visualization, Machine Learning, Data Engineering, and Database Managment. If you have
-                any questions, reach out! Thanks for visiting my website!!
+                any questions, reach out! Thanks for visiting my website!
             </p>
             <div class="buttons">
                 <button onclick="window.open('https\://github.com/HyrumHendrickson', 'blank')">Visit my GitHub</button>
@@ -44,8 +44,8 @@
                 <div class="project-card">
                     <h3> Private SQL Server</h3>
                     <p>
-                        Designed and runs a private SQL server on homemade server. 
-                        Runs machine learning algorithms remotely. 
+                        Designed and runs a private SQL database on homemade server. 
+                        Trains machine learning algorithms remotely. 
                     </p>
                     <div class="tags">
                         <span class="tag">Linux OS</span>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="project-card">
-                    <h3>Weather Analytics for WECC</h3>
+                    <h3>Weather Analytics</h3>
                     <p>
                         Collected and compiled weather data, cleaned and 
                         procsessed data, used visualization and predicitive modeling. 
@@ -80,55 +80,66 @@
             </div>
         </section>
 
-        <section id="skills" class="section">
-            <h2 class="section-title">Skills</h2>
-            <div class="skills">
-                <div class="skill-category">
-                    <h3>Selected Languages</h3>
-                    <ul class="skill-list">
-                        <li>Python / Javascript</li>
-                        <li>C / C# / C++</li>
-                        <li>MySQL / R Studio</li>
-                    </ul>
-                </div>
-                <div class="skill-category">
-                    <h3>Selected Data Tools</h3>
-                    <ul class="skill-list">
-                        <li>Jupyter Notebook</li>
-                        <li>TensorFlow / PyTorch</li>
-                        <li>Power BI / Tableau</li>
-                    </ul>
-                </div>
-                <div class="skill-category">
-                    <h3>Selected Cloud Tools</h3>
-                    <ul class="skill-list">
-                        <li>Amazon Web Services</li>
-                        <li>Docker</li>
-                        <li>Linux / Bash</li>
-                    </ul>
-                </div>
+
+        <section class="section" id="hobbies">
+            <h2 class="section-title">Hobbies</h2>
+             <div class="carousel-container">
+                <div class="carousel-track" id="carouselTrack"></div>
             </div>
         </section>
 
-        <section id="contact" class="section"> <!-- add another element-->
-            <h2 class="section-title">Get In Touch</h2>
-            <form class="contact-form" id="contactForm">
-                <div class="form-group">
-                    <input id = "name" type="text" placeholder="Name" required>
+        <section class="section" id="service">
+            <h2 class="section-title">Service and Volunteer work</h2>
+            <div class="accordion-container">
+                <button class="accordion">Proselytizing Mission</button>
+                <div class="panel">
+                    <p>
+                        Completed a proselytizing mission, dedicating 60-80 hours per week to 
+                        outreach and community service. Engaged in teaching, relationship-building, 
+                        and public speaking to share religious beliefs and provide support to 
+                        individuals. Demonstrated strong work ethic, leadership, and interpersonal 
+                        skills in a high-demand environment.
+                    </p>
                 </div>
-                <div class="form-group">
-                    <input id = "subject" type="text" placeholder="Subject" required>
+        
+                <button class="accordion">Boy Scouts of America</button>
+                <div class="panel">
+                    <p>
+                        Participated in the Boy Scouts of America, gaining leadership, teamwork, and 
+                        outdoor skills through a variety of community service projects and merit-based 
+                        achievements. Successfully completed challenging programs focused on personal 
+                        development, survival skills, and citizenship. Demonstrating commitment, 
+                        responsibility, and the ability to lead and inspire others in various 
+                        group settings.
+                    </p>
                 </div>
-                <div class="form-group">
-                    <textarea id = "message" placeholder="Message" rows="5" required></textarea>
+        
+                <button class="accordion">Academic Tutor</button>
+                <div class="panel">
+                    <p>
+                        Provided academic tutoring to students in various subjects, helping them improve 
+                        their understanding and performance in coursework. Developed personalized learning 
+                        strategies to address individual needs, boosting student confidence and academic 
+                        success. Demonstrated strong communication, patience, and problem-solving skills 
+                        while fostering a supportive learning environment.
+                    </p>
                 </div>
-                <button type="submit">Send Message</button>
-            </form>
-            
-           
-            
-            
+                <button class="accordion">Data Science Society</button>
+                <div class="panel">
+                    <p>
+                        Leader in the Data Science Society, overseeing initiatives to promote learning, 
+                        collaboration, and innovation in data science. Organized workshops, events, and 
+                        collaborative projects to enhance members' skills in areas such as machine learning, 
+                        data analysis, and programming. Fostered a supportive community of students, 
+                        encouraging professional development and networking opportunities within the data science field.
+                    </p>
+                </div>
+            </div>
         </section>
+        
+
+
+
     </main>
 
     <footer>
@@ -136,34 +147,68 @@
     </footer>
 
     <script> 
-            // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+
+
+        document.querySelectorAll('.accordion').forEach(accordion => {
+            accordion.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const panel = this.nextElementSibling;
+                panel.classList.toggle('show');
             });
         });
 
-        // Form submission handling
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Add form submission logic here
+        const carouselTrack = document.getElementById('carouselTrack');
+        const items = [
+            'Pickelball', 'Cooking', 'Philosophy', 'Hiking', 'Literary Analysis',  
+            'Fishing', 'Mountain Biking', 'Theology', 'Disc Golf', 'History'
+        ];
 
-            const name = document.querySelector('#name').value;
-            const subject = document.querySelector('#subject').value;
-            const message = document.querySelector('#message').value;
-            console.log("test")
-            const body = encodeURIComponent(`${message}`);
+        let currentOffset = 0;
 
-            const mailtoLink = `mailto:${'hendrickson.hyrum.apple@gmail.com'}?subject=${subject + " - " + name}&body=${body}`;
+        function createCarouselItems() {
+            carouselTrack.innerHTML = '';
+            
+            // Create two sets of items
+            for (let i = 0; i < 2; i++) {
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('carousel-item');
+                    div.textContent = item;
+                    carouselTrack.appendChild(div);
+                });
+            }
+        }
 
-            window.open(mailtoLink, '_blank');
+        function scrollCarousel() {
+            const itemWidth = carouselTrack.children[0].offsetWidth + 20; // width + margin
+            currentOffset -= itemWidth;
+            
+            carouselTrack.style.transform = `translateX(${currentOffset}px)`;
+            
+            // Reset position when scrolled fully
+            setTimeout(() => {
+                if (Math.abs(currentOffset) >= carouselTrack.children.length / 2 * itemWidth) {
+                    carouselTrack.style.transition = 'none';
+                    currentOffset = 0;
+                    carouselTrack.style.transform = 'translateX(0)';
+                }
+                
+                // Restore transition
+                setTimeout(() => {
+                    carouselTrack.style.transition = 'transform 1.5s ease';
+                }, 50);
+            }, 1500);
+        }
 
-            // end of logic
-            this.reset();
-        });
+        // Initialize carousel
+        createCarouselItems();
+
+        // Start infinite scroll
+        setInterval(scrollCarousel, 2000);
+
+
+
+
 
         // Intersection Observer for fade-in animations
         const observer = new IntersectionObserver((entries) => {
