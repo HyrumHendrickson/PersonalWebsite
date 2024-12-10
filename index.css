@@ -424,12 +424,14 @@ button:hover {
 
 
 @media (max-width: 767px){
-    html {
+    .html {
         scroll-behavior: smooth;
-        width: 300px;
     }
     body {
     	margin-top: 100px;
+        width: 300px;
+    }
+    #contact-body {
         width: 100%;
     }
     main {
