@@ -47,11 +47,11 @@
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.querySelector('#name').value;
-            const subject = document.querySelector('#subject').value;
+            const email = document.querySelector('#email').value;
             const message = document.querySelector('#message').value;
 
             const body = encodeURIComponent(`${message}`);
-            const mailtoLink = `mailto:hendrickson.hyrum.apple@gmail.com?subject=${subject} - ${name}&body=${body}`;
+            const mailtoLink = `mailto:hendrickson.hyrum.apple@gmail.com?subject=${email} - ${name}&body=${body}`;
 
             window.open(mailtoLink, '_blank');
             this.reset();
