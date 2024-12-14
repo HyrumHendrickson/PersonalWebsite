@@ -1,1 +1,1 @@
-This website is live at HyrumHendrickson.com go check it out!!
+This website is live at https://HyrumHendrickson.com go check it out!!
