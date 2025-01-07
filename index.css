@@ -433,6 +433,10 @@ button:hover {
     }
     #contact-body {
         width: 100%;
+    }  
+    #contact-box {
+        margin-left: 50px;
+        margin-right: 50px;
     }
     main {
         max-width: 100%;
