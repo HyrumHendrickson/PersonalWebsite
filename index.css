@@ -429,17 +429,29 @@ button:hover {
     }
     body {
     	margin-top: 100px;
-        width: 300px;
+        width: 100%;
     }
     #contact-body {
         width: 100%;
     }  
+
     #contact-box {
         margin-left: 50px;
         margin-right: 50px;
     }
     main {
         max-width: 100%;
+        padding: 10px;
+        margin-top: 50px;
+    }
+    #contact-box {
+        margin: 0px;
+    }
+    #contact-main {
+        margin-top: 0px;
+    }
+    .chat-container {
+        margin-top: 0px;
     }
     .hero {
          display: block; /* Turn off grid layout for small screens */
@@ -466,6 +478,7 @@ button:hover {
     .particle-container {
         display: none;
     }
+
 }
 
 
