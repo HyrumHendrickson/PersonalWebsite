@@ -423,6 +423,26 @@ button:hover {
 
 
 
+
+/* projects */
+
+
+#projects-message {
+    margin-top: 300px;
+    font-size: 30px;
+    background-color: var(--bg-secondary);
+    padding: 30px;
+    border-radius: 15px;
+    transition: transform 0.3s;
+}
+#projects-message:hover {
+    transform: translateY(-8px);
+}
+
+
+
+
+
 @media (max-width: 767px){
     .html {
         scroll-behavior: smooth;
