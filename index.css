@@ -272,7 +272,7 @@ main {
     background-color: var(--bg-secondary);
 }
 .accordion::after {
-    content: '▼';
+    content: '\25BC';
     font-size: 0.7em;
     transition: transform 0.3s ease;
 }
