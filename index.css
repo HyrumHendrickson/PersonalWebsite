@@ -562,3 +562,10 @@ button:hover {
         opacity: 0;
     }
 }
+
+
+@media (max-width: 767px){ 
+    #home-tab {
+        display: none;
+    }
+}
