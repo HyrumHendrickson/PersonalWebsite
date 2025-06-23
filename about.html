@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyrum Hendrickson - Portfolio</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="icon" href="logo.png">  
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo"><a href="index.html"><img src="logo.png" alt="Epic Logo"></a></div>
+            <div class="nav-links">
+                <a href="index.html" id="home-tab">Home</a>
+                <a href="projects.html">Projects</a>
+                <a href="papers.html">Papers</a>
+                <a href="axis.html">Axis</a> 
+                <a href="about.html">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        
+
+        
+       
+    
+
+        <section class="section" id="hobbies">
+            <h2 class="section-title">Hobbies and Interests</h2>
+             <div class="carousel-container">
+                <div class="carousel-track" id="carouselTrack"></div>
+            </div>
+        </section>
+
+        <section class="section" id="service">
+            <h2 class="section-title">Service and Volunteer work</h2>
+            <div class="accordion-container">
+                <button class="accordion">Proselytizing Mission</button>
+                <div class="panel">
+                    <p>
+                        Completed a proselytizing mission, dedicating 60-80 hours per week to 
+                        outreach and community service. Engaged in teaching, relationship-building, 
+                        and public speaking to share religious beliefs and provide support to 
+                        individuals. Demonstrated strong work ethic, leadership, and interpersonal 
+                        skills in a high-demand environment.
+                    </p>
+                </div>
+        
+                <button class="accordion">Boy Scouts of America</button>
+                <div class="panel">
+                    <p>
+                        Participated in the Boy Scouts of America, gaining leadership, teamwork, and 
+                        outdoor skills through a variety of community service projects and merit-based 
+                        achievements. Successfully completed challenging programs focused on personal 
+                        development, survival skills, and citizenship. Demonstrating commitment, 
+                        responsibility, and the ability to lead and inspire others in various 
+                        group settings.
+                    </p>
+                </div>
+        
+                <button class="accordion">Academic Tutor</button>
+                <div class="panel">
+                    <p>
+                        Provided academic tutoring to students in various subjects, helping them improve 
+                        their understanding and performance in coursework. Developed personalized learning 
+                        strategies to address individual needs, boosting student confidence and academic 
+                        success. Demonstrated strong communication, patience, and problem-solving skills 
+                        while fostering a supportive learning environment.
+                    </p>
+                </div>
+                <button class="accordion">Society Leadership</button>
+                <div class="panel">
+                    <p>
+                        Vice President of the Computing Society and Project Manager in the Data Science 
+                        Society. In the Computing Society, led efforts to organize 
+                        events, mentor new members, and expand engagement in software development and technology 
+                        projects. As Project Manager in the Data Science Society, coordinated workflows, 
+                        led teams, and collaborative projects to enhance members' skills in areas such as machine 
+                        learning, data analysis, and programming.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+
+         <!-- Success message container -->
+        <div id="successMessage" class="hidden"></div>
+        <div id="contact-box">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-wrapper">
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input id="name" type="text" placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input id="email" type="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" placeholder="Message" rows="5" required></textarea>
+                    </div>
+                    <button class="button" type="submit" id="sendMessageButton">Send Message</button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>Reach out by email at contact@hyrumhendrickson.com</p>
+    </footer>
+
+    <script> 
+
+	
+        document.querySelectorAll('.accordion').forEach(accordion => {
+            accordion.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const panel = this.nextElementSibling;
+                panel.classList.toggle('show');
+            });
+        });
+
+        const carouselTrack = document.getElementById('carouselTrack');
+        const items = [
+            'Pickleball', 'Disc Golf', 'Mountain Biking',
+            'Camping', 'Hiking', 'Classic Literature', 
+            'Western History', 'Speech & Debate', 'Physics',
+            'Philosophy', 'Theology', 'Gardening'
+            
+        ];
+
+        let currentOffset = 0;
+
+        function createCarouselItems() {
+            carouselTrack.innerHTML = '';
+            
+            // Create two sets of items
+            for (let i = 0; i < 2; i++) {
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('carousel-item');
+                    div.textContent = item;
+                    carouselTrack.appendChild(div);
+                });
+            }
+        }
+
+        function scrollCarousel() {
+            const itemWidth = carouselTrack.children[0].offsetWidth + 20; // width + margin
+            currentOffset -= itemWidth;
+            
+            carouselTrack.style.transform = `translateX(${currentOffset}px)`;
+            
+            // Reset position when scrolled fully
+            setTimeout(() => {
+                if (Math.abs(currentOffset) >= carouselTrack.children.length / 2 * itemWidth) {
+                    carouselTrack.style.transition = 'none';
+                    currentOffset = 0;
+                    carouselTrack.style.transform = 'translateX(0)';
+                }
+                
+                // Restore transition
+                setTimeout(() => {
+                    carouselTrack.style.transition = 'transform 1.5s ease';
+                }, 50);
+            }, 1500);
+        }
+
+        // Initialize carousel
+        createCarouselItems();
+
+        // Start infinite scroll
+        setInterval(scrollCarousel, 2000);
+
+
+
+
+
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        // Apply fade-in animation to sections
+        document.querySelectorAll('.section').forEach((section) => {
+            section.style.opacity = 0;
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(section);
+        });
+
+
+        // Particle Generator
+        let particlesEnabled = false;
+        let particles = [];
+        const particleContainer = document.getElementById('particleContainer'); 
+        setInterval(createParticle, 100); 
+        function createParticle() {
+            if (window.innerWidth <= 768) return;
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            const size = Math.random() * 10 + 5;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            
+            const startX = Math.random() * particleContainer.offsetWidth;
+            particle.style.left = startX + 'px';
+            particle.style.top = particleContainer.offsetHeight + 'px';
+            
+            const animation = particle.animate([
+                { transform: 'translateY(0)', opacity: 1 },
+                { transform: 'translateY(-' + particleContainer.offsetHeight + 'px)', opacity: 0 }
+            ], {
+                duration: Math.random() * 2000 + 1000,
+                easing: 'linear'
+            });
+            
+            particleContainer.appendChild(particle);
+            
+            animation.onfinish = () => particle.remove();
+        }
+
+    </script>
+
+
+
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.querySelector('#name').value;
+            const email = document.querySelector('#email').value;
+            const message = document.querySelector('#message').value;
+            const sendMessageButton = document.getElementById('sendMessageButton');
+
+            // Disable the button and gray it out
+            sendMessageButton.disabled = true;
+            sendMessageButton.style.opacity = '0.5';
+
+            // Prepare the data to send to the backend
+            const formData = {
+                name: name,
+                email: email,
+                message: message
+            };
+
+            // Send the data to the backend API
+            fetch('https://hyrumhendrickson.com:3000/execute', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Purpose': 'contact_submission' 
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const successMessage = document.getElementById('successMessage');
+                if (data.success) {
+                    document.getElementById('contactForm').reset();
+                    
+                    // Show the success message
+                    successMessage.textContent = 'Thanks for your message! I\'ll get back to you soon.';
+                    successMessage.classList.remove('hidden');
+                    successMessage.classList.add('visible');
+                } else {
+                    alert('Error sending message.');
+                }
+
+                // Re-enable the button after 5 seconds
+                setTimeout(() => {
+                    sendMessageButton.disabled = false;
+                    sendMessageButton.style.opacity = '1';
+                }, 2000);
+
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    successMessage.classList.remove('visible');
+                    successMessage.classList.add('hidden');
+                }, 4000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error sending message.');
+
+                // Re-enable the button after 5 seconds
+                setTimeout(() => {
+                    sendMessageButton.disabled = false;
+                    sendMessageButton.style.opacity = '1';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -16,7 +16,7 @@
                 <a href="projects.html">Projects</a>
                 <a href="papers.html">Papers</a>
                 <a href="axis.html">Axis</a> 
-                <a href="contact.html">Contact</a>
+                <a href="about.html">About</a>
                 
             </div>
         </div>
@@ -25,8 +25,8 @@
     <main>
         <section class="hero">
             <h1>Hyrum Hendrickson</h1>
-            <h2>Data Scientist</h2>
-            <h3>Brigham Young University - Idaho</h3>
+            <h2>Freelance Data Scientist</h2>
+            <h3>Open to Work</h3>
             <p>
                 I'm a Mathematics Major at Brigham Young University - Idaho. My areas of focus are Statistics, 
                 Data Wrangling, Analytics, and Machine Learning. If you have any questions, feel free 
@@ -86,137 +86,21 @@
         </section>
 
 
-        <section class="section" id="hobbies">
-            <h2 class="section-title">Hobbies and Interests</h2>
-             <div class="carousel-container">
-                <div class="carousel-track" id="carouselTrack"></div>
-            </div>
-        </section>
-
-        <section class="section" id="service">
-            <h2 class="section-title">Service and Volunteer work</h2>
-            <div class="accordion-container">
-                <button class="accordion">Proselytizing Mission</button>
-                <div class="panel">
-                    <p>
-                        Completed a proselytizing mission, dedicating 60-80 hours per week to 
-                        outreach and community service. Engaged in teaching, relationship-building, 
-                        and public speaking to share religious beliefs and provide support to 
-                        individuals. Demonstrated strong work ethic, leadership, and interpersonal 
-                        skills in a high-demand environment.
-                    </p>
-                </div>
         
-                <button class="accordion">Boy Scouts of America</button>
-                <div class="panel">
-                    <p>
-                        Participated in the Boy Scouts of America, gaining leadership, teamwork, and 
-                        outdoor skills through a variety of community service projects and merit-based 
-                        achievements. Successfully completed challenging programs focused on personal 
-                        development, survival skills, and citizenship. Demonstrating commitment, 
-                        responsibility, and the ability to lead and inspire others in various 
-                        group settings.
-                    </p>
-                </div>
         
-                <button class="accordion">Academic Tutor</button>
-                <div class="panel">
-                    <p>
-                        Provided academic tutoring to students in various subjects, helping them improve 
-                        their understanding and performance in coursework. Developed personalized learning 
-                        strategies to address individual needs, boosting student confidence and academic 
-                        success. Demonstrated strong communication, patience, and problem-solving skills 
-                        while fostering a supportive learning environment.
-                    </p>
-                </div>
-                <button class="accordion">Society Leadership</button>
-                <div class="panel">
-                    <p>
-                        Vice President of the Computing Society and Project Manager in the Data Science 
-                        Society. In the Computing Society, led efforts to organize 
-                        events, mentor new members, and expand engagement in software development and technology 
-                        projects. As Project Manager in the Data Science Society, coordinated workflows, 
-                        led teams, and collaborative projects to enhance members' skills in areas such as machine 
-                        learning, data analysis, and programming.
-                    </p>
-                </div>
-            </div>
-        </section>
-        
+               
 
 
 
     </main>
 
     <footer>
-        <p>Reach out at contact@hyrumhendrickson.com</p>
+        <p>Reach out by email at contact@hyrumhendrickson.com</p>
     </footer>
 
     <script> 
 
 	
-        document.querySelectorAll('.accordion').forEach(accordion => {
-            accordion.addEventListener('click', function() {
-                this.classList.toggle('active');
-                const panel = this.nextElementSibling;
-                panel.classList.toggle('show');
-            });
-        });
-
-        const carouselTrack = document.getElementById('carouselTrack');
-        const items = [
-            'Pickleball', 'Disc Golf', 'Mountain Biking',
-            'Camping', 'Hiking', 'Classic Literature', 
-            'Western History', 'Speech & Debate', 
-            'Philosophy', 'Theology', 'Gardening'
-            
-        ];
-
-        let currentOffset = 0;
-
-        function createCarouselItems() {
-            carouselTrack.innerHTML = '';
-            
-            // Create two sets of items
-            for (let i = 0; i < 2; i++) {
-                items.forEach(item => {
-                    const div = document.createElement('div');
-                    div.classList.add('carousel-item');
-                    div.textContent = item;
-                    carouselTrack.appendChild(div);
-                });
-            }
-        }
-
-        function scrollCarousel() {
-            const itemWidth = carouselTrack.children[0].offsetWidth + 20; // width + margin
-            currentOffset -= itemWidth;
-            
-            carouselTrack.style.transform = `translateX(${currentOffset}px)`;
-            
-            // Reset position when scrolled fully
-            setTimeout(() => {
-                if (Math.abs(currentOffset) >= carouselTrack.children.length / 2 * itemWidth) {
-                    carouselTrack.style.transition = 'none';
-                    currentOffset = 0;
-                    carouselTrack.style.transform = 'translateX(0)';
-                }
-                
-                // Restore transition
-                setTimeout(() => {
-                    carouselTrack.style.transition = 'transform 1.5s ease';
-                }, 50);
-            }, 1500);
-        }
-
-        // Initialize carousel
-        createCarouselItems();
-
-        // Start infinite scroll
-        setInterval(scrollCarousel, 2000);
-
-
-
 
 
         // Intersection Observer for fade-in animations
