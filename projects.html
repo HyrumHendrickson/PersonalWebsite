@@ -3,78 +3,595 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact - Hyrum Hendrickson</title>
+    <title>Projects - Hyrum Hendrickson</title>
     <link rel="stylesheet" href="index.css">
     <link rel="icon" href="logo.png">
-    <style>
-        .hero {
-            
-            grid-template-columns: 1fr 1fr 1fr;
-        }
-        .projects-card {
-            margin-top: 30px;
-            font-size: 30px;
-            background-color: var(--bg-secondary);
-            padding: 30px;
-            border-radius: 15px;
-            transition: transform 0.3s;
-            display: flex;
-            justify-content: center; /* Centers horizontally */
-            align-items: center; /* Centers vertically */
-        }
-        .hero h1 {
-            grid-column: 1/4;
-        }
-        #card1 {
-            grid-row: 2;
-            grid-column: 1;
-        }
-        #card2 {
-            grid-row: 2;
-            grid-column: 2;
-        }
-        #card3 {
-            grid-row: 2;
-            grid-column: 3;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body id="projects-body">
-    <nav>
+<body>
+    <nav class="navigation">
         <div class="nav-content">
-            <div class="logo"><a href="index.html"><img src="logo.png" alt="Epic Logo"></a></div>
+            <div class="logo">
+                <a href="index.html">
+                    <img src="logo.png" alt="Hyrum Hendrickson Logo">
+                </a>
+            </div>
             <div class="nav-links">
-                <a href="index.html" id="home-tab">Home</a>
-                <a href="projects.html">Projects</a>
-                <a href="papers.html">Papers</a>
-                <a href="axis.html">Axis</a>
-                <a href="about.html">About</a>
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="projects.html" class="nav-link active">Projects</a>
+                <a href="papers.html" class="nav-link">Papers</a>
+                <a href="axis.html" class="nav-link">Axis</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
     </nav>
-    <main id="projects-main">
-        <section class="hero">
-            <h1>
-                Check out my awesome projects!
-            </h1>
-            <div class="projects-card" id="card1">
-                <button class="button" onclick="window.open('https\://github.com/HyrumHendrickson', 'blank')">Visit my GitHub</button>
-            </div>
 
-            <div class="projects-card" id="card2">
-                <button class="button" onclick="window.open('https\://assortedprojects.org/weather', 'blank')">Data Dashboards</button>
-            </div>
+    <main class="main-content">
+        <section class="projects-hero">
+            <h1>My Projects</h1>
+            <p>
+                Explore my work in machine learning, data science, and mathematical research. 
+                Each project represents a unique challenge in applying theoretical knowledge to practical problems.
+            </p>
+        </section>
 
-            <div class="projects-card" id="card3">
-                <button class="button" onclick="window.open('https\://assortedprojects.org', 'blank')">Misc Projects</button>
+        <section class="featured-projects">
+            <div class="section-header">
+                <h2 class="section-title">Featured Work</h2>
+                <p class="section-subtitle">Detailed project showcases</p>
             </div>
+            
+            <div class="projects-detailed-grid">
+                <article class="project-detailed-card" onclick="window.open('https://hyrumhendrickson.com/axis.html', '_blank')">
+                    <div class="project-image">
+                        <div class="project-placeholder">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2"/>
+                                <path d="M2 17l10 5 10-5" stroke="currentColor" stroke-width="2"/>
+                                <path d="M2 12l10 5 10-5" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <div class="project-category">Machine Learning</div>
+                            <div class="project-status">Live</div>
+                        </div>
+                        <h3 class="project-title">Remote ML Server (Axis)</h3>
+                        <p class="project-description">
+                            A sophisticated cloud-based machine learning server designed for high-performance model deployment. 
+                            Features optimized inference pipelines, real-time processing capabilities, and a philosophical AI assistant interface. 
+                            Built with scalability and efficiency in mind using modern web technologies.
+                        </p>
+                        <div class="project-features">
+                            <div class="feature">✓ Real-time AI inference</div>
+                            <div class="feature">✓ Scalable cloud architecture</div>
+                            <div class="feature">✓ RESTful API endpoints</div>
+                            <div class="feature">✓ Performance optimization</div>
+                        </div>
+                        <div class="project-tech">
+                            <span class="tech-tag">TensorFlow</span>
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">SQL</span>
+                            <span class="tech-tag">Cloud Computing</span>
+                        </div>
+                        <div class="project-actions">
+                            <button class="btn btn-primary">
+                                <span>Try Axis</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </article>
 
+                <article class="project-detailed-card" onclick="window.open('https://assortedprojects.org/weather.html', '_blank')">
+                    <div class="project-image">
+                        <div class="project-placeholder">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M3 3v18h18" stroke="currentColor" stroke-width="2"/>
+                                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <div class="project-category">Data Science</div>
+                            <div class="project-status">Live</div>
+                        </div>
+                        <h3 class="project-title">Weather Analytics Dashboard</h3>
+                        <p class="project-description">
+                            Comprehensive weather data analysis platform featuring real-time data collection, cleaning, and visualization. 
+                            Implements predictive modeling algorithms to forecast weather patterns and analyze historical trends. 
+                            Demonstrates end-to-end data science workflow from acquisition to insight generation.
+                        </p>
+                        <div class="project-features">
+                            <div class="feature">✓ Real-time data collection</div>
+                            <div class="feature">✓ Predictive modeling</div>
+                            <div class="feature">✓ Interactive visualizations</div>
+                            <div class="feature">✓ Historical trend analysis</div>
+                        </div>
+                        <div class="project-tech">
+                            <span class="tech-tag">R Studio</span>
+                            <span class="tech-tag">Web Scraping</span>
+                            <span class="tech-tag">Analytics</span>
+                            <span class="tech-tag">Visualization</span>
+                        </div>
+                        <div class="project-actions">
+                            <button class="btn btn-primary">
+                                <span>View Dashboard</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="project-detailed-card" onclick="window.open('https://scatteredgames.com/life.html', '_blank')">
+                    <div class="project-image">
+                        <div class="project-placeholder">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M9 11H3l3-3m0 6l-3-3m6 0h12" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <div class="project-category">Mathematical Research</div>
+                            <div class="project-status">Research</div>
+                        </div>
+                        <h3 class="project-title">Cellular Automaton Research Tool</h3>
+                        <p class="project-description">
+                            Advanced research platform for studying cellular automatons and their emergent mathematical properties. 
+                            Enables exploration of different rule sets, pattern analysis, and statistical modeling of complex systems. 
+                            Combines graph theory, statistics, and computational methods to investigate fundamental questions about complexity.
+                        </p>
+                        <div class="project-features">
+                            <div class="feature">✓ Rule set experimentation</div>
+                            <div class="feature">✓ Pattern recognition</div>
+                            <div class="feature">✓ Statistical analysis</div>
+                            <div class="feature">✓ Graph theory applications</div>
+                        </div>
+                        <div class="project-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Graph Theory</span>
+                            <span class="tech-tag">Statistics</span>
+                            <span class="tech-tag">Complex Systems</span>
+                        </div>
+                        <div class="project-actions">
+                            <button class="btn btn-primary">
+                                <span>Explore Tool</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="project-links-section">
+            <div class="section-header">
+                <h2 class="section-title">Explore More</h2>
+                <p class="section-subtitle">Additional project repositories and platforms</p>
+            </div>
+            
+            <div class="project-links-grid">
+                <div class="project-link-card" onclick="window.open('https://github.com/HyrumHendrickson', '_blank')">
+                    <div class="link-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3>GitHub Repository</h3>
+                    <p>Complete source code for all projects, including documentation, tests, and development history.</p>
+                    <div class="link-stats">
+                        <span class="stat">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <polygon points="12 2 15.09 8.26 22 9 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9 8.91 8.26 12 2" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Multiple Repos
+                        </span>
+                        <span class="stat">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" stroke="currentColor" stroke-width="2"/>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Open Source
+                        </span>
+                    </div>
+                </div>
+
+                <div class="project-link-card" onclick="window.open('https://assortedprojects.org', '_blank')">
+                    <div class="link-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="3.27,6.96 12,12.01 20.73,6.96" stroke="currentColor" stroke-width="2"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3>Miscellaneous Projects</h3>
+                    <p>Collection of experimental projects, prototypes, and research explorations across various domains.</p>
+                    <div class="link-stats">
+                        <span class="stat">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Experimental
+                        </span>
+                        <span class="stat">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2"/>
+                                <path d="M2 17l10 5 10-5" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Multi-domain
+                        </span>
+                    </div>
+                </div>
+
+                <div class="project-link-card" onclick="window.open('https://assortedprojects.org/weather', '_blank')">
+                    <div class="link-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M3 3v18h18" stroke="currentColor" stroke-width="2"/>
+                            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3>Data Dashboards</h3>
+                    <p>Interactive data visualization dashboards showcasing real-time analytics and statistical insights.</p>
+                    <div class="link-stats">
+                        <span class="stat">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Real-time
+                        </span>
+                        <span class="stat">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Interactive
+                        </span>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
-    <footer>
-        <p>Reach out by email at contact@hyrumhendrickson.com</p>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>Get in touch at <a href="mailto:contact@hyrumhendrickson.com">contact@hyrumhendrickson.com</a></p>
+        </div>
     </footer>
 
-    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile navigation toggle
+            const navToggle = document.querySelector('.nav-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            navToggle?.addEventListener('click', () => {
+                navLinks.classList.toggle('nav-open');
+                navToggle.classList.toggle('nav-toggle-active');
+            });
+            
+            // Scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.project-detailed-card, .project-link-card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+
+    <style>
+        /* Projects page specific styles */
+        .projects-hero {
+            text-align: center;
+            padding: var(--space-3xl) 0;
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .projects-hero h1 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+            background: linear-gradient(135deg, var(--color-text-primary), var(--color-accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .projects-hero p {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .featured-projects {
+            margin-bottom: var(--space-3xl);
+        }
+
+        .projects-detailed-grid {
+            display: grid;
+            gap: var(--space-3xl);
+        }
+
+        .project-detailed-card {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: var(--space-xl);
+            background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-tertiary));
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-detailed-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--color-accent-muted), transparent);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+
+        .project-detailed-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--color-accent-primary);
+        }
+
+        .project-detailed-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-image {
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-placeholder {
+            width: 100%;
+            height: 200px;
+            background: var(--color-bg-elevated);
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-accent-primary);
+        }
+
+        .project-placeholder svg {
+            width: 4rem;
+            height: 4rem;
+        }
+
+        .project-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .project-category {
+            background-color: var(--color-accent-muted);
+            color: var(--color-accent-primary);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .project-status {
+            background-color: var(--color-success);
+            color: white;
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-lg);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+        }
+
+        .project-description {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--space-lg);
+        }
+
+        .project-features {
+            margin-bottom: var(--space-lg);
+        }
+
+        .feature {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-xs);
+            font-size: 0.9rem;
+        }
+
+        .project-tech {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-lg);
+        }
+
+        .tech-tag {
+            background-color: var(--color-bg-elevated);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .project-actions .btn {
+            padding: var(--space-sm) var(--space-lg);
+        }
+
+        .project-links-section {
+            margin-bottom: var(--space-3xl);
+        }
+
+        .project-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-xl);
+        }
+
+        .project-link-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-tertiary));
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            text-align: center;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-link-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--color-accent-muted), transparent);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+
+        .project-link-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--color-accent-primary);
+        }
+
+        .project-link-card:hover::before {
+            opacity: 1;
+        }
+
+        .link-icon {
+            width: 4rem;
+            height: 4rem;
+            background: var(--color-accent-muted);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-lg);
+            color: var(--color-accent-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .link-icon svg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .project-link-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-link-card p {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--space-lg);
+            position: relative;
+            z-index: 1;
+        }
+
+        .link-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-lg);
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+        }
+
+        .stat svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .project-detailed-card {
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
+            }
+
+            .project-placeholder {
+                height: 150px;
+            }
+
+            .project-placeholder svg {
+                width: 3rem;
+                height: 3rem;
+            }
+
+            .project-links-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .link-stats {
+                flex-direction: column;
+                gap: var(--space-sm);
+            }
+        }
+    </style>
 </body>
 </html>

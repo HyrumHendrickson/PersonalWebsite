@@ -6,52 +6,839 @@
     <title>Papers - Hyrum Hendrickson</title>
     <link rel="stylesheet" href="index.css">
     <link rel="icon" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body id="contact-body">
-    <nav>
+<body>
+    <nav class="navigation">
         <div class="nav-content">
-            <div class="logo"><a href="index.html"><img src="logo.png" alt="Epic Logo"></a></div>
+            <div class="logo">
+                <a href="index.html">
+                    <img src="logo.png" alt="Hyrum Hendrickson Logo">
+                </a>
+            </div>
             <div class="nav-links">
-                <a href="index.html" id="home-tab">Home</a>
-                <a href="projects.html">Projects</a>
-                <a href="papers.html">Papers</a>
-                <a href="axis.html">Axis</a>
-                <a href="about.html">About</a>
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="projects.html" class="nav-link">Projects</a>
+                <a href="papers.html" class="nav-link active">Papers</a>
+                <a href="axis.html" class="nav-link">Axis</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
     </nav>
 
-    <main id="contact-main">
+    <main class="main-content">
+        <section class="papers-hero">
+            <h1>Academic Papers</h1>
+            <p>
+                A collection of my philosophical and mathematical research exploring questions 
+                at the intersection of logic, metaphysics, epistemology, and rational inquiry.
+            </p>
+        </section>
+
+        <section class="papers-filters">
+            <div class="filter-container">
+                <button class="filter-btn active" data-filter="all">All Papers</button>
+                <button class="filter-btn" data-filter="philosophy">Philosophy</button>
+                <button class="filter-btn" data-filter="metaphysics">Metaphysics</button>
+                <button class="filter-btn" data-filter="epistemology">Epistemology</button>
+                <button class="filter-btn" data-filter="theology">Theology</button>
+            </div>
+        </section>
+
         <section class="papers-section">
-            <h1 class="section-title">My Papers</h1>
-            <div class="papers-grid">
-                <a class="paper-card" href="papers/OnSocrates.pdf" target="_blank">
-                    <h2>On Socrates</h2>
-                    <p>An examination and defense of Socrates' claim that "the unexamined life is not worth living."</p>
-                </a>
-                <a class="paper-card" href="papers/UltimateReality.pdf" target="_blank">
-                    <h2>On the Nature of Reality</h2>
-                    <p>A comparison of the metaphysical claims of Parmenides and Heraclitus.</p>
-                </a>
-                <a class="paper-card" href="papers/PlatoMetaphysics.pdf" target="_blank">
-                    <h2>Plato's Metaphysics</h2>
-                    <p>A comparison of the metaphysical claims of Plato and Parmenides.</p>
-                </a>
-                <a class="paper-card" href="papers/WhyRationalism.pdf" target="_blank">
-                    <h2>Why Rationalism</h2>
-                    <p>A paper explainging the benfit of a rationalist epistemology.</p>
-                </a>
-                <a class="paper-card" href="papers/WhyRationalism.pdf" target="_blank">
-                    <h2>Thomas Aquinas</h2>
-                    <p>A paper examining the connection between Thomism and Latter-Day Saint theology.</p>
-                </a>
+            <div class="papers-grid" id="papersGrid">
+                <article class="paper-card" data-categories="philosophy epistemology" data-pdf="papers/OnSocrates.pdf">
+                    <div class="paper-header">
+                        <div class="paper-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="paper-meta">
+                            <span class="paper-year">2024</span>
+                            <span class="reading-time">12 min read</span>
+                        </div>
+                    </div>
+                    <h2 class="paper-title">On Socrates</h2>
+                    <p class="paper-abstract">
+                        An examination and defense of Socrates' claim that "the unexamined life is not worth living." 
+                        This paper explores the philosophical foundations of self-reflection and its role in human flourishing, 
+                        analyzing the connection between knowledge, virtue, and the good life.
+                    </p>
+                    <div class="paper-tags">
+                        <span class="paper-tag philosophy">Philosophy</span>
+                        <span class="paper-tag epistemology">Epistemology</span>
+                        <span class="paper-tag">Ethics</span>
+                        <span class="paper-tag">Ancient Philosophy</span>
+                    </div>
+                    <div class="paper-actions">
+                        <button class="btn btn-secondary preview-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Preview
+                        </button>
+                        <button class="btn btn-primary download-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2"/>
+                                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                </article>
+
+                <article class="paper-card" data-categories="philosophy metaphysics" data-pdf="papers/UltimateReality.pdf">
+                    <div class="paper-header">
+                        <div class="paper-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="paper-meta">
+                            <span class="paper-year">2024</span>
+                            <span class="reading-time">18 min read</span>
+                        </div>
+                    </div>
+                    <h2 class="paper-title">On the Nature of Reality</h2>
+                    <p class="paper-abstract">
+                        A comparative analysis of the metaphysical claims of Parmenides and Heraclitus regarding 
+                        the fundamental nature of reality. This paper examines the tension between being and becoming, 
+                        permanence and change, and their implications for our understanding of existence.
+                    </p>
+                    <div class="paper-tags">
+                        <span class="paper-tag philosophy">Philosophy</span>
+                        <span class="paper-tag metaphysics">Metaphysics</span>
+                        <span class="paper-tag">Pre-Socratics</span>
+                        <span class="paper-tag">Ontology</span>
+                    </div>
+                    <div class="paper-actions">
+                        <button class="btn btn-secondary preview-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Preview
+                        </button>
+                        <button class="btn btn-primary download-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2"/>
+                                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                </article>
+
+                <article class="paper-card" data-categories="philosophy metaphysics" data-pdf="papers/PlatoMetaphysics.pdf">
+                    <div class="paper-header">
+                        <div class="paper-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="paper-meta">
+                            <span class="paper-year">2024</span>
+                            <span class="reading-time">15 min read</span>
+                        </div>
+                    </div>
+                    <h2 class="paper-title">Plato's Metaphysics</h2>
+                    <p class="paper-abstract">
+                        A detailed comparison of the metaphysical frameworks proposed by Plato and Parmenides. 
+                        This analysis explores Plato's theory of Forms as a response to Parmenidean challenges 
+                        about change and multiplicity, examining how Plato's system addresses fundamental questions about reality.
+                    </p>
+                    <div class="paper-tags">
+                        <span class="paper-tag philosophy">Philosophy</span>
+                        <span class="paper-tag metaphysics">Metaphysics</span>
+                        <span class="paper-tag">Ancient Philosophy</span>
+                        <span class="paper-tag">Theory of Forms</span>
+                    </div>
+                    <div class="paper-actions">
+                        <button class="btn btn-secondary preview-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Preview
+                        </button>
+                        <button class="btn btn-primary download-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2"/>
+                                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                </article>
+
+                <article class="paper-card" data-categories="philosophy epistemology" data-pdf="papers/WhyRationalism.pdf">
+                    <div class="paper-header">
+                        <div class="paper-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="paper-meta">
+                            <span class="paper-year">2023</span>
+                            <span class="reading-time">14 min read</span>
+                        </div>
+                    </div>
+                    <h2 class="paper-title">Why Rationalism</h2>
+                    <p class="paper-abstract">
+                        A defense of rationalist epistemology and its advantages over empiricist approaches to knowledge. 
+                        This paper examines the role of reason in acquiring knowledge, the reliability of rational intuition, 
+                        and the foundational principles that make rational inquiry possible.
+                    </p>
+                    <div class="paper-tags">
+                        <span class="paper-tag philosophy">Philosophy</span>
+                        <span class="paper-tag epistemology">Epistemology</span>
+                        <span class="paper-tag">Rationalism</span>
+                        <span class="paper-tag">Theory of Knowledge</span>
+                    </div>
+                    <div class="paper-actions">
+                        <button class="btn btn-secondary preview-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Preview
+                        </button>
+                        <button class="btn btn-primary download-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2"/>
+                                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                </article>
+
+                <article class="paper-card" data-categories="philosophy theology" data-pdf="papers/ThomasAquinas.pdf">
+                    <div class="paper-header">
+                        <div class="paper-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="paper-meta">
+                            <span class="paper-year">2023</span>
+                            <span class="reading-time">20 min read</span>
+                        </div>
+                    </div>
+                    <h2 class="paper-title">Thomas Aquinas and Modern Theology</h2>
+                    <p class="paper-abstract">
+                        An exploration of the connections between Thomistic philosophy and contemporary theological frameworks, 
+                        with particular attention to how Aquinas's systematic approach to metaphysics and ethics 
+                        provides foundational principles for modern religious thought.
+                    </p>
+                    <div class="paper-tags">
+                        <span class="paper-tag philosophy">Philosophy</span>
+                        <span class="paper-tag theology">Theology</span>
+                        <span class="paper-tag">Thomism</span>
+                        <span class="paper-tag">Medieval Philosophy</span>
+                    </div>
+                    <div class="paper-actions">
+                        <button class="btn btn-secondary preview-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Preview
+                        </button>
+                        <button class="btn btn-primary download-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2"/>
+                                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                </article>
             </div>
         </section>
     </main>
 
+    <!-- PDF Preview Modal -->
+    <div class="pdf-modal" id="pdfModal">
+        <div class="modal-backdrop" id="modalBackdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Paper Preview</h3>
+                <button class="modal-close" id="modalClose">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/>
+                        <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="pdf-preview-container">
+                    <iframe id="pdfFrame" src="" frameborder="0"></iframe>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="modalDownload">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2"/>
+                            <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Download PDF
+                    </button>
+                    <button class="btn btn-primary" id="modalOpenNew">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="15,3 21,3 21,9" stroke="currentColor" stroke-width="2"/>
+                            <line x1="10" y1="14" x2="21" y2="3" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Open in New Tab
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <footer>
-        <p>Reach out by email at contact@hyrumhendrickson.com</p>
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>Get in touch at <a href="mailto:contact@hyrumhendrickson.com">contact@hyrumhendrickson.com</a></p>
+        </div>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter functionality
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const paperCards = document.querySelectorAll('.paper-card');
+            
+            // Ensure all cards are visible initially
+            paperCards.forEach(card => {
+                card.style.display = 'block';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            });
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Update active filter button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    const filterValue = button.dataset.filter;
+                    
+                    // Filter papers
+                    paperCards.forEach(card => {
+                        const categories = card.dataset.categories.split(' ');
+                        
+                        if (filterValue === 'all' || categories.includes(filterValue)) {
+                            card.style.display = 'block';
+                            // Small delay to ensure display is set first
+                            requestAnimationFrame(() => {
+                                card.style.opacity = '1';
+                                card.style.transform = 'translateY(0)';
+                            });
+                        } else {
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(20px)';
+                            setTimeout(() => {
+                                if (card.style.opacity === '0') {
+                                    card.style.display = 'none';
+                                }
+                            }, 300);
+                        }
+                    });
+                });
+            });
+            
+            // PDF Preview functionality
+            const modal = document.getElementById('pdfModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const pdfFrame = document.getElementById('pdfFrame');
+            const modalClose = document.getElementById('modalClose');
+            const modalBackdrop = document.getElementById('modalBackdrop');
+            const modalDownload = document.getElementById('modalDownload');
+            const modalOpenNew = document.getElementById('modalOpenNew');
+            
+            let currentPdfUrl = '';
+            
+            // Preview button event listeners
+            document.querySelectorAll('.preview-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const card = button.closest('.paper-card');
+                    const pdfUrl = card.dataset.pdf;
+                    const title = card.querySelector('.paper-title').textContent;
+                    
+                    showPdfPreview(pdfUrl, title);
+                });
+            });
+            
+            // Download button event listeners
+            document.querySelectorAll('.download-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const card = button.closest('.paper-card');
+                    const pdfUrl = card.dataset.pdf;
+                    downloadPdf(pdfUrl);
+                });
+            });
+            
+            // Modal event listeners
+            modalClose.addEventListener('click', closePdfPreview);
+            modalBackdrop.addEventListener('click', closePdfPreview);
+            
+            modalDownload.addEventListener('click', () => {
+                downloadPdf(currentPdfUrl);
+            });
+            
+            modalOpenNew.addEventListener('click', () => {
+                window.open(currentPdfUrl, '_blank');
+            });
+            
+            // Escape key to close modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closePdfPreview();
+                }
+            });
+            
+            function showPdfPreview(pdfUrl, title) {
+                currentPdfUrl = pdfUrl;
+                modalTitle.textContent = title;
+                pdfFrame.src = pdfUrl;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closePdfPreview() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                setTimeout(() => {
+                    pdfFrame.src = '';
+                }, 300);
+            }
+            
+            function downloadPdf(pdfUrl) {
+                const link = document.createElement('a');
+                link.href = pdfUrl;
+                link.download = pdfUrl.split('/').pop();
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            
+            // Mobile navigation toggle
+            const navToggle = document.querySelector('.nav-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (navToggle && navLinks) {
+                navToggle.addEventListener('click', () => {
+                    navLinks.classList.toggle('nav-open');
+                    navToggle.classList.toggle('nav-toggle-active');
+                });
+            }
+            
+            // Simple scroll animations - no initial hiding to prevent flash
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            // Only observe papers hero and filters to prevent loading flash on cards
+            const elementsToObserve = document.querySelectorAll('.papers-hero, .papers-filters');
+            elementsToObserve.forEach(el => {
+                if (el) {
+                    observer.observe(el);
+                }
+            });
+        });
+    </script>
+
+    <style>
+        /* Papers page specific styles */
+        .papers-hero {
+            text-align: center;
+            padding: var(--space-3xl) 0;
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .papers-hero h1 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: var(--space-lg);
+            background: linear-gradient(135deg, var(--color-text-primary), var(--color-accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .papers-hero p {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        .papers-filters {
+            margin-bottom: var(--space-3xl);
+        }
+        
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-md);
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: var(--space-sm) var(--space-lg);
+            background-color: transparent;
+            border: 2px solid var(--color-border);
+            color: var(--color-text-secondary);
+            border-radius: var(--radius-lg);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+            border-color: var(--color-accent-primary);
+            color: var(--color-bg-primary);
+        }
+        
+        .papers-section {
+            padding-bottom: var(--space-3xl);
+        }
+        
+        .papers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-xl);
+        }
+        
+        .paper-card {
+            background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-tertiary));
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .paper-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--color-accent-muted), transparent);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+        
+        .paper-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--color-accent-primary);
+        }
+        
+        .paper-card:hover::before {
+            opacity: 1;
+        }
+        
+        .paper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-lg);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .paper-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            padding: var(--space-sm);
+            background: var(--color-accent-muted);
+            border-radius: var(--radius-md);
+            color: var(--color-accent-primary);
+        }
+        
+        .paper-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .paper-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: var(--space-xs);
+            font-size: 0.875rem;
+        }
+        
+        .paper-year {
+            color: var(--color-accent-primary);
+            font-weight: 600;
+        }
+        
+        .reading-time {
+            color: var(--color-text-muted);
+        }
+        
+        .paper-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-md);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .paper-abstract {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--space-lg);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .paper-tags {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-lg);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .paper-tag {
+            padding: var(--space-xs) var(--space-sm);
+            background-color: var(--color-bg-elevated);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+        
+        .paper-tag.philosophy {
+            background-color: rgba(139, 69, 19, 0.2);
+            border-color: #8b4513;
+            color: #deb887;
+        }
+        
+        .paper-tag.metaphysics {
+            background-color: rgba(75, 0, 130, 0.2);
+            border-color: #4b0082;
+            color: #dda0dd;
+        }
+        
+        .paper-tag.epistemology {
+            background-color: rgba(0, 100, 0, 0.2);
+            border-color: #006400;
+            color: #90ee90;
+        }
+        
+        .paper-tag.theology {
+            background-color: rgba(184, 134, 11, 0.2);
+            border-color: #b8860b;
+            color: #f0e68c;
+        }
+        
+        .paper-actions {
+            display: flex;
+            gap: var(--space-md);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .paper-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+        
+        /* PDF Modal Styles */
+        .pdf-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal);
+        }
+        
+        .pdf-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            position: relative;
+            width: 90vw;
+            max-width: 900px;
+            height: 90vh;
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform var(--transition-normal);
+        }
+        
+        .pdf-modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-lg) var(--space-xl);
+            border-bottom: 1px solid var(--color-border);
+            background: var(--color-bg-tertiary);
+        }
+        
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+        
+        .modal-close {
+            width: 2rem;
+            height: 2rem;
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+        
+        .modal-close:hover {
+            background-color: var(--color-bg-elevated);
+            color: var(--color-text-primary);
+        }
+        
+        .modal-close svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .modal-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .pdf-preview-container {
+            flex: 1;
+            padding: var(--space-lg);
+        }
+        
+        #pdfFrame {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius-md);
+            background: white;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-lg) var(--space-xl);
+            border-top: 1px solid var(--color-border);
+            background: var(--color-bg-tertiary);
+        }
+        
+        .modal-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+            .papers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-container {
+                gap: var(--space-sm);
+            }
+            
+            .filter-btn {
+                padding: var(--space-xs) var(--space-md);
+                font-size: 0.875rem;
+            }
+            
+            .paper-actions {
+                flex-direction: column;
+            }
+            
+            .modal-content {
+                width: 95vw;
+                height: 95vh;
+            }
+            
+            .modal-header {
+                padding: var(--space-md);
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+                padding: var(--space-md);
+            }
+        }
+    </style>
 </body>
 </html>
