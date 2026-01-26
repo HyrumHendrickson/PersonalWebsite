@@ -43,8 +43,10 @@
                 <button class="filter-btn active" data-filter="all">All Papers</button>
                 <button class="filter-btn" data-filter="philosophy">Philosophy</button>
                 <button class="filter-btn" data-filter="history">History</button>
+                <button class="filter-btn" data-filter="religion">Religion</button>
+                <button class="filter-btn" data-filter="narrative">Narrative</button>
                 <button class="filter-btn" data-filter="mathematics">Mathematics</button>
-                <button class="filter-btn" data-filter="artifical intelegence">Artificial Intelegence</button>
+                
             </div>
         </section>
 
@@ -224,6 +226,49 @@
                         </button>
                     </div>
                 </article>
+
+                
+                <article class="paper-card" data-categories="philosophy" data-pdf="papers/OnWastingTime.pdf">
+                    <div class="paper-header">
+                        <div class="paper-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/>
+                                <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="paper-meta">
+                            <span class="paper-year"></span>
+                            <span class="reading-time"></span>
+                        </div>
+                    </div>
+                    <h2 class="paper-title">On Wasting Time</h2>
+                    <p class="paper-abstract">
+                        A whismical defense of wasting time, or in other words, why it's important to take breaks and rest.
+                    </p>
+                    <div class="paper-tags">
+                        <span class="paper-tag philosophy">Philosophy</span>
+                    </div>
+                    <div class="paper-actions">
+                        <button class="btn btn-secondary preview-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Preview
+                        </button>
+                        <button class="btn btn-primary download-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2"/>
+                                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                </article>
+
 
                 <article class="paper-card" data-categories="philosophy history" data-pdf="papers/Thomas.pdf">
                     <div class="paper-header">
