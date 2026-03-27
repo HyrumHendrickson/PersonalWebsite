@@ -52,7 +52,7 @@
 
         <section class="papers-section">
             <div class="papers-grid" id="papersGrid">
-                <article class="paper-card" data-categories="philosophy history" data-pdf="papers/OnSocrates.pdf">
+                <article class="paper-card" data-categories="philosophy history" data-pdf="paper/OnSocrates.pdf">
                     <div class="paper-header">
                         <div class="paper-icon">
                             <svg viewBox="0 0 24 24" fill="none">
@@ -95,7 +95,7 @@
                     </div>
                 </article>
 
-                <article class="paper-card" data-categories="philosophy history" data-pdf="papers/UltimateReality.pdf">
+                <article class="paper-card" data-categories="philosophy history" data-pdf="paper/UltimateReality.pdf">
                     <div class="paper-header">
                         <div class="paper-icon">
                             <svg viewBox="0 0 24 24" fill="none">
@@ -138,7 +138,7 @@
                     </div>
                 </article>
 
-                <article class="paper-card" data-categories="philosophy history" data-pdf="papers/PlatoMetaphysics.pdf">
+                <article class="paper-card" data-categories="philosophy history" data-pdf="paper/PlatoMetaphysics.pdf">
                     <div class="paper-header">
                         <div class="paper-icon">
                             <svg viewBox="0 0 24 24" fill="none">
@@ -180,7 +180,7 @@
                     </div>
                 </article>
 
-                <article class="paper-card" data-categories="narrative" data-pdf="papers/Avacados.pdf">
+                <article class="paper-card" data-categories="narrative" data-pdf="paper/Avacados.pdf">
                                     <div class="paper-header">
                                         <div class="paper-icon">
                                             <svg viewBox="0 0 24 24" fill="none">
@@ -222,7 +222,7 @@
                                 </article>
 
 
-                 <article class="paper-card" data-categories="rhetoric history" data-pdf="papers/Follette.pdf">
+                 <article class="paper-card" data-categories="rhetoric history" data-pdf="paper/Follette.pdf">
                                                      <div class="paper-header">
                                                          <div class="paper-icon">
                                                              <svg viewBox="0 0 24 24" fill="none">
@@ -264,7 +264,7 @@
                                                      </div>
                                                  </article>
 
-                <article class="paper-card" data-categories="philosophy" data-pdf="papers/WhyRationalism.pdf">
+                <article class="paper-card" data-categories="philosophy" data-pdf="paper/WhyRationalism.pdf">
                     <div class="paper-header">
                         <div class="paper-icon">
                             <svg viewBox="0 0 24 24" fill="none">
@@ -306,7 +306,7 @@
                 </article>
 
                 
-                <article class="paper-card" data-categories="philosophy" data-pdf="papers/OnWastingTime.pdf">
+                <article class="paper-card" data-categories="philosophy" data-pdf="paper/OnWastingTime.pdf">
                     <div class="paper-header">
                         <div class="paper-icon">
                             <svg viewBox="0 0 24 24" fill="none">
@@ -348,7 +348,7 @@
                 </article>
 
 
-                <article class="paper-card" data-categories="philosophy history" data-pdf="papers/Thomas.pdf">
+                <article class="paper-card" data-categories="philosophy history" data-pdf="paper/Thomas.pdf">
                     <div class="paper-header">
                         <div class="paper-icon">
                             <svg viewBox="0 0 24 24" fill="none">
