@@ -1,102 +1,13 @@
-import React, { useState, useEffect, useMemo } from "react";
-
-// ─── DATA ─────────────────────────────────────────────────────────────────────
-// Attic Greek definite articles, all genders, cases, and numbers.
-const ARTICLES = [
-  // Singular — Masculine
-  { form: "ὁ",    gender: "Masculine", number: "Singular", case: "Nominative", translit: "ho",   gloss: "the (subj.)" },
-  { form: "τοῦ",  gender: "Masculine", number: "Singular", case: "Genitive",   translit: "tou",  gloss: "of the" },
-  { form: "τῷ",   gender: "Masculine", number: "Singular", case: "Dative",     translit: "tōi",  gloss: "to/for the" },
-  { form: "τόν",  gender: "Masculine", number: "Singular", case: "Accusative", translit: "ton",  gloss: "the (obj.)" },
-  { form: "—",    gender: "Masculine", number: "Singular", case: "Vocative",   translit: "—",    gloss: "(no article)" },
-
-  // Singular — Feminine
-  { form: "ἡ",    gender: "Feminine",  number: "Singular", case: "Nominative", translit: "hē",   gloss: "the (subj.)" },
-  { form: "τῆς",  gender: "Feminine",  number: "Singular", case: "Genitive",   translit: "tēs",  gloss: "of the" },
-  { form: "τῇ",   gender: "Feminine",  number: "Singular", case: "Dative",     translit: "tēi",  gloss: "to/for the" },
-  { form: "τήν",  gender: "Feminine",  number: "Singular", case: "Accusative", translit: "tēn",  gloss: "the (obj.)" },
-  { form: "—",    gender: "Feminine",  number: "Singular", case: "Vocative",   translit: "—",    gloss: "(no article)" },
-
-  // Singular — Neuter
-  { form: "τό",   gender: "Neuter",    number: "Singular", case: "Nominative", translit: "to",   gloss: "the (subj.)" },
-  { form: "τοῦ",  gender: "Neuter",    number: "Singular", case: "Genitive",   translit: "tou",  gloss: "of the" },
-  { form: "τῷ",   gender: "Neuter",    number: "Singular", case: "Dative",     translit: "tōi",  gloss: "to/for the" },
-  { form: "τό",   gender: "Neuter",    number: "Singular", case: "Accusative", translit: "to",   gloss: "the (obj.)" },
-  { form: "—",    gender: "Neuter",    number: "Singular", case: "Vocative",   translit: "—",    gloss: "(no article)" },
-
-  // Plural — Masculine
-  { form: "οἱ",   gender: "Masculine", number: "Plural",   case: "Nominative", translit: "hoi",  gloss: "the (subj.)" },
-  { form: "τῶν",  gender: "Masculine", number: "Plural",   case: "Genitive",   translit: "tōn",  gloss: "of the" },
-  { form: "τοῖς", gender: "Masculine", number: "Plural",   case: "Dative",     translit: "tois", gloss: "to/for the" },
-  { form: "τούς", gender: "Masculine", number: "Plural",   case: "Accusative", translit: "tous", gloss: "the (obj.)" },
-  { form: "—",    gender: "Masculine", number: "Plural",   case: "Vocative",   translit: "—",    gloss: "(no article)" },
-
-  // Plural — Feminine
-  { form: "αἱ",   gender: "Feminine",  number: "Plural",   case: "Nominative", translit: "hai",  gloss: "the (subj.)" },
-  { form: "τῶν",  gender: "Feminine",  number: "Plural",   case: "Genitive",   translit: "tōn",  gloss: "of the" },
-  { form: "ταῖς", gender: "Feminine",  number: "Plural",   case: "Dative",     translit: "tais", gloss: "to/for the" },
-  { form: "τάς",  gender: "Feminine",  number: "Plural",   case: "Accusative", translit: "tas",  gloss: "the (obj.)" },
-  { form: "—",    gender: "Feminine",  number: "Plural",   case: "Vocative",   translit: "—",    gloss: "(no article)" },
-
-  // Plural — Neuter
-  { form: "τά",   gender: "Neuter",    number: "Plural",   case: "Nominative", translit: "ta",   gloss: "the (subj.)" },
-  { form: "τῶν",  gender: "Neuter",    number: "Plural",   case: "Genitive",   translit: "tōn",  gloss: "of the" },
-  { form: "τοῖς", gender: "Neuter",    number: "Plural",   case: "Dative",     translit: "tois", gloss: "to/for the" },
-  { form: "τά",   gender: "Neuter",    number: "Plural",   case: "Accusative", translit: "ta",   gloss: "the (obj.)" },
-  { form: "—",    gender: "Neuter",    number: "Plural",   case: "Vocative",   translit: "—",    gloss: "(no article)" },
-];
-
-// Drop the vocative blanks from the studyable set
-const STUDY_SET = ARTICLES.filter((a) => a.form !== "—");
-
-const CASES = ["Nominative", "Genitive", "Dative", "Accusative", "Vocative"];
-const GENDERS = ["Masculine", "Feminine", "Neuter"];
-const NUMBERS = ["Singular", "Plural"];
-
-// ─── UTILITIES ────────────────────────────────────────────────────────────────
-const shuffle = (arr) => {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-};
-
-// Strict identity (same slot in the paradigm)
-const sameArticle = (a, b) =>
-  a.case === b.case && a.gender === b.gender && a.number === b.number;
-
-// Two parsings are equivalent if they produce the same surface form,
-// the same case, and the same number. Gender is the only ambiguous axis
-// for the article (e.g. τοῦ is both M and N gen. sg.; τῶν is M/F/N gen. pl.).
-// This is the right check for "did the user identify a valid parsing?"
-const equivalentParse = (a, b) =>
-  a.form === b.form &&
-  a.case === b.case &&
-  a.number === b.number;
-
-// All paradigm slots that share a surface form with the given article.
-const allParsingsOf = (article) =>
-  STUDY_SET.filter((a) => a.form === article.form);
-
-// All distinct surface forms (used to avoid duplicate options in quizzes).
-const uniqueForms = (articles) => {
-  const seen = new Set();
-  const out = [];
-  for (const a of articles) {
-    if (!seen.has(a.form)) {
-      seen.add(a.form);
-      out.push(a);
-    }
-  }
-  return out;
-};
-
-// ─── STYLES ───────────────────────────────────────────────────────────────────
-const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=GFS+Didot&family=JetBrains+Mono:wght@400;500&display=swap');
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Definite Article — Attic Greek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=GFS+Didot&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
   :root {
     --parchment: #f4ecd8;
     --parchment-deep: #e8dcc0;
@@ -110,6 +21,7 @@ const styles = `
   }
 
   * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
 
   .greek-app {
     min-height: 100vh;
@@ -128,17 +40,15 @@ const styles = `
     content: '';
     position: fixed;
     inset: 0;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0 0.06 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
     opacity: 0.5;
     pointer-events: none;
     z-index: 0;
   }
 
   .greek-app > * { position: relative; z-index: 1; }
-
   .container { max-width: 1100px; margin: 0 auto; }
 
-  /* Header */
   .masthead {
     text-align: center;
     margin-bottom: 2.5rem;
@@ -185,12 +95,10 @@ const styles = `
     margin-top: 0.5rem;
   }
 
-  /* Mode tabs */
   .tabs {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 0;
     margin-bottom: 2rem;
     border-bottom: 1px solid rgba(26, 20, 16, 0.15);
   }
@@ -221,7 +129,6 @@ const styles = `
     vertical-align: 1px;
   }
 
-  /* Panels */
   .panel {
     background: rgba(255, 252, 244, 0.5);
     border: 1px solid rgba(164, 126, 42, 0.25);
@@ -240,15 +147,8 @@ const styles = `
   .panel-corner.bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
   .panel-corner.br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
 
-  .panel-header {
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  .panel-title {
-    font-family: 'GFS Didot', serif;
-    font-size: 1.5rem;
-    margin: 0;
-  }
+  .panel-header { text-align: center; margin-bottom: 1.5rem; }
+  .panel-title { font-family: 'GFS Didot', serif; font-size: 1.5rem; margin: 0; }
   .panel-meta {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
@@ -258,13 +158,7 @@ const styles = `
     margin-top: 0.4rem;
   }
 
-  /* Flashcard */
-  .flashcard-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-  }
+  .flashcard-wrap { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
   .flashcard {
     width: 100%;
     max-width: 480px;
@@ -279,9 +173,7 @@ const styles = `
     transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1);
     transform-style: preserve-3d;
   }
-  .flashcard.flipped .flashcard-inner {
-    transform: rotateY(180deg);
-  }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
   .flashcard-face {
     position: absolute;
     inset: 0;
@@ -338,13 +230,7 @@ const styles = `
     font-size: 1.05rem;
   }
 
-  .nav-row {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+  .nav-row { display: flex; gap: 0.75rem; align-items: center; justify-content: center; flex-wrap: wrap; }
 
   .btn {
     background: transparent;
@@ -357,31 +243,13 @@ const styles = `
     transition: all 0.2s ease;
     letter-spacing: 0.03em;
   }
-  .btn:hover:not(:disabled) {
-    background: var(--ink);
-    color: var(--parchment);
-  }
+  .btn:hover:not(:disabled) { background: var(--ink); color: var(--parchment); }
   .btn:disabled { opacity: 0.35; cursor: not-allowed; }
-  .btn.primary {
-    background: var(--crimson);
-    color: var(--parchment);
-    border-color: var(--crimson);
-  }
+  .btn.primary { background: var(--crimson); color: var(--parchment); border-color: var(--crimson); }
   .btn.primary:hover:not(:disabled) { background: #5a1515; border-color: #5a1515; }
-  .btn.gilt {
-    border-color: var(--gilt);
-    color: var(--gilt);
-  }
+  .btn.gilt { border-color: var(--gilt); color: var(--gilt); }
   .btn.gilt:hover:not(:disabled) { background: var(--gilt); color: var(--parchment); }
 
-  .counter {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
-    color: var(--ink-soft);
-    letter-spacing: 0.1em;
-  }
-
-  /* Quiz */
   .quiz-stats {
     display: flex;
     justify-content: center;
@@ -392,6 +260,7 @@ const styles = `
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: var(--ink-soft);
+    flex-wrap: wrap;
   }
   .quiz-stats span strong { color: var(--crimson); font-size: 1rem; }
 
@@ -431,23 +300,14 @@ const styles = `
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
-    position: relative;
   }
   .option:hover:not(:disabled) {
     border-color: var(--gilt);
     background: rgba(255, 252, 244, 1);
     transform: translateY(-1px);
   }
-  .option.correct {
-    background: rgba(74, 93, 58, 0.15);
-    border-color: var(--laurel);
-    color: var(--laurel);
-  }
-  .option.incorrect {
-    background: rgba(122, 31, 31, 0.1);
-    border-color: var(--crimson);
-    color: var(--crimson);
-  }
+  .option.correct { background: rgba(74, 93, 58, 0.15); border-color: var(--laurel); color: var(--laurel); }
+  .option.incorrect { background: rgba(122, 31, 31, 0.1); border-color: var(--crimson); color: var(--crimson); }
   .option:disabled { cursor: default; }
 
   .feedback {
@@ -460,10 +320,7 @@ const styles = `
   .feedback.correct { color: var(--laurel); }
   .feedback.incorrect { color: var(--crimson); }
 
-  /* Browse — paradigm table */
-  .paradigm-section {
-    margin-bottom: 2rem;
-  }
+  .paradigm-section { margin-bottom: 2rem; }
   .paradigm-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
@@ -522,13 +379,8 @@ const styles = `
     margin-top: 0.2rem;
     letter-spacing: 0.04em;
   }
-  .paradigm-table td.empty {
-    color: var(--ink-soft);
-    opacity: 0.4;
-    font-size: 1.2rem;
-  }
+  .paradigm-table td.empty { color: var(--ink-soft); opacity: 0.4; font-size: 1.2rem; }
 
-  /* Match */
   .match-board {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -545,11 +397,7 @@ const styles = `
     text-align: center;
     margin-bottom: 0.5rem;
   }
-  .match-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
+  .match-list { display: flex; flex-direction: column; gap: 0.6rem; }
   .match-tile {
     background: rgba(255, 252, 244, 0.7);
     border: 1px solid rgba(26, 20, 16, 0.25);
@@ -575,15 +423,8 @@ const styles = `
     border-width: 2px;
     background: rgba(122, 31, 31, 0.08);
   }
-  .match-tile.matched {
-    opacity: 0.25;
-    cursor: default;
-    border-style: dashed;
-  }
-  .match-tile.flash-correct {
-    background: rgba(74, 93, 58, 0.2);
-    border-color: var(--laurel);
-  }
+  .match-tile.matched { opacity: 0.25; cursor: default; border-style: dashed; }
+  .match-tile.flash-correct { background: rgba(74, 93, 58, 0.2); border-color: var(--laurel); }
   .match-tile.flash-wrong {
     background: rgba(122, 31, 31, 0.15);
     border-color: var(--crimson);
@@ -595,24 +436,10 @@ const styles = `
     75% { transform: translateX(4px); }
   }
 
-  .victory {
-    text-align: center;
-    padding: 1.5rem 1rem;
-    margin-top: 1rem;
-  }
-  .victory-title {
-    font-family: 'GFS Didot', serif;
-    font-size: 2rem;
-    color: var(--crimson);
-    margin: 0 0 0.5rem;
-  }
-  .victory-text {
-    font-style: italic;
-    color: var(--ink-soft);
-    margin-bottom: 1rem;
-  }
+  .victory { text-align: center; padding: 1.5rem 1rem; margin-top: 1rem; }
+  .victory-title { font-family: 'GFS Didot', serif; font-size: 2rem; color: var(--crimson); margin: 0 0 0.5rem; }
+  .victory-text { font-style: italic; color: var(--ink-soft); margin-bottom: 1rem; }
 
-  /* Footer */
   .colophon {
     text-align: center;
     margin-top: 3rem;
@@ -624,16 +451,117 @@ const styles = `
     text-transform: uppercase;
     color: var(--ink-soft);
   }
-`;
+
+  #loading {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--parchment);
+    font-family: 'GFS Didot', serif;
+    font-size: 1.5rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    z-index: 100;
+  }
+</style>
+</head>
+<body>
+<div id="loading">Loading…</div>
+<div id="root"></div>
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect } = React;
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const ARTICLES = [
+  // Singular — Masculine
+  { form: "ὁ",    gender: "Masculine", number: "Singular", case: "Nominative", translit: "ho",   gloss: "the (subj.)" },
+  { form: "τοῦ",  gender: "Masculine", number: "Singular", case: "Genitive",   translit: "tou",  gloss: "of the" },
+  { form: "τῷ",   gender: "Masculine", number: "Singular", case: "Dative",     translit: "tōi",  gloss: "to/for the" },
+  { form: "τόν",  gender: "Masculine", number: "Singular", case: "Accusative", translit: "ton",  gloss: "the (obj.)" },
+  { form: "—",    gender: "Masculine", number: "Singular", case: "Vocative",   translit: "—",    gloss: "(no article)" },
+
+  // Singular — Feminine
+  { form: "ἡ",    gender: "Feminine",  number: "Singular", case: "Nominative", translit: "hē",   gloss: "the (subj.)" },
+  { form: "τῆς",  gender: "Feminine",  number: "Singular", case: "Genitive",   translit: "tēs",  gloss: "of the" },
+  { form: "τῇ",   gender: "Feminine",  number: "Singular", case: "Dative",     translit: "tēi",  gloss: "to/for the" },
+  { form: "τήν",  gender: "Feminine",  number: "Singular", case: "Accusative", translit: "tēn",  gloss: "the (obj.)" },
+  { form: "—",    gender: "Feminine",  number: "Singular", case: "Vocative",   translit: "—",    gloss: "(no article)" },
+
+  // Singular — Neuter
+  { form: "τό",   gender: "Neuter",    number: "Singular", case: "Nominative", translit: "to",   gloss: "the (subj.)" },
+  { form: "τοῦ",  gender: "Neuter",    number: "Singular", case: "Genitive",   translit: "tou",  gloss: "of the" },
+  { form: "τῷ",   gender: "Neuter",    number: "Singular", case: "Dative",     translit: "tōi",  gloss: "to/for the" },
+  { form: "τό",   gender: "Neuter",    number: "Singular", case: "Accusative", translit: "to",   gloss: "the (obj.)" },
+  { form: "—",    gender: "Neuter",    number: "Singular", case: "Vocative",   translit: "—",    gloss: "(no article)" },
+
+  // Plural — Masculine
+  { form: "οἱ",   gender: "Masculine", number: "Plural",   case: "Nominative", translit: "hoi",  gloss: "the (subj.)" },
+  { form: "τῶν",  gender: "Masculine", number: "Plural",   case: "Genitive",   translit: "tōn",  gloss: "of the" },
+  { form: "τοῖς", gender: "Masculine", number: "Plural",   case: "Dative",     translit: "tois", gloss: "to/for the" },
+  { form: "τούς", gender: "Masculine", number: "Plural",   case: "Accusative", translit: "tous", gloss: "the (obj.)" },
+  { form: "—",    gender: "Masculine", number: "Plural",   case: "Vocative",   translit: "—",    gloss: "(no article)" },
+
+  // Plural — Feminine
+  { form: "αἱ",   gender: "Feminine",  number: "Plural",   case: "Nominative", translit: "hai",  gloss: "the (subj.)" },
+  { form: "τῶν",  gender: "Feminine",  number: "Plural",   case: "Genitive",   translit: "tōn",  gloss: "of the" },
+  { form: "ταῖς", gender: "Feminine",  number: "Plural",   case: "Dative",     translit: "tais", gloss: "to/for the" },
+  { form: "τάς",  gender: "Feminine",  number: "Plural",   case: "Accusative", translit: "tas",  gloss: "the (obj.)" },
+  { form: "—",    gender: "Feminine",  number: "Plural",   case: "Vocative",   translit: "—",    gloss: "(no article)" },
+
+  // Plural — Neuter
+  { form: "τά",   gender: "Neuter",    number: "Plural",   case: "Nominative", translit: "ta",   gloss: "the (subj.)" },
+  { form: "τῶν",  gender: "Neuter",    number: "Plural",   case: "Genitive",   translit: "tōn",  gloss: "of the" },
+  { form: "τοῖς", gender: "Neuter",    number: "Plural",   case: "Dative",     translit: "tois", gloss: "to/for the" },
+  { form: "τά",   gender: "Neuter",    number: "Plural",   case: "Accusative", translit: "ta",   gloss: "the (obj.)" },
+  { form: "—",    gender: "Neuter",    number: "Plural",   case: "Vocative",   translit: "—",    gloss: "(no article)" },
+];
+
+const STUDY_SET = ARTICLES.filter((a) => a.form !== "—");
+const CASES = ["Nominative", "Genitive", "Dative", "Accusative", "Vocative"];
+const GENDERS = ["Masculine", "Feminine", "Neuter"];
+const NUMBERS = ["Singular", "Plural"];
+
+// ─── UTILITIES ────────────────────────────────────────────────────────────────
+const shuffle = (arr) => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
+const equivalentParse = (a, b) =>
+  a.form === b.form && a.case === b.case && a.number === b.number;
+
+const allParsingsOf = (article) =>
+  STUDY_SET.filter((a) => a.form === article.form);
+
+const uniqueForms = (articles) => {
+  const seen = new Set();
+  const out = [];
+  for (const a of articles) {
+    if (!seen.has(a.form)) {
+      seen.add(a.form);
+      out.push(a);
+    }
+  }
+  return out;
+};
 
 // ─── HEADER & TABS ────────────────────────────────────────────────────────────
 function Masthead() {
   return (
     <header className="masthead">
       <div className="eyebrow">Codex · Lingua Graeca Attica</div>
-      <h1 className="title">
-        The Definite <em>Article</em>
-      </h1>
+      <h1 className="title">The Definite <em>Article</em></h1>
       <p className="subtitle">A study apparatus for ὁ, ἡ, τό in all cases and numbers</p>
     </header>
   );
@@ -683,7 +611,7 @@ function FlashcardMode() {
   const [deck, setDeck] = useState(() => shuffle(STUDY_SET));
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
-  const [direction, setDirection] = useState("greek-first"); // or "label-first"
+  const [direction, setDirection] = useState("greek-first");
 
   const card = deck[index];
 
@@ -718,8 +646,7 @@ function FlashcardMode() {
                 <span className="flashcard-greek">{card.form}</span>
               ) : (
                 <span className="flashcard-prompt">
-                  <em>{card.case}</em>
-                  <br />
+                  <em>{card.case}</em><br />
                   {card.gender} · {card.number}
                 </span>
               )}
@@ -727,20 +654,19 @@ function FlashcardMode() {
             </div>
             <div className="flashcard-face back">
               {direction === "greek-first" ? (
-                <>
+                <React.Fragment>
                   <span className="flashcard-prompt">
-                    <em>{card.case}</em>
-                    <br />
+                    <em>{card.case}</em><br />
                     {card.gender} · {card.number}
                   </span>
                   <span className="flashcard-translit">{card.translit}</span>
                   <span className="flashcard-gloss">{card.gloss}</span>
-                </>
+                </React.Fragment>
               ) : (
-                <>
+                <React.Fragment>
                   <span className="flashcard-greek">{card.form}</span>
                   <span className="flashcard-translit">{card.translit}</span>
-                </>
+                </React.Fragment>
               )}
             </div>
           </div>
@@ -766,26 +692,20 @@ function FlashcardMode() {
 
 // ─── QUIZ MODE ────────────────────────────────────────────────────────────────
 function QuizMode() {
-  const [direction, setDirection] = useState("form-to-label"); // or "label-to-form"
+  const [direction, setDirection] = useState("form-to-label");
   const [question, setQuestion] = useState(null);
   const [choices, setChoices] = useState([]);
   const [selected, setSelected] = useState(null);
   const [score, setScore] = useState({ correct: 0, total: 0 });
 
-  const generateQuestion = (dir = direction) => {
+  const generateQuestion = (dir) => {
     const answer = STUDY_SET[Math.floor(Math.random() * STUDY_SET.length)];
-
     let options;
+
     if (dir === "form-to-label") {
-      // Showing a Greek form; user picks a parsing.
-      // Distractors must be parsings that do NOT match the shown form
-      // (so they're actually wrong) and each option should be a distinct
-      // (case, gender, number) slot.
       const wrongPool = STUDY_SET.filter((a) => a.form !== answer.form);
       const distractors = [];
-      const seenSlots = new Set([
-        `${answer.case}-${answer.gender}-${answer.number}`,
-      ]);
+      const seenSlots = new Set([`${answer.case}-${answer.gender}-${answer.number}`]);
       for (const a of shuffle(wrongPool)) {
         if (distractors.length >= 3) break;
         const key = `${a.case}-${a.gender}-${a.number}`;
@@ -796,10 +716,6 @@ function QuizMode() {
       }
       options = shuffle([answer, ...distractors]);
     } else {
-      // Showing a parsing; user picks a Greek form.
-      // Distractors must be forms different from the answer's form
-      // (otherwise they'd also be "correct" visually), and we
-      // deduplicate so no two options show the same Greek string.
       const wrongPool = STUDY_SET.filter((a) => a.form !== answer.form);
       const distinctWrong = uniqueForms(shuffle(wrongPool));
       const distractors = distinctWrong.slice(0, 3);
@@ -813,25 +729,21 @@ function QuizMode() {
 
   useEffect(() => {
     generateQuestion(direction);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [direction]);
-
-  const choose = (c) => {
-    if (selected) return;
-    setSelected(c);
-    const correct =
-      direction === "form-to-label"
-        ? equivalentParse(c, question)   // any parsing yielding the same form/case/number is correct
-        : c.form === question.form;       // any option whose surface form matches the answer's form is correct
-    setScore((s) => ({ correct: s.correct + (correct ? 1 : 0), total: s.total + 1 }));
-  };
-
-  const next = () => generateQuestion(direction);
 
   const isCorrect = (c) =>
     direction === "form-to-label"
       ? equivalentParse(c, question)
       : c.form === question.form;
+
+  const choose = (c) => {
+    if (selected) return;
+    setSelected(c);
+    const correct = isCorrect(c);
+    setScore((s) => ({ correct: s.correct + (correct ? 1 : 0), total: s.total + 1 }));
+  };
+
+  const next = () => generateQuestion(direction);
 
   if (!question) return null;
 
@@ -859,17 +771,15 @@ function QuizMode() {
 
       <div className="quiz-prompt">
         {direction === "form-to-label" ? (
-          <>
+          <React.Fragment>
             Parse this article:
             <span className="big">{question.form}</span>
-          </>
+          </React.Fragment>
         ) : (
-          <>
+          <React.Fragment>
             Give the form for{" "}
-            <em>
-              {question.case} {question.gender} {question.number}
-            </em>
-          </>
+            <em>{question.case} {question.gender} {question.number}</em>
+          </React.Fragment>
         )}
       </div>
 
@@ -883,12 +793,7 @@ function QuizMode() {
             else if (picked) cls += " incorrect";
           }
           return (
-            <button
-              key={i}
-              className={cls}
-              onClick={() => choose(c)}
-              disabled={!!selected}
-            >
+            <button key={i} className={cls} onClick={() => choose(c)} disabled={!!selected}>
               {direction === "form-to-label"
                 ? `${c.case} · ${c.gender} ${c.number}`
                 : c.form}
@@ -898,7 +803,7 @@ function QuizMode() {
       </div>
 
       {selected && (
-        <>
+        <React.Fragment>
           <div className={`feedback ${isCorrect(selected) ? "correct" : "incorrect"}`}>
             {isCorrect(selected)
               ? (() => {
@@ -923,13 +828,13 @@ function QuizMode() {
           <div className="nav-row" style={{ marginTop: "1rem" }}>
             <button className="btn primary" onClick={next}>Next Question ›</button>
           </div>
-        </>
+        </React.Fragment>
       )}
     </PanelFrame>
   );
 }
 
-// ─── BROWSE MODE (Paradigm) ───────────────────────────────────────────────────
+// ─── BROWSE MODE ──────────────────────────────────────────────────────────────
 function BrowseMode() {
   const getCell = (num, gen, cs) =>
     ARTICLES.find((a) => a.number === num && a.gender === gen && a.case === cs);
@@ -941,9 +846,7 @@ function BrowseMode() {
         <thead>
           <tr>
             <th className="case-th">Case</th>
-            {GENDERS.map((g) => (
-              <th key={g}>{g}</th>
-            ))}
+            {GENDERS.map((g) => <th key={g}>{g}</th>)}
           </tr>
         </thead>
         <tbody>
@@ -987,7 +890,6 @@ function MatchMode() {
   const ROUND_SIZE = 6;
 
   const buildRound = () => {
-    // Draw distinct surface forms so no ambiguity within a round.
     const picks = uniqueForms(shuffle(STUDY_SET)).slice(0, ROUND_SIZE);
     return {
       pairs: picks.map((p, i) => ({ id: i, ...p })),
@@ -1112,25 +1014,30 @@ function MatchMode() {
 }
 
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
-export default function App() {
+function App() {
   const [mode, setMode] = useState("flashcard");
 
   return (
-    <>
-      <style>{styles}</style>
-      <div className="greek-app">
-        <div className="container">
-          <Masthead />
-          <Tabs mode={mode} setMode={setMode} />
-          {mode === "flashcard" && <FlashcardMode />}
-          {mode === "quiz" && <QuizMode />}
-          {mode === "browse" && <BrowseMode />}
-          {mode === "match" && <MatchMode />}
-          <footer className="colophon">
-            Ὁ Ἡ Τό · A study apparatus for the Attic definite article
-          </footer>
-        </div>
+    <div className="greek-app">
+      <div className="container">
+        <Masthead />
+        <Tabs mode={mode} setMode={setMode} />
+        {mode === "flashcard" && <FlashcardMode />}
+        {mode === "quiz" && <QuizMode />}
+        {mode === "browse" && <BrowseMode />}
+        {mode === "match" && <MatchMode />}
+        <footer className="colophon">
+          Ὁ Ἡ Τό · A study apparatus for the Attic definite article
+        </footer>
       </div>
-    </>
+    </div>
   );
 }
+
+// Mount and hide the loading screen
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+document.getElementById("loading").style.display = "none";
+</script>
+</body>
+</html>
