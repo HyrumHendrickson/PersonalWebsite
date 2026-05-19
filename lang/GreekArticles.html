@@ -1,0 +1,1136 @@
+import React, { useState, useEffect, useMemo } from "react";
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+// Attic Greek definite articles, all genders, cases, and numbers.
+const ARTICLES = [
+  // Singular — Masculine
+  { form: "ὁ",    gender: "Masculine", number: "Singular", case: "Nominative", translit: "ho",   gloss: "the (subj.)" },
+  { form: "τοῦ",  gender: "Masculine", number: "Singular", case: "Genitive",   translit: "tou",  gloss: "of the" },
+  { form: "τῷ",   gender: "Masculine", number: "Singular", case: "Dative",     translit: "tōi",  gloss: "to/for the" },
+  { form: "τόν",  gender: "Masculine", number: "Singular", case: "Accusative", translit: "ton",  gloss: "the (obj.)" },
+  { form: "—",    gender: "Masculine", number: "Singular", case: "Vocative",   translit: "—",    gloss: "(no article)" },
+
+  // Singular — Feminine
+  { form: "ἡ",    gender: "Feminine",  number: "Singular", case: "Nominative", translit: "hē",   gloss: "the (subj.)" },
+  { form: "τῆς",  gender: "Feminine",  number: "Singular", case: "Genitive",   translit: "tēs",  gloss: "of the" },
+  { form: "τῇ",   gender: "Feminine",  number: "Singular", case: "Dative",     translit: "tēi",  gloss: "to/for the" },
+  { form: "τήν",  gender: "Feminine",  number: "Singular", case: "Accusative", translit: "tēn",  gloss: "the (obj.)" },
+  { form: "—",    gender: "Feminine",  number: "Singular", case: "Vocative",   translit: "—",    gloss: "(no article)" },
+
+  // Singular — Neuter
+  { form: "τό",   gender: "Neuter",    number: "Singular", case: "Nominative", translit: "to",   gloss: "the (subj.)" },
+  { form: "τοῦ",  gender: "Neuter",    number: "Singular", case: "Genitive",   translit: "tou",  gloss: "of the" },
+  { form: "τῷ",   gender: "Neuter",    number: "Singular", case: "Dative",     translit: "tōi",  gloss: "to/for the" },
+  { form: "τό",   gender: "Neuter",    number: "Singular", case: "Accusative", translit: "to",   gloss: "the (obj.)" },
+  { form: "—",    gender: "Neuter",    number: "Singular", case: "Vocative",   translit: "—",    gloss: "(no article)" },
+
+  // Plural — Masculine
+  { form: "οἱ",   gender: "Masculine", number: "Plural",   case: "Nominative", translit: "hoi",  gloss: "the (subj.)" },
+  { form: "τῶν",  gender: "Masculine", number: "Plural",   case: "Genitive",   translit: "tōn",  gloss: "of the" },
+  { form: "τοῖς", gender: "Masculine", number: "Plural",   case: "Dative",     translit: "tois", gloss: "to/for the" },
+  { form: "τούς", gender: "Masculine", number: "Plural",   case: "Accusative", translit: "tous", gloss: "the (obj.)" },
+  { form: "—",    gender: "Masculine", number: "Plural",   case: "Vocative",   translit: "—",    gloss: "(no article)" },
+
+  // Plural — Feminine
+  { form: "αἱ",   gender: "Feminine",  number: "Plural",   case: "Nominative", translit: "hai",  gloss: "the (subj.)" },
+  { form: "τῶν",  gender: "Feminine",  number: "Plural",   case: "Genitive",   translit: "tōn",  gloss: "of the" },
+  { form: "ταῖς", gender: "Feminine",  number: "Plural",   case: "Dative",     translit: "tais", gloss: "to/for the" },
+  { form: "τάς",  gender: "Feminine",  number: "Plural",   case: "Accusative", translit: "tas",  gloss: "the (obj.)" },
+  { form: "—",    gender: "Feminine",  number: "Plural",   case: "Vocative",   translit: "—",    gloss: "(no article)" },
+
+  // Plural — Neuter
+  { form: "τά",   gender: "Neuter",    number: "Plural",   case: "Nominative", translit: "ta",   gloss: "the (subj.)" },
+  { form: "τῶν",  gender: "Neuter",    number: "Plural",   case: "Genitive",   translit: "tōn",  gloss: "of the" },
+  { form: "τοῖς", gender: "Neuter",    number: "Plural",   case: "Dative",     translit: "tois", gloss: "to/for the" },
+  { form: "τά",   gender: "Neuter",    number: "Plural",   case: "Accusative", translit: "ta",   gloss: "the (obj.)" },
+  { form: "—",    gender: "Neuter",    number: "Plural",   case: "Vocative",   translit: "—",    gloss: "(no article)" },
+];
+
+// Drop the vocative blanks from the studyable set
+const STUDY_SET = ARTICLES.filter((a) => a.form !== "—");
+
+const CASES = ["Nominative", "Genitive", "Dative", "Accusative", "Vocative"];
+const GENDERS = ["Masculine", "Feminine", "Neuter"];
+const NUMBERS = ["Singular", "Plural"];
+
+// ─── UTILITIES ────────────────────────────────────────────────────────────────
+const shuffle = (arr) => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
+// Strict identity (same slot in the paradigm)
+const sameArticle = (a, b) =>
+  a.case === b.case && a.gender === b.gender && a.number === b.number;
+
+// Two parsings are equivalent if they produce the same surface form,
+// the same case, and the same number. Gender is the only ambiguous axis
+// for the article (e.g. τοῦ is both M and N gen. sg.; τῶν is M/F/N gen. pl.).
+// This is the right check for "did the user identify a valid parsing?"
+const equivalentParse = (a, b) =>
+  a.form === b.form &&
+  a.case === b.case &&
+  a.number === b.number;
+
+// All paradigm slots that share a surface form with the given article.
+const allParsingsOf = (article) =>
+  STUDY_SET.filter((a) => a.form === article.form);
+
+// All distinct surface forms (used to avoid duplicate options in quizzes).
+const uniqueForms = (articles) => {
+  const seen = new Set();
+  const out = [];
+  for (const a of articles) {
+    if (!seen.has(a.form)) {
+      seen.add(a.form);
+      out.push(a);
+    }
+  }
+  return out;
+};
+
+// ─── STYLES ───────────────────────────────────────────────────────────────────
+const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=GFS+Didot&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --parchment: #f4ecd8;
+    --parchment-deep: #e8dcc0;
+    --ink: #1a1410;
+    --ink-soft: #3d2f24;
+    --gilt: #a47e2a;
+    --gilt-bright: #c89b3c;
+    --crimson: #7a1f1f;
+    --laurel: #4a5d3a;
+    --shadow: rgba(26, 20, 16, 0.15);
+  }
+
+  * { box-sizing: border-box; }
+
+  .greek-app {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at top, rgba(164, 126, 42, 0.08), transparent 60%),
+      radial-gradient(ellipse at bottom right, rgba(122, 31, 31, 0.05), transparent 50%),
+      var(--parchment);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', serif;
+    padding: 2.5rem 1.5rem 4rem;
+    position: relative;
+  }
+
+  .greek-app::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .greek-app > * { position: relative; z-index: 1; }
+
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* Header */
+  .masthead {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--gilt);
+    position: relative;
+  }
+  .masthead::after {
+    content: '❦';
+    position: absolute;
+    bottom: -0.85rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--parchment);
+    color: var(--gilt);
+    padding: 0 1rem;
+    font-size: 1.2rem;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gilt);
+    margin-bottom: 0.75rem;
+  }
+  .title {
+    font-family: 'GFS Didot', serif;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 400;
+    margin: 0;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .title em {
+    font-family: 'GFS Didot', serif;
+    font-style: italic;
+    color: var(--crimson);
+  }
+  .subtitle {
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    margin-top: 0.5rem;
+  }
+
+  /* Mode tabs */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(26, 20, 16, 0.15);
+  }
+  .tab {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.85rem 1.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.02em;
+    margin-bottom: -1px;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active {
+    color: var(--crimson);
+    border-bottom-color: var(--crimson);
+    font-weight: 600;
+  }
+  .tab-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gilt);
+    margin-right: 0.5rem;
+    vertical-align: 1px;
+  }
+
+  /* Panels */
+  .panel {
+    background: rgba(255, 252, 244, 0.5);
+    border: 1px solid rgba(164, 126, 42, 0.25);
+    padding: 2rem;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 8px 32px var(--shadow);
+    position: relative;
+  }
+  .panel-corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--gilt);
+  }
+  .panel-corner.tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+  .panel-corner.tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+  .panel-corner.bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+  .panel-corner.br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+
+  .panel-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .panel-title {
+    font-family: 'GFS Didot', serif;
+    font-size: 1.5rem;
+    margin: 0;
+  }
+  .panel-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 0.4rem;
+  }
+
+  /* Flashcard */
+  .flashcard-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .flashcard {
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 3 / 2;
+    perspective: 1500px;
+    cursor: pointer;
+  }
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+  .flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+  }
+  .flashcard-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    background: linear-gradient(135deg, #fdf6e3 0%, #f4ecd8 100%);
+    border: 1px solid var(--gilt);
+    box-shadow: 0 12px 40px rgba(26,20,16,0.25), inset 0 0 0 6px rgba(164,126,42,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+  }
+  .flashcard-face.back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, #f4ecd8 0%, #e8dcc0 100%);
+  }
+  .flashcard-greek {
+    font-family: 'GFS Didot', serif;
+    font-size: clamp(4rem, 12vw, 7rem);
+    line-height: 1;
+    color: var(--crimson);
+  }
+  .flashcard-prompt {
+    font-family: 'GFS Didot', serif;
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .flashcard-prompt em { color: var(--crimson); font-style: italic; }
+  .flashcard-hint {
+    position: absolute;
+    bottom: 0.85rem;
+    left: 0;
+    right: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gilt);
+  }
+  .flashcard-translit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    margin-top: 1rem;
+    letter-spacing: 0.05em;
+  }
+  .flashcard-gloss {
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-top: 0.5rem;
+    font-size: 1.05rem;
+  }
+
+  .nav-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    background: transparent;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    padding: 0.55rem 1.25rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.03em;
+  }
+  .btn:hover:not(:disabled) {
+    background: var(--ink);
+    color: var(--parchment);
+  }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn.primary {
+    background: var(--crimson);
+    color: var(--parchment);
+    border-color: var(--crimson);
+  }
+  .btn.primary:hover:not(:disabled) { background: #5a1515; border-color: #5a1515; }
+  .btn.gilt {
+    border-color: var(--gilt);
+    color: var(--gilt);
+  }
+  .btn.gilt:hover:not(:disabled) { background: var(--gilt); color: var(--parchment); }
+
+  .counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.1em;
+  }
+
+  /* Quiz */
+  .quiz-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    margin-bottom: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .quiz-stats span strong { color: var(--crimson); font-size: 1rem; }
+
+  .quiz-prompt {
+    text-align: center;
+    font-family: 'GFS Didot', serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    margin: 1.5rem 0 2rem;
+    line-height: 1.3;
+  }
+  .quiz-prompt em { color: var(--crimson); font-style: italic; }
+  .quiz-prompt .big {
+    display: block;
+    font-size: clamp(3.5rem, 9vw, 5rem);
+    color: var(--crimson);
+    line-height: 1;
+    margin: 0.5rem 0;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  @media (max-width: 480px) {
+    .options { grid-template-columns: 1fr; }
+  }
+  .option {
+    background: rgba(255, 252, 244, 0.7);
+    border: 1px solid rgba(26, 20, 16, 0.3);
+    padding: 1.1rem 1rem;
+    font-family: 'GFS Didot', serif;
+    font-size: 1.4rem;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    position: relative;
+  }
+  .option:hover:not(:disabled) {
+    border-color: var(--gilt);
+    background: rgba(255, 252, 244, 1);
+    transform: translateY(-1px);
+  }
+  .option.correct {
+    background: rgba(74, 93, 58, 0.15);
+    border-color: var(--laurel);
+    color: var(--laurel);
+  }
+  .option.incorrect {
+    background: rgba(122, 31, 31, 0.1);
+    border-color: var(--crimson);
+    color: var(--crimson);
+  }
+  .option:disabled { cursor: default; }
+
+  .feedback {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-style: italic;
+    font-size: 1.1rem;
+    min-height: 1.5rem;
+  }
+  .feedback.correct { color: var(--laurel); }
+  .feedback.incorrect { color: var(--crimson); }
+
+  /* Browse — paradigm table */
+  .paradigm-section {
+    margin-bottom: 2rem;
+  }
+  .paradigm-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gilt);
+    text-align: center;
+    margin-bottom: 0.75rem;
+  }
+  .paradigm-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 252, 244, 0.5);
+  }
+  .paradigm-table th,
+  .paradigm-table td {
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    border: 1px solid rgba(164, 126, 42, 0.3);
+  }
+  .paradigm-table th {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    background: rgba(164, 126, 42, 0.08);
+  }
+  .paradigm-table th.case-th {
+    text-align: left;
+    padding-left: 1rem;
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+  }
+  .paradigm-table td.case-td {
+    text-align: left;
+    padding-left: 1rem;
+    font-style: italic;
+    color: var(--ink-soft);
+    background: rgba(164, 126, 42, 0.04);
+  }
+  .paradigm-greek {
+    font-family: 'GFS Didot', serif;
+    font-size: 1.6rem;
+    color: var(--crimson);
+    display: block;
+    line-height: 1.1;
+  }
+  .paradigm-translit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    margin-top: 0.2rem;
+    letter-spacing: 0.04em;
+  }
+  .paradigm-table td.empty {
+    color: var(--ink-soft);
+    opacity: 0.4;
+    font-size: 1.2rem;
+  }
+
+  /* Match */
+  .match-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    max-width: 700px;
+    margin: 1rem auto 0;
+  }
+  .match-column-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gilt);
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  .match-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .match-tile {
+    background: rgba(255, 252, 244, 0.7);
+    border: 1px solid rgba(26, 20, 16, 0.25);
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    font-family: 'GFS Didot', serif;
+    color: var(--ink);
+    min-height: 3.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .match-tile.greek { font-size: 1.6rem; color: var(--crimson); }
+  .match-tile.label { font-size: 1.05rem; font-style: italic; }
+  .match-tile:hover:not(:disabled):not(.matched) {
+    border-color: var(--gilt);
+    background: rgba(255, 252, 244, 1);
+  }
+  .match-tile.selected {
+    border-color: var(--crimson);
+    border-width: 2px;
+    background: rgba(122, 31, 31, 0.08);
+  }
+  .match-tile.matched {
+    opacity: 0.25;
+    cursor: default;
+    border-style: dashed;
+  }
+  .match-tile.flash-correct {
+    background: rgba(74, 93, 58, 0.2);
+    border-color: var(--laurel);
+  }
+  .match-tile.flash-wrong {
+    background: rgba(122, 31, 31, 0.15);
+    border-color: var(--crimson);
+    animation: shake 0.4s;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  .victory {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    margin-top: 1rem;
+  }
+  .victory-title {
+    font-family: 'GFS Didot', serif;
+    font-size: 2rem;
+    color: var(--crimson);
+    margin: 0 0 0.5rem;
+  }
+  .victory-text {
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-bottom: 1rem;
+  }
+
+  /* Footer */
+  .colophon {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(164, 126, 42, 0.3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+`;
+
+// ─── HEADER & TABS ────────────────────────────────────────────────────────────
+function Masthead() {
+  return (
+    <header className="masthead">
+      <div className="eyebrow">Codex · Lingua Graeca Attica</div>
+      <h1 className="title">
+        The Definite <em>Article</em>
+      </h1>
+      <p className="subtitle">A study apparatus for ὁ, ἡ, τό in all cases and numbers</p>
+    </header>
+  );
+}
+
+function Tabs({ mode, setMode }) {
+  const tabs = [
+    { id: "flashcard", label: "Flashcards", num: "I" },
+    { id: "quiz", label: "Quiz", num: "II" },
+    { id: "browse", label: "Paradigm", num: "III" },
+    { id: "match", label: "Match", num: "IV" },
+  ];
+  return (
+    <nav className="tabs">
+      {tabs.map((t) => (
+        <button
+          key={t.id}
+          className={`tab ${mode === t.id ? "active" : ""}`}
+          onClick={() => setMode(t.id)}
+        >
+          <span className="tab-num">{t.num}</span>
+          {t.label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+function PanelFrame({ title, meta, children }) {
+  return (
+    <section className="panel">
+      <span className="panel-corner tl" />
+      <span className="panel-corner tr" />
+      <span className="panel-corner bl" />
+      <span className="panel-corner br" />
+      <div className="panel-header">
+        <h2 className="panel-title">{title}</h2>
+        <div className="panel-meta">{meta}</div>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+// ─── FLASHCARD MODE ───────────────────────────────────────────────────────────
+function FlashcardMode() {
+  const [deck, setDeck] = useState(() => shuffle(STUDY_SET));
+  const [index, setIndex] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const [direction, setDirection] = useState("greek-first"); // or "label-first"
+
+  const card = deck[index];
+
+  const next = () => {
+    setFlipped(false);
+    setTimeout(() => setIndex((i) => (i + 1) % deck.length), 200);
+  };
+  const prev = () => {
+    setFlipped(false);
+    setTimeout(() => setIndex((i) => (i - 1 + deck.length) % deck.length), 200);
+  };
+  const reshuffle = () => {
+    setFlipped(false);
+    setDeck(shuffle(STUDY_SET));
+    setIndex(0);
+  };
+  const toggleDir = () => {
+    setFlipped(false);
+    setDirection((d) => (d === "greek-first" ? "label-first" : "greek-first"));
+  };
+
+  return (
+    <PanelFrame title="Flashcards" meta={`Card ${index + 1} of ${deck.length}`}>
+      <div className="flashcard-wrap">
+        <div
+          className={`flashcard ${flipped ? "flipped" : ""}`}
+          onClick={() => setFlipped((f) => !f)}
+        >
+          <div className="flashcard-inner">
+            <div className="flashcard-face">
+              {direction === "greek-first" ? (
+                <span className="flashcard-greek">{card.form}</span>
+              ) : (
+                <span className="flashcard-prompt">
+                  <em>{card.case}</em>
+                  <br />
+                  {card.gender} · {card.number}
+                </span>
+              )}
+              <span className="flashcard-hint">Tap to reveal</span>
+            </div>
+            <div className="flashcard-face back">
+              {direction === "greek-first" ? (
+                <>
+                  <span className="flashcard-prompt">
+                    <em>{card.case}</em>
+                    <br />
+                    {card.gender} · {card.number}
+                  </span>
+                  <span className="flashcard-translit">{card.translit}</span>
+                  <span className="flashcard-gloss">{card.gloss}</span>
+                </>
+              ) : (
+                <>
+                  <span className="flashcard-greek">{card.form}</span>
+                  <span className="flashcard-translit">{card.translit}</span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="nav-row">
+          <button className="btn" onClick={prev}>‹ Previous</button>
+          <button className="btn primary" onClick={() => setFlipped((f) => !f)}>
+            {flipped ? "Hide" : "Reveal"}
+          </button>
+          <button className="btn" onClick={next}>Next ›</button>
+        </div>
+        <div className="nav-row">
+          <button className="btn gilt" onClick={toggleDir}>
+            {direction === "greek-first" ? "Switch: Label → Greek" : "Switch: Greek → Label"}
+          </button>
+          <button className="btn gilt" onClick={reshuffle}>Reshuffle Deck</button>
+        </div>
+      </div>
+    </PanelFrame>
+  );
+}
+
+// ─── QUIZ MODE ────────────────────────────────────────────────────────────────
+function QuizMode() {
+  const [direction, setDirection] = useState("form-to-label"); // or "label-to-form"
+  const [question, setQuestion] = useState(null);
+  const [choices, setChoices] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [score, setScore] = useState({ correct: 0, total: 0 });
+
+  const generateQuestion = (dir = direction) => {
+    const answer = STUDY_SET[Math.floor(Math.random() * STUDY_SET.length)];
+
+    let options;
+    if (dir === "form-to-label") {
+      // Showing a Greek form; user picks a parsing.
+      // Distractors must be parsings that do NOT match the shown form
+      // (so they're actually wrong) and each option should be a distinct
+      // (case, gender, number) slot.
+      const wrongPool = STUDY_SET.filter((a) => a.form !== answer.form);
+      const distractors = [];
+      const seenSlots = new Set([
+        `${answer.case}-${answer.gender}-${answer.number}`,
+      ]);
+      for (const a of shuffle(wrongPool)) {
+        if (distractors.length >= 3) break;
+        const key = `${a.case}-${a.gender}-${a.number}`;
+        if (!seenSlots.has(key)) {
+          distractors.push(a);
+          seenSlots.add(key);
+        }
+      }
+      options = shuffle([answer, ...distractors]);
+    } else {
+      // Showing a parsing; user picks a Greek form.
+      // Distractors must be forms different from the answer's form
+      // (otherwise they'd also be "correct" visually), and we
+      // deduplicate so no two options show the same Greek string.
+      const wrongPool = STUDY_SET.filter((a) => a.form !== answer.form);
+      const distinctWrong = uniqueForms(shuffle(wrongPool));
+      const distractors = distinctWrong.slice(0, 3);
+      options = shuffle([answer, ...distractors]);
+    }
+
+    setQuestion({ ...answer, direction: dir });
+    setChoices(options);
+    setSelected(null);
+  };
+
+  useEffect(() => {
+    generateQuestion(direction);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [direction]);
+
+  const choose = (c) => {
+    if (selected) return;
+    setSelected(c);
+    const correct =
+      direction === "form-to-label"
+        ? equivalentParse(c, question)   // any parsing yielding the same form/case/number is correct
+        : c.form === question.form;       // any option whose surface form matches the answer's form is correct
+    setScore((s) => ({ correct: s.correct + (correct ? 1 : 0), total: s.total + 1 }));
+  };
+
+  const next = () => generateQuestion(direction);
+
+  const isCorrect = (c) =>
+    direction === "form-to-label"
+      ? equivalentParse(c, question)
+      : c.form === question.form;
+
+  if (!question) return null;
+
+  const pct = score.total ? Math.round((score.correct / score.total) * 100) : 0;
+
+  return (
+    <PanelFrame title="Quiz" meta="Multiple choice · auto-advance with Next">
+      <div className="quiz-stats">
+        <span>Correct: <strong>{score.correct}</strong></span>
+        <span>Asked: <strong>{score.total}</strong></span>
+        <span>Accuracy: <strong>{pct}%</strong></span>
+      </div>
+
+      <div className="nav-row" style={{ marginBottom: "1rem" }}>
+        <button className="btn gilt" onClick={() => setDirection("form-to-label")} disabled={direction === "form-to-label"}>
+          Form → Identify
+        </button>
+        <button className="btn gilt" onClick={() => setDirection("label-to-form")} disabled={direction === "label-to-form"}>
+          Identify → Form
+        </button>
+        <button className="btn gilt" onClick={() => setScore({ correct: 0, total: 0 })}>
+          Reset Score
+        </button>
+      </div>
+
+      <div className="quiz-prompt">
+        {direction === "form-to-label" ? (
+          <>
+            Parse this article:
+            <span className="big">{question.form}</span>
+          </>
+        ) : (
+          <>
+            Give the form for{" "}
+            <em>
+              {question.case} {question.gender} {question.number}
+            </em>
+          </>
+        )}
+      </div>
+
+      <div className="options">
+        {choices.map((c, i) => {
+          const correct = isCorrect(c);
+          const picked = selected === c;
+          let cls = "option";
+          if (selected) {
+            if (correct) cls += " correct";
+            else if (picked) cls += " incorrect";
+          }
+          return (
+            <button
+              key={i}
+              className={cls}
+              onClick={() => choose(c)}
+              disabled={!!selected}
+            >
+              {direction === "form-to-label"
+                ? `${c.case} · ${c.gender} ${c.number}`
+                : c.form}
+            </button>
+          );
+        })}
+      </div>
+
+      {selected && (
+        <>
+          <div className={`feedback ${isCorrect(selected) ? "correct" : "incorrect"}`}>
+            {isCorrect(selected)
+              ? (() => {
+                  const parsings = allParsingsOf(question);
+                  if (direction === "form-to-label" && parsings.length > 1) {
+                    const genders = parsings
+                      .filter((p) => p.case === question.case && p.number === question.number)
+                      .map((p) => p.gender);
+                    return `Recte! ${question.form} is ${question.case} ${question.number} — valid for ${genders.join(", ")}.`;
+                  }
+                  return `Recte! ${question.form} — ${question.case}, ${question.gender}, ${question.number} (${question.translit}).`;
+                })()
+              : direction === "form-to-label"
+                ? (() => {
+                    const valid = allParsingsOf(question).map(
+                      (p) => `${p.case} ${p.gender} ${p.number}`
+                    );
+                    return `Not quite. ${question.form} can be parsed as: ${valid.join("; ")}.`;
+                  })()
+                : `Not quite. The form for ${question.case} ${question.gender} ${question.number} is ${question.form}.`}
+          </div>
+          <div className="nav-row" style={{ marginTop: "1rem" }}>
+            <button className="btn primary" onClick={next}>Next Question ›</button>
+          </div>
+        </>
+      )}
+    </PanelFrame>
+  );
+}
+
+// ─── BROWSE MODE (Paradigm) ───────────────────────────────────────────────────
+function BrowseMode() {
+  const getCell = (num, gen, cs) =>
+    ARTICLES.find((a) => a.number === num && a.gender === gen && a.case === cs);
+
+  const renderTable = (num) => (
+    <div className="paradigm-section">
+      <div className="paradigm-label">{num}</div>
+      <table className="paradigm-table">
+        <thead>
+          <tr>
+            <th className="case-th">Case</th>
+            {GENDERS.map((g) => (
+              <th key={g}>{g}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {CASES.map((cs) => (
+            <tr key={cs}>
+              <td className="case-td">{cs}</td>
+              {GENDERS.map((g) => {
+                const cell = getCell(num, g, cs);
+                if (!cell || cell.form === "—") {
+                  return <td key={g} className="empty">—</td>;
+                }
+                return (
+                  <td key={g}>
+                    <span className="paradigm-greek">{cell.form}</span>
+                    <span className="paradigm-translit">{cell.translit}</span>
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
+  return (
+    <PanelFrame title="Paradigm" meta="The full declension at a glance">
+      {NUMBERS.map((n) => (
+        <React.Fragment key={n}>{renderTable(n)}</React.Fragment>
+      ))}
+      <p style={{ textAlign: "center", fontStyle: "italic", color: "var(--ink-soft)", marginTop: "1rem", fontSize: "0.95rem" }}>
+        Note: The definite article has no vocative case in Attic Greek; direct address uses the
+        bare noun, often preceded by the particle <em>ὦ</em>.
+      </p>
+    </PanelFrame>
+  );
+}
+
+// ─── MATCH MODE ───────────────────────────────────────────────────────────────
+function MatchMode() {
+  const ROUND_SIZE = 6;
+
+  const buildRound = () => {
+    // Draw distinct surface forms so no ambiguity within a round.
+    const picks = uniqueForms(shuffle(STUDY_SET)).slice(0, ROUND_SIZE);
+    return {
+      pairs: picks.map((p, i) => ({ id: i, ...p })),
+      greekTiles: shuffle(picks.map((p, i) => ({ id: i, ...p }))),
+      labelTiles: shuffle(picks.map((p, i) => ({ id: i, ...p }))),
+    };
+  };
+
+  const [round, setRound] = useState(buildRound);
+  const [matched, setMatched] = useState(new Set());
+  const [selGreek, setSelGreek] = useState(null);
+  const [selLabel, setSelLabel] = useState(null);
+  const [flash, setFlash] = useState({ ids: [], kind: null });
+  const [attempts, setAttempts] = useState(0);
+  const [wrong, setWrong] = useState(0);
+
+  useEffect(() => {
+    if (selGreek !== null && selLabel !== null) {
+      setAttempts((a) => a + 1);
+      if (selGreek === selLabel) {
+        setFlash({ ids: [selGreek], kind: "correct" });
+        setTimeout(() => {
+          setMatched((m) => new Set([...m, selGreek]));
+          setSelGreek(null);
+          setSelLabel(null);
+          setFlash({ ids: [], kind: null });
+        }, 400);
+      } else {
+        setWrong((w) => w + 1);
+        setFlash({ ids: [selGreek, selLabel], kind: "wrong" });
+        setTimeout(() => {
+          setSelGreek(null);
+          setSelLabel(null);
+          setFlash({ ids: [], kind: null });
+        }, 600);
+      }
+    }
+  }, [selGreek, selLabel]);
+
+  const newRound = () => {
+    setRound(buildRound());
+    setMatched(new Set());
+    setSelGreek(null);
+    setSelLabel(null);
+    setFlash({ ids: [], kind: null });
+    setAttempts(0);
+    setWrong(0);
+  };
+
+  const tileClass = (id, side) => {
+    let cls = `match-tile ${side}`;
+    if (matched.has(id)) cls += " matched";
+    else if (
+      (side === "greek" && selGreek === id) ||
+      (side === "label" && selLabel === id)
+    ) cls += " selected";
+    if (flash.ids.includes(id)) {
+      cls += flash.kind === "correct" ? " flash-correct" : " flash-wrong";
+    }
+    return cls;
+  };
+
+  const done = matched.size === ROUND_SIZE;
+
+  return (
+    <PanelFrame title="Match" meta={`Pair Greek forms with their grammatical labels · ${matched.size} / ${ROUND_SIZE}`}>
+      <div className="quiz-stats">
+        <span>Attempts: <strong>{attempts}</strong></span>
+        <span>Errors: <strong>{wrong}</strong></span>
+      </div>
+
+      <div className="match-board">
+        <div>
+          <div className="match-column-label">Greek</div>
+          <div className="match-list">
+            {round.greekTiles.map((t) => (
+              <button
+                key={`g-${t.id}`}
+                className={tileClass(t.id, "greek")}
+                disabled={matched.has(t.id) || flash.kind !== null}
+                onClick={() => setSelGreek(t.id)}
+              >
+                {t.form}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div className="match-column-label">Parsing</div>
+          <div className="match-list">
+            {round.labelTiles.map((t) => (
+              <button
+                key={`l-${t.id}`}
+                className={tileClass(t.id, "label")}
+                disabled={matched.has(t.id) || flash.kind !== null}
+                onClick={() => setSelLabel(t.id)}
+              >
+                {t.case} · {t.gender} {t.number === "Plural" ? "Pl." : "Sg."}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {done && (
+        <div className="victory">
+          <h3 className="victory-title">Εὖγε!</h3>
+          <p className="victory-text">
+            Round complete in {attempts} attempts ({wrong} {wrong === 1 ? "error" : "errors"}).
+          </p>
+          <button className="btn primary" onClick={newRound}>New Round ›</button>
+        </div>
+      )}
+
+      {!done && (
+        <div className="nav-row" style={{ marginTop: "1.5rem" }}>
+          <button className="btn gilt" onClick={newRound}>Restart Round</button>
+        </div>
+      )}
+    </PanelFrame>
+  );
+}
+
+// ─── ROOT ─────────────────────────────────────────────────────────────────────
+export default function App() {
+  const [mode, setMode] = useState("flashcard");
+
+  return (
+    <>
+      <style>{styles}</style>
+      <div className="greek-app">
+        <div className="container">
+          <Masthead />
+          <Tabs mode={mode} setMode={setMode} />
+          {mode === "flashcard" && <FlashcardMode />}
+          {mode === "quiz" && <QuizMode />}
+          {mode === "browse" && <BrowseMode />}
+          {mode === "match" && <MatchMode />}
+          <footer className="colophon">
+            Ὁ Ἡ Τό · A study apparatus for the Attic definite article
+          </footer>
+        </div>
+      </div>
+    </>
+  );
+}

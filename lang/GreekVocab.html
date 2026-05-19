@@ -1,0 +1,3040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Athenaze — Vocabulary Atelier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=GFS+Didot&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --ink-soft: #3d322a;
+    --parchment: #f3ead7;
+    --parchment-deep: #e8dcc0;
+    --parchment-shadow: #d9c9a3;
+    --accent: #8b2c1f;
+    --accent-deep: #661f15;
+    --gold: #a8832a;
+    --gold-soft: #c9a847;
+    --sage: #5b6b3c;
+    --rule: #8b7656;
+    --correct: #4a6b3c;
+    --incorrect: #8b2c1f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.5;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at top left, rgba(168, 131, 42, 0.08), transparent 60%),
+      radial-gradient(ellipse at bottom right, rgba(139, 44, 31, 0.06), transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139, 118, 86, 0.015) 2px, rgba(139, 118, 86, 0.015) 4px);
+  }
+
+  /* -------- Header -------- */
+  header.masthead {
+    border-bottom: 3px double var(--rule);
+    padding: 2.5rem 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    background: linear-gradient(180deg, rgba(232, 220, 192, 0.4), transparent);
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+
+  h1.title {
+    font-family: 'GFS Didot', 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  h1.title .greek {
+    font-family: 'GFS Didot', serif;
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .subtitle {
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    margin-top: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    color: var(--gold);
+    font-size: 1.2rem;
+  }
+
+  .ornament::before, .ornament::after {
+    content: '';
+    height: 1px;
+    width: 60px;
+    background: linear-gradient(90deg, transparent, var(--rule), transparent);
+  }
+
+  /* -------- Layout -------- */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .panel {
+    background: rgba(255, 251, 240, 0.55);
+    border: 1px solid var(--parchment-shadow);
+    border-radius: 2px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    box-shadow:
+      0 1px 0 rgba(0,0,0,0.02),
+      0 8px 24px -12px rgba(26, 20, 16, 0.15);
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute;
+    top: 6px; left: 6px; right: 6px; bottom: 6px;
+    border: 1px solid rgba(139, 118, 86, 0.25);
+    pointer-events: none;
+    border-radius: 1px;
+  }
+
+  .panel-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .panel-title::before {
+    content: '§';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    letter-spacing: 0;
+  }
+
+  /* -------- Chapter selection -------- */
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .chapter-chip {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .chapter-chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .chip-body {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--rule);
+    background: rgba(255, 251, 240, 0.4);
+    transition: all 0.2s ease;
+    border-radius: 1px;
+  }
+
+  .chip-body:hover {
+    background: rgba(168, 131, 42, 0.08);
+    border-color: var(--gold);
+  }
+
+  .chapter-chip input:checked + .chip-body {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--parchment);
+  }
+
+  .chapter-chip input:checked + .chip-body .chip-num {
+    color: var(--gold-soft);
+  }
+
+  .chapter-chip input:checked + .chip-body .chip-count {
+    color: rgba(243, 234, 215, 0.65);
+  }
+
+  .chip-check {
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--rule);
+    flex-shrink: 0;
+    position: relative;
+    background: var(--parchment);
+  }
+
+  .chapter-chip input:checked + .chip-body .chip-check {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .chapter-chip input:checked + .chip-body .chip-check::after {
+    content: '';
+    position: absolute;
+    left: 3px; top: 0px;
+    width: 4px; height: 8px;
+    border: solid var(--ink);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .chip-label {
+    flex: 1;
+    font-family: 'GFS Didot', serif;
+    font-size: 1rem;
+  }
+
+  .chip-num {
+    font-weight: 600;
+    color: var(--accent);
+    margin-right: 0.2rem;
+  }
+
+  .chip-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ink-soft);
+    opacity: 0.7;
+  }
+
+  .chapter-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .mini-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.85rem;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 1px;
+  }
+
+  .mini-btn:hover {
+    background: var(--ink);
+    color: var(--parchment);
+    border-color: var(--ink);
+  }
+
+  .selection-summary {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    align-self: center;
+    padding: 0.45rem 0;
+  }
+
+  .selection-summary strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* -------- Mode tabs -------- */
+  .mode-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .mode-tab {
+    font-family: 'GFS Didot', serif;
+    font-size: 1.15rem;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    position: relative;
+  }
+
+  .mode-tab:hover {
+    color: var(--ink);
+  }
+
+  .mode-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .mode-tab .tab-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--gold);
+    margin-right: 0.5rem;
+    letter-spacing: 0.2em;
+  }
+
+  /* -------- Settings bar -------- */
+  .settings-bar {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0.9rem 1.25rem;
+    background: rgba(232, 220, 192, 0.5);
+    border: 1px solid var(--parchment-shadow);
+    margin-bottom: 1.5rem;
+    border-radius: 1px;
+  }
+
+  .setting-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .setting-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .seg-control {
+    display: flex;
+    border: 1px solid var(--rule);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .seg-control button {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    padding: 0.35rem 0.9rem;
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-right: 1px solid var(--rule);
+  }
+
+  .seg-control button:last-child { border-right: none; }
+
+  .seg-control button:hover {
+    background: rgba(168, 131, 42, 0.08);
+  }
+
+  .seg-control button.active {
+    background: var(--ink);
+    color: var(--parchment);
+  }
+
+  .toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .toggle-wrap input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .toggle-track {
+    width: 34px;
+    height: 18px;
+    background: var(--parchment-shadow);
+    border-radius: 10px;
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 14px; height: 14px;
+    background: var(--parchment);
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .toggle-wrap input:checked + .toggle-track {
+    background: var(--accent);
+  }
+
+  .toggle-wrap input:checked + .toggle-track::after {
+    transform: translateX(16px);
+  }
+
+  .toggle-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+
+  /* -------- Flashcard -------- */
+  .flash-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0 2rem;
+  }
+
+  .flash-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 1.25rem;
+  }
+
+  .flash-meta .chap-tag {
+    color: var(--accent);
+    margin-right: 0.75rem;
+  }
+
+  .flashcard {
+    width: 100%;
+    max-width: 620px;
+    aspect-ratio: 3/2;
+    perspective: 1500px;
+    cursor: pointer;
+    margin-bottom: 1.75rem;
+  }
+
+  .flash-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .flashcard.flipped .flash-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flash-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    background: linear-gradient(180deg, #fbf6e6, #f0e5c8);
+    border: 1px solid var(--parchment-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.5) inset,
+      0 20px 50px -20px rgba(26, 20, 16, 0.25),
+      0 8px 16px -8px rgba(26, 20, 16, 0.15);
+    border-radius: 2px;
+  }
+
+  .flash-face::before {
+    content: '';
+    position: absolute;
+    top: 10px; left: 10px; right: 10px; bottom: 10px;
+    border: 1px solid rgba(139, 118, 86, 0.3);
+    pointer-events: none;
+    border-radius: 1px;
+  }
+
+  .flash-face::after {
+    content: '';
+    position: absolute;
+    top: 14px; left: 14px; right: 14px; bottom: 14px;
+    border: 1px solid rgba(139, 118, 86, 0.15);
+    pointer-events: none;
+  }
+
+  .flash-face.back {
+    transform: rotateY(180deg);
+    background: linear-gradient(180deg, #f5ead0, #e8dcbd);
+  }
+
+  .flash-corner {
+    position: absolute;
+    top: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .flash-corner.left { left: 24px; }
+  .flash-corner.right { right: 24px; }
+
+  .flash-content {
+    font-family: 'GFS Didot', 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+    line-height: 1.3;
+    color: var(--ink);
+    font-weight: 400;
+    max-width: 85%;
+  }
+
+  .flash-content.greek {
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    color: var(--accent-deep);
+  }
+
+  .flash-tap-hint {
+    position: absolute;
+    bottom: 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--ink-soft);
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+
+  /* -------- Controls -------- */
+  .flash-controls {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .ctrl-btn {
+    font-family: 'GFS Didot', serif;
+    font-size: 1.05rem;
+    padding: 0.7rem 1.5rem;
+    background: var(--parchment);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    border-radius: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .ctrl-btn:hover:not(:disabled) {
+    background: var(--ink);
+    color: var(--parchment);
+    border-color: var(--ink);
+  }
+
+  .ctrl-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .ctrl-btn.primary {
+    background: var(--accent);
+    color: var(--parchment);
+    border-color: var(--accent);
+  }
+
+  .ctrl-btn.primary:hover:not(:disabled) {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+  }
+
+  .ctrl-btn.ghost {
+    background: transparent;
+    border-color: transparent;
+    padding: 0.7rem 0.9rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .ctrl-btn.ghost:hover {
+    background: rgba(26, 20, 16, 0.06);
+    color: var(--ink);
+    border-color: transparent;
+  }
+
+  .known-btn {
+    background: transparent;
+    border-color: var(--sage);
+    color: var(--sage);
+  }
+  .known-btn:hover:not(:disabled) {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: var(--parchment);
+  }
+
+  .unknown-btn {
+    background: transparent;
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .unknown-btn:hover:not(:disabled) {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--parchment);
+  }
+
+  /* -------- Progress -------- */
+  .progress-bar {
+    height: 2px;
+    background: var(--parchment-shadow);
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto 1rem;
+    position: relative;
+  }
+  .progress-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--accent);
+    transition: width 0.3s;
+  }
+
+  /* -------- Quiz -------- */
+  .quiz-card {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .quiz-prompt {
+    text-align: center;
+    padding: 2rem 1rem 1.5rem;
+  }
+
+  .quiz-prompt-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+
+  .quiz-prompt-text {
+    font-family: 'GFS Didot', serif;
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    line-height: 1.3;
+    color: var(--ink);
+    font-weight: 400;
+  }
+
+  .quiz-prompt-text.greek {
+    color: var(--accent-deep);
+  }
+
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  @media (max-width: 640px) {
+    .quiz-options { grid-template-columns: 1fr; }
+  }
+
+  .quiz-option {
+    text-align: left;
+    padding: 1rem 1.25rem;
+    background: var(--parchment);
+    border: 1px solid var(--rule);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    border-radius: 1px;
+    position: relative;
+  }
+
+  .quiz-option:hover:not(:disabled) {
+    background: rgba(168, 131, 42, 0.08);
+    border-color: var(--gold);
+  }
+
+  .quiz-option:disabled {
+    cursor: default;
+  }
+
+  .quiz-option .letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gold);
+    width: 20px;
+    text-align: center;
+    letter-spacing: 0.1em;
+  }
+
+  .quiz-option.greek .opt-text {
+    font-family: 'GFS Didot', serif;
+    font-size: 1.2rem;
+  }
+
+  .quiz-option.correct {
+    background: rgba(74, 107, 60, 0.12);
+    border-color: var(--correct);
+    color: var(--correct);
+  }
+  .quiz-option.correct .letter { color: var(--correct); }
+
+  .quiz-option.incorrect {
+    background: rgba(139, 44, 31, 0.1);
+    border-color: var(--incorrect);
+    color: var(--incorrect);
+  }
+  .quiz-option.incorrect .letter { color: var(--incorrect); }
+
+  .quiz-option.reveal {
+    opacity: 0.5;
+  }
+
+  .quiz-feedback {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    font-style: italic;
+    font-size: 1.1rem;
+    min-height: 2.5rem;
+  }
+  .quiz-feedback.correct { color: var(--correct); }
+  .quiz-feedback.incorrect { color: var(--incorrect); }
+
+  .quiz-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--parchment-shadow);
+    margin-top: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .quiz-stats .stat strong {
+    font-family: 'GFS Didot', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .stat.correct strong { color: var(--correct); }
+  .stat.incorrect strong { color: var(--incorrect); }
+  .stat.streak strong { color: var(--gold); }
+
+  /* -------- Match game -------- */
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .match-tile {
+    padding: 1rem 1.25rem;
+    background: var(--parchment);
+    border: 1px solid var(--rule);
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 1px;
+    font-size: 1.1rem;
+  }
+
+  .match-tile.greek {
+    font-family: 'GFS Didot', serif;
+    font-size: 1.25rem;
+    color: var(--accent-deep);
+  }
+
+  .match-tile:hover:not(.matched):not(.selected) {
+    background: rgba(168, 131, 42, 0.08);
+    border-color: var(--gold);
+  }
+
+  .match-tile.selected {
+    background: var(--ink);
+    color: var(--parchment);
+    border-color: var(--ink);
+  }
+  .match-tile.selected.greek { color: var(--gold-soft); }
+
+  .match-tile.matched {
+    opacity: 0.25;
+    cursor: default;
+    background: transparent;
+    border-style: dashed;
+  }
+
+  .match-tile.wrong {
+    animation: shake 0.4s;
+    background: rgba(139, 44, 31, 0.15);
+    border-color: var(--incorrect);
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* -------- Browse -------- */
+  .browse-filter {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .browse-search {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.6rem 0.9rem;
+    background: var(--parchment);
+    border: 1px solid var(--rule);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--ink);
+    border-radius: 1px;
+  }
+
+  .browse-search:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .browse-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+  }
+
+  .browse-table th {
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border-bottom: 2px solid var(--rule);
+    font-weight: 500;
+  }
+
+  .browse-table td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid rgba(139, 118, 86, 0.2);
+    vertical-align: top;
+  }
+
+  .browse-table td.greek {
+    font-family: 'GFS Didot', serif;
+    font-size: 1.15rem;
+    color: var(--accent-deep);
+    width: 35%;
+  }
+
+  .browse-table td.chap {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    width: 80px;
+  }
+
+  .browse-table tbody tr:hover {
+    background: rgba(168, 131, 42, 0.05);
+  }
+
+  .browse-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+  }
+
+  .browse-table th.sortable:hover {
+    color: var(--accent);
+  }
+
+  .browse-table th .sort-arrow {
+    font-size: 0.55rem;
+    margin-left: 0.3rem;
+    opacity: 0.4;
+  }
+
+  .browse-table th.sort-active .sort-arrow {
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
+
+  .status-dot.known { background: var(--sage); }
+  .status-dot.review { background: var(--accent); }
+  .status-dot.unmarked { background: var(--parchment-shadow); }
+
+  td.status-cell {
+    text-align: center;
+    width: 60px;
+  }
+
+  /* -------- Empty state -------- */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    font-size: 1.15rem;
+  }
+
+  .empty-state::before {
+    content: '❦';
+    display: block;
+    font-size: 2.5rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    font-style: normal;
+  }
+
+  /* -------- Results modal -------- */
+  .results-banner {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    background: linear-gradient(180deg, rgba(168, 131, 42, 0.08), transparent);
+    border: 1px solid var(--gold);
+    border-radius: 1px;
+    margin: 2rem 0;
+  }
+
+  .results-banner h2 {
+    font-family: 'GFS Didot', serif;
+    font-size: 2.5rem;
+    color: var(--accent);
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+
+  .results-banner .score {
+    font-family: 'GFS Didot', serif;
+    font-size: 4rem;
+    color: var(--ink);
+    line-height: 1;
+    margin: 1rem 0;
+  }
+
+  .results-banner .score small {
+    font-size: 1.5rem;
+    color: var(--ink-soft);
+  }
+
+  .results-banner .epithet {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* -------- Footer -------- */
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    border-top: 1px solid var(--rule);
+    margin-top: 3rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  footer .latin {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--ink-soft);
+    margin-top: 0.5rem;
+  }
+
+  /* -------- Flashcard filter checkboxes -------- */
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-check {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    user-select: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    transition: color 0.2s;
+    padding: 0.3rem 0.1rem;
+  }
+
+  .filter-check:hover {
+    color: var(--ink);
+  }
+
+  .filter-check input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .filter-box {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--rule);
+    background: var(--parchment);
+    flex-shrink: 0;
+    position: relative;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .filter-check input:checked + .filter-box {
+    border-color: var(--ink);
+    background: var(--ink);
+  }
+
+  .filter-check input:checked + .filter-box::after {
+    content: '';
+    width: 4px;
+    height: 8px;
+    border: solid var(--parchment);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    position: absolute;
+    top: 1px;
+  }
+
+  .filter-check.known-filter input:checked + .filter-box {
+    border-color: var(--sage);
+    background: var(--sage);
+  }
+
+  .filter-check.unknown-filter input:checked + .filter-box {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .filter-check .filter-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--ink-soft);
+    opacity: 0.7;
+    margin-left: 0.1rem;
+  }
+
+  .shuffle-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.85rem;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .shuffle-btn:hover {
+    background: var(--ink);
+    color: var(--parchment);
+    border-color: var(--ink);
+  }
+
+  .shuffle-btn .shuffle-icon {
+    font-size: 0.85rem;
+    line-height: 1;
+  }
+
+  .flash-filter-bar {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0.65rem 1.25rem;
+    background: rgba(232, 220, 192, 0.35);
+    border: 1px solid rgba(217, 201, 163, 0.6);
+    margin-bottom: 1rem;
+    border-radius: 1px;
+  }
+
+  .flash-filter-bar .setting-label {
+    margin-right: -0.25rem;
+  }
+
+  .flash-filter-sep {
+    width: 1px;
+    height: 24px;
+    background: var(--rule);
+    opacity: 0.4;
+  }
+
+  .flash-active-filter-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 0.2rem 0.5rem;
+    background: rgba(168, 131, 42, 0.08);
+    border: 1px solid rgba(168, 131, 42, 0.2);
+    border-radius: 1px;
+  }
+
+  /* Utility */
+  .hidden { display: none !important; }
+  .fade-in { animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--parchment); }
+  ::-webkit-scrollbar-thumb { background: var(--rule); border: 2px solid var(--parchment); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="eyebrow">Ἀθήναζε · Vocabulary Atelier</div>
+  <h1 class="title">Athenaze <span class="greek">Λεξικόν</span></h1>
+  <div class="subtitle">An instrument for the study of Attic Greek — Chapters I through X</div>
+  <div class="ornament">❦</div>
+</header>
+
+<main>
+  <!-- Chapter selection -->
+  <section class="panel">
+    <div class="panel-title">Select Chapters <span style="margin-left:auto" class="selection-summary" id="selectionSummary"></span></div>
+    <div class="chapter-grid" id="chapterGrid"></div>
+    <div class="chapter-actions">
+      <button class="mini-btn" onclick="selectAllChapters()">Select All</button>
+      <button class="mini-btn" onclick="deselectAllChapters()">Clear All</button>
+      <button class="mini-btn" onclick="selectRangeChapters(1,5)">Ch. 1–5</button>
+      <button class="mini-btn" onclick="selectRangeChapters(6,10)">Ch. 6–10</button>
+    </div>
+  </section>
+
+  <!-- Mode tabs -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="flash"><span class="tab-num">I.</span>Flashcards</button>
+    <button class="mode-tab" data-mode="quiz"><span class="tab-num">II.</span>Multiple Choice</button>
+    <button class="mode-tab" data-mode="match"><span class="tab-num">III.</span>Matching</button>
+    <button class="mode-tab" data-mode="type"><span class="tab-num">IV.</span>Type Answer</button>
+    <button class="mode-tab" data-mode="browse"><span class="tab-num">V.</span>Browse</button>
+  </div>
+
+  <!-- ============ FLASHCARDS MODE ============ -->
+  <section id="mode-flash" class="mode-panel">
+    <div class="settings-bar">
+      <div class="setting-group">
+        <span class="setting-label">Default Side</span>
+        <div class="seg-control" id="flashSideControl">
+          <button data-side="greek" class="active">Greek</button>
+          <button data-side="english">English</button>
+          <button data-side="random">Random</button>
+        </div>
+      </div>
+
+      <label class="toggle-wrap">
+        <input type="checkbox" id="autoFlipToggle" />
+        <span class="toggle-track"></span>
+        <span class="toggle-text">Auto-flip</span>
+      </label>
+    </div>
+
+    <div class="flash-filter-bar" id="flashFilterBar">
+      <span class="setting-label">Show</span>
+      <div class="filter-group">
+        <label class="filter-check" title="Show cards not yet marked">
+          <input type="checkbox" checked onchange="onFlashFilterChange()" id="filterUnmarked" />
+          <span class="filter-box"></span>
+          Unmarked <span class="filter-count" id="filterUnmarkedCount"></span>
+        </label>
+        <label class="filter-check known-filter" title="Show cards marked as Known">
+          <input type="checkbox" checked onchange="onFlashFilterChange()" id="filterKnown" />
+          <span class="filter-box"></span>
+          Known <span class="filter-count" id="filterKnownCount"></span>
+        </label>
+        <label class="filter-check unknown-filter" title="Show cards marked for Review">
+          <input type="checkbox" checked onchange="onFlashFilterChange()" id="filterReview" />
+          <span class="filter-box"></span>
+          Review <span class="filter-count" id="filterReviewCount"></span>
+        </label>
+      </div>
+      <div class="flash-filter-sep"></div>
+      <button class="shuffle-btn" onclick="shuffleDeck()" title="Shuffle without resetting markings"><span class="shuffle-icon">&#8645;</span> Shuffle</button>
+      <span class="flash-active-filter-note hidden" id="flashFilterNote">Filtered</span>
+    </div>
+
+    <div class="flash-stage" id="flashStage">
+      <div class="progress-bar"><div class="progress-fill" id="flashProgress"></div></div>
+      <div class="flash-meta" id="flashMeta"></div>
+      <div class="flashcard" id="flashcard" onclick="flipFlashcard()">
+        <div class="flash-inner">
+          <div class="flash-face front">
+            <span class="flash-corner left">Recto</span>
+            <span class="flash-corner right" id="flashFrontCorner">I.</span>
+            <div class="flash-content" id="flashFront"></div>
+            <span class="flash-tap-hint">Tap or press Space to flip</span>
+          </div>
+          <div class="flash-face back">
+            <span class="flash-corner left">Verso</span>
+            <span class="flash-corner right" id="flashBackCorner">I.</span>
+            <div class="flash-content" id="flashBack"></div>
+            <span class="flash-tap-hint">Tap to return</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flash-controls">
+        <button class="ctrl-btn ghost" onclick="prevFlashcard()">← Prev</button>
+        <button class="ctrl-btn known-btn" onclick="markFlashcard(true)">✓ Known</button>
+        <button class="ctrl-btn unknown-btn" onclick="markFlashcard(false)">↻ Review</button>
+        <button class="ctrl-btn ghost" onclick="nextFlashcard()">Next →</button>
+      </div>
+
+      <div style="margin-top:1rem; display:flex; gap:1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.15em; color:var(--ink-soft); text-transform:uppercase;">
+        <span>Known: <strong id="flashKnown" style="color:var(--sage)">0</strong></span>
+        <span>Review: <strong id="flashReview" style="color:var(--accent)">0</strong></span>
+        <button class="mini-btn" onclick="resetFlashcards()">Reset Deck</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ MODE ============ -->
+  <section id="mode-quiz" class="mode-panel hidden">
+    <div class="settings-bar">
+      <div class="setting-group">
+        <span class="setting-label">Prompt Language</span>
+        <div class="seg-control" id="quizPromptControl">
+          <button data-prompt="greek" class="active">Greek → English</button>
+          <button data-prompt="english">English → Greek</button>
+          <button data-prompt="mixed">Mixed</button>
+        </div>
+      </div>
+      <div class="setting-group">
+        <span class="setting-label">Length</span>
+        <div class="seg-control" id="quizLengthControl">
+          <button data-length="10" class="active">10</button>
+          <button data-length="20">20</button>
+          <button data-length="50">50</button>
+          <button data-length="0">All</button>
+        </div>
+      </div>
+      <button class="ctrl-btn primary" style="margin-left:auto" onclick="startQuiz()">Begin Quiz</button>
+    </div>
+
+    <div id="quizStage" class="quiz-card"></div>
+  </section>
+
+  <!-- ============ MATCH MODE ============ -->
+  <section id="mode-match" class="mode-panel hidden">
+    <div class="settings-bar">
+      <div class="setting-group">
+        <span class="setting-label">Pairs</span>
+        <div class="seg-control" id="matchSizeControl">
+          <button data-size="6" class="active">6</button>
+          <button data-size="8">8</button>
+          <button data-size="10">10</button>
+        </div>
+      </div>
+      <div class="setting-group" id="matchTimerDisplay" style="display:none;">
+        <span class="setting-label">Time</span>
+        <span style="font-family:'GFS Didot',serif; font-size:1.5rem; color:var(--accent);" id="matchTimer">00:00</span>
+      </div>
+      <div class="setting-group" id="matchMistakesDisplay" style="display:none;">
+        <span class="setting-label">Mistakes</span>
+        <span style="font-family:'GFS Didot',serif; font-size:1.5rem; color:var(--ink-soft);" id="matchMistakes">0</span>
+      </div>
+      <div class="setting-group" id="matchBestDisplay" style="display:none;">
+        <span class="setting-label">Best</span>
+        <span style="font-family:'GFS Didot',serif; font-size:1rem; color:var(--sage);" id="matchBest">--</span>
+      </div>
+      <button class="ctrl-btn primary" style="margin-left:auto" onclick="startMatch()">New Round</button>
+    </div>
+
+    <div id="matchStage"></div>
+  </section>
+
+  <!-- ============ TYPE MODE ============ -->
+  <section id="mode-type" class="mode-panel hidden">
+    <div class="settings-bar">
+      <div class="setting-group">
+        <span class="setting-label">Prompt</span>
+        <div class="seg-control" id="typePromptControl">
+          <button data-prompt="english" class="active">English → Greek</button>
+          <button data-prompt="greek">Greek → English</button>
+          <button data-prompt="mixed">Mixed</button>
+        </div>
+      </div>
+      <div class="setting-group">
+        <span class="setting-label">Accents</span>
+        <div class="seg-control" id="typeAccentControl">
+          <button data-accent="lenient" class="active">Lenient</button>
+          <button data-accent="strict">Strict</button>
+        </div>
+      </div>
+      <button class="ctrl-btn primary" style="margin-left:auto" onclick="startType()">Begin</button>
+    </div>
+
+    <div id="typeStage" class="quiz-card"></div>
+  </section>
+
+  <!-- ============ BROWSE MODE ============ -->
+  <section id="mode-browse" class="mode-panel hidden">
+    <div class="browse-filter">
+      <input type="text" class="browse-search" id="browseSearch" placeholder="Search Greek or English..." oninput="renderBrowse()" />
+      <span style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--ink-soft); letter-spacing:0.15em;" id="browseCount"></span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="browse-table" id="browseTable"></table>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div>Athenaze Vocabulary · Chapters I–X</div>
+  <div class="latin">Repetitio mater studiorum est</div>
+  <div style="margin-top:1rem;">
+    <button class="mini-btn" id="clearDataBtn" onclick="confirmClearAllData()" style="font-size:0.6rem; color:var(--accent); border-color:var(--accent); opacity:0.7;">Clear All Saved Data</button>
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// VOCABULARY DATA
+// ============================================================
+const VOCAB = [
+  // Chapter 1
+  { ch: 1, gr: "ἐστί(ν)", en: "he/she/it is" },
+  { ch: 1, gr: "λέγει", en: "he/she says; he/she tells; he/she speaks" },
+  { ch: 1, gr: "οἰκεῖ", en: "he/she lives; he/she dwells" },
+  { ch: 1, gr: "πονεῖ", en: "he/she works" },
+  { ch: 1, gr: "φιλεῖ", en: "he/she loves" },
+  { ch: 1, gr: "χαίρει", en: "he/she rejoices" },
+  { ch: 1, gr: "ὁ ἀγρός", en: "field" },
+  { ch: 1, gr: "ὁ ἄνθρωπος", en: "man; human being; person" },
+  { ch: 1, gr: "ὁ αὐτουργός", en: "farmer" },
+  { ch: 1, gr: "ὁ οἶκος", en: "house; home; dwelling" },
+  { ch: 1, gr: "ὁ πόνος", en: "toil; work" },
+  { ch: 1, gr: "ὁ σῖτος", en: "grain; food" },
+  { ch: 1, gr: "καλός", en: "beautiful" },
+  { ch: 1, gr: "μακρός", en: "long; large" },
+  { ch: 1, gr: "μικρός", en: "small" },
+  { ch: 1, gr: "πολύς", en: "much; pl., many" },
+  { ch: 1, gr: "ἐν ταῖς Ἀθήναις", en: "in Athens" },
+  { ch: 1, gr: "οὐ, οὐκ, οὐχ", en: "not" },
+  { ch: 1, gr: "οὖν", en: "so; then" },
+  { ch: 1, gr: "ἀλλά", en: "but" },
+  { ch: 1, gr: "γάρ", en: "for" },
+  { ch: 1, gr: "καί", en: "and" },
+  { ch: 1, gr: "δέ", en: "and, but" },
+  { ch: 1, gr: "Ἀθηναῖος", en: "Athenian" },
+  { ch: 1, gr: "ὁ Δικαιόπολις", en: "Dicaeopolis" },
+  { ch: 1, gr: "αἴρει", en: "he/she lifts" },
+  { ch: 1, gr: "βαδίζει", en: "he/she walks; he/she goes" },
+  { ch: 1, gr: "καθίζει", en: "he/she sits" },
+  { ch: 1, gr: "φέρει", en: "he/she carries" },
+  { ch: 1, gr: "ὁ ἥλιος", en: "sun" },
+  { ch: 1, gr: "ὁ χρόνος", en: "time" },
+  { ch: 1, gr: "αὐτόν", en: "him" },
+  { ch: 1, gr: "ἰσχυρός", en: "strong" },
+  { ch: 1, gr: "χαλεπός", en: "difficult" },
+  { ch: 1, gr: "πρός + acc.", en: "to, toward" },
+
+  // Chapter 2
+  { ch: 2, gr: "ἐκβαίνει", en: "he/she steps out, comes out" },
+  { ch: 2, gr: "ἐλαύνει", en: "he/she drives" },
+  { ch: 2, gr: "ἐλθέ", en: "come!" },
+  { ch: 2, gr: "καθεύδει", en: "he/she sleeps" },
+  { ch: 2, gr: "καλεῖ", en: "he/she calls" },
+  { ch: 2, gr: "πάρεστι(ν)", en: "he/she/it is present, is here, is there" },
+  { ch: 2, gr: "σπεύδει", en: "he/she hurries" },
+  { ch: 2, gr: "τὸ ἄροτρον", en: "plow" },
+  { ch: 2, gr: "ὁ δοῦλος", en: "slave" },
+  { ch: 2, gr: "ἐγώ", en: "I" },
+  { ch: 2, gr: "ἀργός", en: "lazy" },
+  { ch: 2, gr: "μή", en: "not; + imperative, don't" },
+  { ch: 2, gr: "οὕτως, οὕτω", en: "so, thus" },
+  { ch: 2, gr: "τί", en: "why?" },
+  { ch: 2, gr: "μέν...δέ...", en: "on the one hand...and/but on the other hand" },
+  { ch: 2, gr: "ὁ Ξανθίας", en: "Xanthias" },
+  { ch: 2, gr: "ἄγω", en: "I lead; I take" },
+  { ch: 2, gr: "εἰσάγω", en: "I lead in; I take in" },
+  { ch: 2, gr: "βαίνω", en: "I step, walk, go" },
+  { ch: 2, gr: "βλέπω", en: "I look; I see" },
+  { ch: 2, gr: "λαμβάνω", en: "I take" },
+  { ch: 2, gr: "συλλαμβάνω", en: "I help" },
+  { ch: 2, gr: "ὁ βοῦς", en: "ox" },
+  { ch: 2, gr: "τὸ δένδρον", en: "tree" },
+  { ch: 2, gr: "ὁ δεσπότης", en: "master" },
+  { ch: 2, gr: "εἰς + acc.", en: "into; to; at" },
+  { ch: 2, gr: "βραδέως", en: "slowly" },
+  { ch: 2, gr: "ἔπειτα", en: "then, thereafter" },
+  { ch: 2, gr: "ἤδη", en: "already, now" },
+
+  // Chapter 3
+  { ch: 3, gr: "μένω", en: "I stay (in one place); I wait; I wait for" },
+  { ch: 3, gr: "πίπτω", en: "I fall" },
+  { ch: 3, gr: "προσχωρέω + dat.", en: "I go toward, approach" },
+  { ch: 3, gr: "φησί(ν)", en: "he/she says" },
+  { ch: 3, gr: "ὁ λίθος", en: "stone" },
+  { ch: 3, gr: "αὐτό", en: "it" },
+  { ch: 3, gr: "αὐτόν", en: "him; it" },
+  { ch: 3, gr: "αἴτιος", en: "responsible (for); to blame" },
+  { ch: 3, gr: "δυνατός", en: "possible" },
+  { ch: 3, gr: "μέγας", en: "big, large; great" },
+  { ch: 3, gr: "ἐκ, ἐξ", en: "out of" },
+  { ch: 3, gr: "αὖθις", en: "again" },
+  { ch: 3, gr: "δεῦρο", en: "here, hither" },
+  { ch: 3, gr: "ἔτι", en: "still" },
+  { ch: 3, gr: "οὐκέτι", en: "no longer" },
+  { ch: 3, gr: "τε...καί, τε καί", en: "both...and" },
+  { ch: 3, gr: "ὦ Ζεῦ", en: "O Zeus" },
+  { ch: 3, gr: "λείπω", en: "I leave" },
+  { ch: 3, gr: "λύω", en: "I loosen, loose" },
+  { ch: 3, gr: "τὸ δεῖπνον", en: "dinner" },
+  { ch: 3, gr: "ὁ/ἡ παῖς", en: "boy; girl; son; daughter; child" },
+  { ch: 3, gr: "ὁ πατήρ", en: "father" },
+  { ch: 3, gr: "σύ", en: "sing. you" },
+  { ch: 3, gr: "ἀνδρεῖος", en: "brave" },
+  { ch: 3, gr: "πολλοί", en: "many" },
+  { ch: 3, gr: "τοσοῦτος", en: "so great; pl. so many" },
+  { ch: 3, gr: "ἐν + dat.", en: "in, on" },
+  { ch: 3, gr: "μηκέτι + imperative", en: "any longer!" },
+  { ch: 3, gr: "ἐπεί", en: "when" },
+  { ch: 3, gr: "ὁ Φίλιππος", en: "Philip" },
+
+  // Chapter 4
+  { ch: 4, gr: "ἀκούω", en: "I listen; I hear (+gen. of person, +acc. of thing)" },
+  { ch: 4, gr: "ἐθέλω + infin.", en: "I am willing; I wish" },
+  { ch: 4, gr: "ἔχω", en: "I have; I hold" },
+  { ch: 4, gr: "θεωρέω", en: "I watch; I see" },
+  { ch: 4, gr: "ποιέω", en: "I make; I do" },
+  { ch: 4, gr: "χαίρω", en: "I rejoice" },
+  { ch: 4, gr: "χαῖρε, pl. χαίρετε", en: "greetings!" },
+  { ch: 4, gr: "ὁ ἄγγελος", en: "messenger" },
+  { ch: 4, gr: "ὁ ἀνήρ", en: "man; husband" },
+  { ch: 4, gr: "ἡ γυνή", en: "woman; wife" },
+  { ch: 4, gr: "ἡ ἑορτή", en: "festival" },
+  { ch: 4, gr: "ἡ θυγάτηρ", en: "daughter" },
+  { ch: 4, gr: "ὁ καιρός", en: "time; right time" },
+  { ch: 4, gr: "ἡ κρήνη", en: "spring" },
+  { ch: 4, gr: "ἡ μήτηρ", en: "mother" },
+  { ch: 4, gr: "ἡ ὑδρία", en: "water jar" },
+  { ch: 4, gr: "ὁ χορός", en: "dance; chorus" },
+  { ch: 4, gr: "ἀργός, ἀργόν", en: "not working, idle, lazy" },
+  { ch: 4, gr: "φίλος, φίλη, φίλον", en: "dear; (as noun) friend" },
+  { ch: 4, gr: "ἀπό + gen.", en: "from" },
+  { ch: 4, gr: "ἀπο- (prefix)", en: "away" },
+  { ch: 4, gr: "πρός + dat.", en: "at, near, by" },
+  { ch: 4, gr: "πρός + acc.", en: "to, toward" },
+  { ch: 4, gr: "ἰδού", en: "look!" },
+  { ch: 4, gr: "καί", en: "even; also, too" },
+  { ch: 4, gr: "μάλα", en: "very" },
+  { ch: 4, gr: "μόλις", en: "with difficulty; scarcely; reluctantly" },
+  { ch: 4, gr: "πρῶτον", en: "first" },
+  { ch: 4, gr: "ταχέως", en: "quickly, swiftly" },
+  { ch: 4, gr: "ἆρα", en: "introduces a question" },
+  { ch: 4, gr: "ἐν νῷ ἔχω + infin.", en: "I have in mind; I intend" },
+  { ch: 4, gr: "τὰ Διονύσια", en: "the festival of Dionysus" },
+  { ch: 4, gr: "τὰ Διονύσια ποιῶ", en: "I celebrate the festival of Dionysus" },
+  { ch: 4, gr: "ἡ Μέλιττα", en: "Melissa" },
+  { ch: 4, gr: "ἡ Μυρρίνη", en: "Myrrhine" },
+  { ch: 4, gr: "πείθω", en: "I persuade" },
+  { ch: 4, gr: "στενάζω", en: "I groan" },
+  { ch: 4, gr: "ἡ γῆ", en: "land; earth; ground" },
+  { ch: 4, gr: "ἡ ὁδός", en: "road; way; journey" },
+  { ch: 4, gr: "ἄλλος, ἄλλη, ἄλλο", en: "other; another" },
+  { ch: 4, gr: "ῥᾴδιος, ῥᾳδία, ῥᾴδιον", en: "easy" },
+  { ch: 4, gr: "ἀεί", en: "always" },
+  { ch: 4, gr: "μάλιστα", en: "most, most of all; very much; especially" },
+  { ch: 4, gr: "οἴκαδε", en: "homeward, to home" },
+  { ch: 4, gr: "ἑορτὴν ποιῶ", en: "I celebrate a festival" },
+  { ch: 4, gr: "τί", en: "(adv.) why? (pronoun) what?" },
+
+  // Chapter 5
+  { ch: 5, gr: "ἄπειμι", en: "I am away (from)" },
+  { ch: 5, gr: "βοάω", en: "I shout" },
+  { ch: 5, gr: "διώκω", en: "I pursue, chase" },
+  { ch: 5, gr: "ζητέω", en: "I seek, look for" },
+  { ch: 5, gr: "ἴθι, pl. ἴτε", en: "go!" },
+  { ch: 5, gr: "ἴθι δή", en: "go on!" },
+  { ch: 5, gr: "ὁράω", en: "I see" },
+  { ch: 5, gr: "τιμάω", en: "I honor" },
+  { ch: 5, gr: "τρέχω", en: "I run" },
+  { ch: 5, gr: "φεύγω", en: "I flee; I escape" },
+  { ch: 5, gr: "φυλάττω", en: "I guard" },
+  { ch: 5, gr: "ὁ/ἡ κύων", en: "dog" },
+  { ch: 5, gr: "ὁ λαγώς", en: "hare" },
+  { ch: 5, gr: "ὁ λύκος", en: "wolf" },
+  { ch: 5, gr: "ἡ οἰκία", en: "house; home; dwelling" },
+  { ch: 5, gr: "τὸ ὄρος", en: "mountain; hill" },
+  { ch: 5, gr: "ὁ πάππος", en: "grandfather" },
+  { ch: 5, gr: "τὰ πρόβατα", en: "pl. sheep" },
+  { ch: 5, gr: "ἄκρος, -α, -ον", en: "top (of)" },
+  { ch: 5, gr: "ἄκρον τὸ ὄρος", en: "the top of the mountain/hill" },
+  { ch: 5, gr: "ῥᾴθυμος, -ον", en: "careless" },
+  { ch: 5, gr: "ἀνά", en: "up" },
+  { ch: 5, gr: "κατά", en: "down" },
+  { ch: 5, gr: "ποῦ", en: "where?" },
+  { ch: 5, gr: "οὐδέ", en: "and...not; nor; not even" },
+  { ch: 5, gr: "οὔτε...οὔτε", en: "neither...nor" },
+  { ch: 5, gr: "ὥστε", en: "so that, that, so as to" },
+  { ch: 5, gr: "δι᾽ ὀλίγου", en: "soon" },
+  { ch: 5, gr: "ὁ Ἄργος", en: "Argus" },
+  { ch: 5, gr: "ἀποφεύγω", en: "I flee away, escape" },
+  { ch: 5, gr: "γιγνώσκω", en: "I get to know, learn" },
+  { ch: 5, gr: "ἥκω", en: "I have come" },
+  { ch: 5, gr: "θαυμάζω", en: "I am amazed; I wonder at; I admire" },
+  { ch: 5, gr: "πάσχω", en: "I suffer; I experience" },
+  { ch: 5, gr: "τύπτω", en: "I strike, hit" },
+  { ch: 5, gr: "ὁ μῦθος", en: "story" },
+  { ch: 5, gr: "ἡμεῖς", en: "we" },
+  { ch: 5, gr: "ὑμεῖς", en: "pl. you" },
+  { ch: 5, gr: "ἀγαθός, -ή, -όν", en: "good" },
+  { ch: 5, gr: "ἄγριος, -α, -ον", en: "savage; wild; fierce" },
+  { ch: 5, gr: "πρῶτος, -η, -ον", en: "first" },
+  { ch: 5, gr: "αὐτός, -ή, -ό", en: "-self; same; (pron.) him, her, it, them" },
+  { ch: 5, gr: "ἐπί + dat.", en: "upon, on" },
+  { ch: 5, gr: "ἐπί + acc.", en: "at, against" },
+  { ch: 5, gr: "ὑπό + dat.", en: "under" },
+  { ch: 5, gr: "ὑπό + acc.", en: "under" },
+  { ch: 5, gr: "ἐνταῦθα", en: "then; here; there" },
+  { ch: 5, gr: "ἐνταῦθα δή", en: "at that very moment, then" },
+  { ch: 5, gr: "νῦν", en: "now" },
+  { ch: 5, gr: "καί...καί", en: "both...and" },
+  { ch: 5, gr: "ὅτι", en: "that" },
+
+  // Chapter 6
+  { ch: 6, gr: "ἀποκτείνω", en: "I kill" },
+  { ch: 6, gr: "ἀφικνέομαι", en: "I arrive; (+εἰς+acc.) I arrive at" },
+  { ch: 6, gr: "βασιλεύω", en: "I rule" },
+  { ch: 6, gr: "βοηθέω", en: "I come to the rescue; (+dat.) I come to aid" },
+  { ch: 6, gr: "βούλομαι + infin.", en: "I want; I wish" },
+  { ch: 6, gr: "γίγνομαι", en: "I become" },
+  { ch: 6, gr: "γίγνεται", en: "he/she/it becomes; it happens" },
+  { ch: 6, gr: "δέχομαι", en: "I receive" },
+  { ch: 6, gr: "ἐκφεύγω", en: "I flee out, escape" },
+  { ch: 6, gr: "ἔρχομαι", en: "I come; I go" },
+  { ch: 6, gr: "ἀπέρχομαι", en: "I go away" },
+  { ch: 6, gr: "πείθομαι + dat.", en: "I obey" },
+  { ch: 6, gr: "πέμπω", en: "I send" },
+  { ch: 6, gr: "πλέω", en: "I sail" },
+  { ch: 6, gr: "σῴζω", en: "I save" },
+  { ch: 6, gr: "φοβέομαι", en: "I am afraid; I fear" },
+  { ch: 6, gr: "ὁ βασιλεύς", en: "king" },
+  { ch: 6, gr: "ὁ ἑταῖρος", en: "comrade, companion" },
+  { ch: 6, gr: "ἡ ἡμέρα", en: "day" },
+  { ch: 6, gr: "ἡ ναῦς", en: "ship" },
+  { ch: 6, gr: "ἡ νῆσος", en: "island" },
+  { ch: 6, gr: "ἡ νύξ", en: "night" },
+  { ch: 6, gr: "ὁ πάππας", en: "papa" },
+  { ch: 6, gr: "ἡ παρθένος", en: "maiden; girl" },
+  { ch: 6, gr: "δεινός, -ή, -όν", en: "terrible" },
+  { ch: 6, gr: "μετά + gen.", en: "with" },
+  { ch: 6, gr: "μετά + acc.", en: "after" },
+  { ch: 6, gr: "ἐκεῖ", en: "there" },
+  { ch: 6, gr: "αἱ Ἀθῆναι", en: "Athens" },
+  { ch: 6, gr: "ὁ Αἰγεύς", en: "Aegeus (king of Athens)" },
+  { ch: 6, gr: "ἡ Ἀριάδνη", en: "Ariadne" },
+  { ch: 6, gr: "ὁ Θησεύς", en: "Theseus" },
+  { ch: 6, gr: "ἡ Κνωσός", en: "Knossos" },
+  { ch: 6, gr: "ἡ Κρήτη", en: "Crete" },
+  { ch: 6, gr: "ὁ Μίνως", en: "Minos (King of Crete)" },
+  { ch: 6, gr: "ὁ Μινώταυρος", en: "Minotaur" },
+  { ch: 6, gr: "ἐξέρχομαι + ἐκ + gen.", en: "I come out of; I go out of" },
+  { ch: 6, gr: "ἡγέομαι + dat.", en: "I lead" },
+  { ch: 6, gr: "μάχομαι", en: "I fight" },
+  { ch: 6, gr: "παρέχω", en: "I hand over; I supply, provide" },
+  { ch: 6, gr: "πορεύομαι", en: "I go; I walk; I march; I journey" },
+  { ch: 6, gr: "προχωρέω", en: "I go forward, advance; (+dat.) I approach" },
+  { ch: 6, gr: "φασί(ν)", en: "they say" },
+  { ch: 6, gr: "αἱ πύλαι", en: "pl. double gates" },
+  { ch: 6, gr: "οὐδαμῶς", en: "in no way, no" },
+  { ch: 6, gr: "πολλάκις", en: "many times, often" },
+  { ch: 6, gr: "ὡς", en: "how...!" },
+  { ch: 6, gr: "γε", en: "(restrictive) at least; (intensive) indeed" },
+  { ch: 6, gr: "δή", en: "indeed, in fact" },
+
+  // Chapter 7
+  { ch: 7, gr: "αἱρέω (αἴρω)", en: "I take, lift" },
+  { ch: 7, gr: "ἐπαίρω", en: "I lift, raise" },
+  { ch: 7, gr: "ἐπαίρω ἐμαυτόν", en: "I get up" },
+  { ch: 7, gr: "εὑρίσκω", en: "I find" },
+  { ch: 7, gr: "ἰέναι", en: "to go" },
+  { ch: 7, gr: "κελεύω + acc. and inf.", en: "I order, tell (someone to do something)" },
+  { ch: 7, gr: "παρασκευάζω", en: "I prepare" },
+  { ch: 7, gr: "ὁ/ἡ αἴξ", en: "goat" },
+  { ch: 7, gr: "ἡ θάλαττα", en: "sea" },
+  { ch: 7, gr: "τὸ ὄνομα", en: "name" },
+  { ch: 7, gr: "ἡ πόλις", en: "city" },
+  { ch: 7, gr: "τίς (pl. τίνες)", en: "who? which? what?" },
+  { ch: 7, gr: "τις", en: "someone; something; a certain; some" },
+  { ch: 7, gr: "οὐδείς, οὐδεμία, οὐδέν", en: "no one; nothing; (adj.) no" },
+  { ch: 7, gr: "ἐμαυτοῦ, σεαυτοῦ, ἑαυτοῦ", en: "of myself; of yourself; of him-, her-, itself" },
+  { ch: 7, gr: "μέγιστος, -η, -ον", en: "very big; greatest; biggest" },
+  { ch: 7, gr: "περί + gen.", en: "about, concerning" },
+  { ch: 7, gr: "περί + acc.", en: "around" },
+  { ch: 7, gr: "ὁ Ἀγαμέμνων", en: "Agamemnon" },
+  { ch: 7, gr: "οἱ Ἀχαιοί", en: "Achaeans, Greeks" },
+  { ch: 7, gr: "ὁ Ὀδυσσεύς", en: "Odysseus" },
+  { ch: 7, gr: "ἡ Τροία", en: "Troy" },
+  { ch: 7, gr: "ἀποκρίνομαι", en: "I answer" },
+  { ch: 7, gr: "βάλλω", en: "I throw; I put; I pelt; I hit, strike" },
+  { ch: 7, gr: "μέλλω + infin.", en: "I am about (to); I intend (to)" },
+  { ch: 7, gr: "ὁρμάω", en: "I set in motion; I start; I rush" },
+  { ch: 7, gr: "παύω", en: "I stop X; (mid.) I stop doing X; (+gen.) I cease from" },
+  { ch: 7, gr: "ὁ ξένος", en: "foreigner; stranger" },
+  { ch: 7, gr: "ὁ οἶνος", en: "wine" },
+  { ch: 7, gr: "ὁ ὀφθαλμός", en: "eye" },
+  { ch: 7, gr: "τὸ πῦρ", en: "fire" },
+  { ch: 7, gr: "ὁ χειμών", en: "storm; winter" },
+  { ch: 7, gr: "δύο", en: "two" },
+  { ch: 7, gr: "εἷς, μία, ἕν", en: "one" },
+  { ch: 7, gr: "πᾶς, πᾶσα, πᾶν", en: "all; every; whole" },
+  { ch: 7, gr: "σώφρων, σῶφρον", en: "of sound mind; prudent; self-controlled" },
+  { ch: 7, gr: "ἐνθάδε", en: "here; hither; there; thither" },
+  { ch: 7, gr: "πόθεν", en: "from where? whence?" },
+  { ch: 7, gr: "πῶς", en: "how?" },
+  { ch: 7, gr: "ὁ Κύκλωψ", en: "Cyclops" },
+
+  // Chapter 8
+  { ch: 8, gr: "διαλέγομαι + dat.", en: "I talk to, converse with" },
+  { ch: 8, gr: "ἕπομαι + dat.", en: "I follow" },
+  { ch: 8, gr: "ἐργάζομαι", en: "I work; I accomplish" },
+  { ch: 8, gr: "θεάομαι", en: "I see, watch, look at" },
+  { ch: 8, gr: "τὸ ἄστυ", en: "city" },
+  { ch: 8, gr: "τὸ ἔργον", en: "work; deed" },
+  { ch: 8, gr: "ἡ ἑσπέρα", en: "evening" },
+  { ch: 8, gr: "ὁ θεός", en: "god" },
+  { ch: 8, gr: "ἡ θύρα", en: "door" },
+  { ch: 8, gr: "ὁ ποιητής", en: "poet" },
+  { ch: 8, gr: "ἐκεῖσε", en: "to that place, thither" },
+  { ch: 8, gr: "εὖ", en: "well" },
+  { ch: 8, gr: "οἴκοι", en: "at home" },
+  { ch: 8, gr: "ὥσπερ", en: "just as" },
+  { ch: 8, gr: "ὅμως", en: "nevertheless" },
+  { ch: 8, gr: "ἐν ᾧ", en: "while" },
+  { ch: 8, gr: "εὖ γε", en: "good! well done!" },
+  { ch: 8, gr: "ὁ Διόνυσος", en: "Dionysus" },
+  { ch: 8, gr: "ἀναβαίνω", en: "I go up, get up; (+ἐπί+acc.) I climb onto" },
+  { ch: 8, gr: "ἐγείρω", en: "I wake X up; (mid.) I wake up" },
+  { ch: 8, gr: "εὔχομαι", en: "I pray; (+dat.) I pray to" },
+  { ch: 8, gr: "καθίζω", en: "I make X sit down; I sit; I seat myself" },
+  { ch: 8, gr: "ἡ ἀγορά", en: "agora, city center, market place" },
+  { ch: 8, gr: "ὁ βωμός", en: "altar" },
+  { ch: 8, gr: "ὁ νεανίας", en: "young man" },
+  { ch: 8, gr: "ὁ πολίτης", en: "citizen" },
+  { ch: 8, gr: "ἡ χείρ", en: "hand" },
+  { ch: 8, gr: "ὑπέρ + gen.", en: "on behalf of, for" },
+  { ch: 8, gr: "τέλος", en: "in the end, finally" },
+  { ch: 8, gr: "ἐν...τούτῳ", en: "meanwhile" },
+  { ch: 8, gr: "τῇ ὑστεραίᾳ", en: "on the next day" },
+  { ch: 8, gr: "ἡ Ἀκρόπολις", en: "the Acropolis" },
+  { ch: 8, gr: "ὁ Ζεύς", en: "Zeus" },
+  { ch: 8, gr: "ὁ Παρθενών", en: "the Parthenon" },
+
+  // Chapter 9
+  { ch: 9, gr: "ἄγε; pl. ἄγετε", en: "come on!" },
+  { ch: 9, gr: "ἐπανέρχομαι", en: "I come back, return; (+εἰς/πρός) I return to" },
+  { ch: 9, gr: "ἐσθίω", en: "I eat" },
+  { ch: 9, gr: "κάμνω", en: "I am sick; I am tired" },
+  { ch: 9, gr: "πίνω", en: "I drink" },
+  { ch: 9, gr: "ἡ ἀριστερά", en: "left hand" },
+  { ch: 9, gr: "ἡ δεξιά", en: "right hand" },
+  { ch: 9, gr: "ἡ θεός", en: "goddess" },
+  { ch: 9, gr: "τὸ ἱερόν", en: "temple" },
+  { ch: 9, gr: "ὁ κίνδυνος", en: "danger" },
+  { ch: 9, gr: "κάλλιστος, -η, -ον", en: "most beautiful; very beautiful" },
+  { ch: 9, gr: "διά + gen.", en: "through" },
+  { ch: 9, gr: "ἐπί + dat.", en: "upon, on" },
+  { ch: 9, gr: "ἐπί + acc.", en: "at; against; unto, upon" },
+  { ch: 9, gr: "ἡ Ἀθηνᾶ", en: "Athena" },
+  { ch: 9, gr: "ἡ Νίκη", en: "Nike" },
+  { ch: 9, gr: "ἡ Παρθένος", en: "the Maiden (Athena)" },
+  { ch: 9, gr: "ὁ Φειδίας", en: "Pheidias" },
+  { ch: 9, gr: "αὐξάνω", en: "I increase" },
+  { ch: 9, gr: "καίω, κάω", en: "I kindle, burn; (mid.) I burn, am on fire" },
+  { ch: 9, gr: "σιγάω", en: "I am silent" },
+  { ch: 9, gr: "τέρπομαι", en: "I enjoy myself; (+dat.) I enjoy X" },
+  { ch: 9, gr: "ὁ γέρων", en: "old man" },
+  { ch: 9, gr: "ὁ δῆμος", en: "the people" },
+  { ch: 9, gr: "τὸ ἱερεῖον", en: "sacrificial victim" },
+  { ch: 9, gr: "ὁ ἱερεύς", en: "priest" },
+  { ch: 9, gr: "ὁ κῆρυξ", en: "herald" },
+  { ch: 9, gr: "ὁ οὐρανός", en: "sky, heaven" },
+  { ch: 9, gr: "ἡ πομπή", en: "procession" },
+  { ch: 9, gr: "ἄριστος, -η, -ον", en: "best; very good; noble" },
+  { ch: 9, gr: "γέρων, γέροντος", en: "old" },
+  { ch: 9, gr: "ἕτοιμος, -η, -ον", en: "ready" },
+  { ch: 9, gr: "ἵλεως", en: "propitious" },
+  { ch: 9, gr: "μέσος, -η, -ον", en: "middle (of)" },
+  { ch: 9, gr: "ὁ βρόμιος", en: "the Thunderer" },
+
+  // Chapter 10
+  { ch: 10, gr: "ἀφικνέομαι", en: "I arrive; (+εἰς+acc.) I arrive at" },
+  { ch: 10, gr: "γίγνομαι", en: "I become" },
+  { ch: 10, gr: "εὑρίσκω", en: "I find" },
+  { ch: 10, gr: "θεάομαι", en: "I see, watch, look at" },
+  { ch: 10, gr: "νικάω", en: "I defeat; I win" },
+  { ch: 10, gr: "καλῶς", en: "well" },
+  { ch: 10, gr: "φεῦ", en: "alas!" },
+  { ch: 10, gr: "αἴρω", en: "I lift; I get up" },
+  { ch: 10, gr: "ἀποκτείνω", en: "I kill" },
+  { ch: 10, gr: "δεῖ", en: "it is necessary" },
+  { ch: 10, gr: "δεῖ ἡμᾶς παρεῖναι", en: "we must be there" },
+  { ch: 10, gr: "ἀποφεύγω", en: "I flee away, escape" },
+  { ch: 10, gr: "ἔξεστι(ν)", en: "it is allowed/possible" },
+  { ch: 10, gr: "ἔξεστιν ἡμῖν μένειν", en: "we are allowed to stay" },
+  { ch: 10, gr: "καταλείπω", en: "I leave behind, desert" },
+  { ch: 10, gr: "μένω", en: "I stay; I wait; I wait for" },
+  { ch: 10, gr: "τρέπω", en: "I turn X; (mid.) I turn myself, turn" },
+  { ch: 10, gr: "τύπτω", en: "I strike, hit" },
+  { ch: 10, gr: "ἡ βοή", en: "shout" },
+  { ch: 10, gr: "ἡ κεφαλή", en: "head" },
+  { ch: 10, gr: "οἱ τεκόντες", en: "parents" },
+  { ch: 10, gr: "τὸ ὕδωρ", en: "water" },
+  { ch: 10, gr: "πρό", en: "before" },
+  { ch: 10, gr: "εὐθύς", en: "straightway, immediately, at once" },
+  { ch: 10, gr: "ποτέ", en: "at some time, once, ever" },
+];
+
+// Index each entry
+VOCAB.forEach((v, i) => v.id = i);
+
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  selectedChapters: new Set([1,2,3,4,5,6,7,8,9,10]),
+  mode: 'flash',
+  flash: {
+    side: 'greek',
+    order: 'sequential',
+    autoFlip: false,
+    index: 0,
+    deck: [],
+    known: new Set(),
+    review: new Set(),
+    autoFlipTimer: null,
+  },
+  quiz: {
+    prompt: 'greek',
+    length: 10,
+    questions: [],
+    current: 0,
+    correct: 0,
+    incorrect: 0,
+    streak: 0,
+    bestStreak: 0,
+    answered: false,
+    active: false,
+    missed: [],
+    best: null,
+  },
+  match: {
+    size: 6,
+    pairs: [],
+    tiles: [],
+    selected: null,
+    matched: new Set(),
+    startTime: null,
+    timer: null,
+    mistakes: 0,
+    bestTimes: {},
+  },
+  type: {
+    prompt: 'english',
+    accents: 'lenient',
+    deck: [],
+    current: 0,
+    correct: 0,
+    incorrect: 0,
+    active: false,
+    answered: false,
+    missed: [],
+    best: null,
+  },
+};
+
+// ============================================================
+// UTILS
+// ============================================================
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function getActiveVocab() {
+  return VOCAB.filter(v => state.selectedChapters.has(v.ch));
+}
+
+function romanize(n) {
+  const map = [['X',10],['IX',9],['V',5],['IV',4],['I',1]];
+  let result = '';
+  for (const [sym, val] of map) {
+    while (n >= val) { result += sym; n -= val; }
+  }
+  return result;
+}
+
+// Strip accents & diacritics for lenient comparison
+function normalize(s) {
+  return s.toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[.,;:!?()]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Compare English answers flexibly (user provides one valid synonym)
+function englishMatches(userAns, correct) {
+  const userN = normalize(userAns);
+  if (!userN) return false;
+  const parts = correct.split(/[;,]|\bor\b/).map(p => normalize(p));
+  for (const p of parts) {
+    // allow exact match or user answer is a substantial substring
+    const cleaned = p.replace(/^(i |he\/she |he\/she\/it |to |the |a |an |my |his |her )/, '').trim();
+    if (p === userN || cleaned === userN) return true;
+    if (p.includes(userN) && userN.length >= 3 && userN.length >= p.length * 0.5) return true;
+  }
+  return false;
+}
+
+// ============================================================
+// CHAPTER SELECTION
+// ============================================================
+function renderChapterGrid() {
+  const grid = document.getElementById('chapterGrid');
+  const chapters = [...new Set(VOCAB.map(v => v.ch))].sort((a,b)=>a-b);
+  grid.innerHTML = chapters.map(ch => {
+    const count = VOCAB.filter(v => v.ch === ch).length;
+    const checked = state.selectedChapters.has(ch) ? 'checked' : '';
+    return `
+      <label class="chapter-chip">
+        <input type="checkbox" ${checked} onchange="toggleChapter(${ch})" />
+        <span class="chip-body">
+          <span class="chip-check"></span>
+          <span class="chip-label"><span class="chip-num">${romanize(ch)}.</span><span class="chip-count">${count}</span></span>
+        </span>
+      </label>
+    `;
+  }).join('');
+  updateSelectionSummary();
+}
+
+function toggleChapter(ch) {
+  if (state.selectedChapters.has(ch)) state.selectedChapters.delete(ch);
+  else state.selectedChapters.add(ch);
+  updateSelectionSummary();
+  onSelectionChange();
+  saveState();
+}
+
+function selectAllChapters() {
+  [1,2,3,4,5,6,7,8,9,10].forEach(c => state.selectedChapters.add(c));
+  renderChapterGrid();
+  onSelectionChange();
+  saveState();
+}
+
+function deselectAllChapters() {
+  state.selectedChapters.clear();
+  renderChapterGrid();
+  onSelectionChange();
+  saveState();
+}
+
+function selectRangeChapters(from, to) {
+  state.selectedChapters.clear();
+  for (let i = from; i <= to; i++) state.selectedChapters.add(i);
+  renderChapterGrid();
+  onSelectionChange();
+  saveState();
+}
+
+function updateSelectionSummary() {
+  const terms = getActiveVocab().length;
+  const chs = state.selectedChapters.size;
+  document.getElementById('selectionSummary').innerHTML =
+    `<strong>${chs}</strong> chapter${chs===1?'':'s'} · <strong>${terms}</strong> term${terms===1?'':'s'}`;
+}
+
+function onSelectionChange() {
+  if (state.mode === 'flash') resumeFlashcards();
+  else if (state.mode === 'browse') renderBrowse();
+  else if (state.mode === 'quiz') clearQuiz();
+  else if (state.mode === 'match') clearMatch();
+  else if (state.mode === 'type') clearType();
+}
+
+// ============================================================
+// MODE SWITCHING
+// ============================================================
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.mode-panel').forEach(p => p.classList.add('hidden'));
+    tab.classList.add('active');
+    const mode = tab.dataset.mode;
+    state.mode = mode;
+    document.getElementById('mode-' + mode).classList.remove('hidden');
+    if (mode === 'flash') resumeFlashcards();
+    else if (mode === 'browse') renderBrowse();
+    else if (mode === 'quiz') clearQuiz();
+    else if (mode === 'match') clearMatch();
+    else if (mode === 'type') clearType();
+  });
+});
+
+// ============================================================
+// FLASHCARDS
+// ============================================================
+function setupFlashControls() {
+  document.querySelectorAll('#flashSideControl button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#flashSideControl button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      state.flash.side = b.dataset.side;
+      renderFlashcard();
+    });
+  });
+
+  document.getElementById('autoFlipToggle').addEventListener('change', (e) => {
+    state.flash.autoFlip = e.target.checked;
+  });
+}
+
+function initFlashcards() {
+  const active = getActiveVocab();
+  state.flash.deck = state.flash.order === 'shuffle' ? shuffle(active) : active;
+  state.flash.index = 0;
+  state.flash.known = new Set();
+  state.flash.review = new Set();
+  applyFlashFilter();
+  renderFlashcard();
+}
+
+function resetFlashcards() {
+  initFlashcards();
+  saveState();
+}
+
+function resumeFlashcards() {
+  // Rebuild deck from current chapters but preserve known/review markings
+  applyFlashFilter();
+  // If index is out of bounds, reset to 0
+  if (state.flash.index >= state.flash.deck.length) {
+    state.flash.index = 0;
+  }
+  renderFlashcard();
+}
+
+function updateFlashCounts() {
+  // Update filter checkbox count labels without touching the deck
+  const active = getActiveVocab();
+  let unmarkedCount = 0, knownCount = 0, reviewCount = 0;
+  for (const v of active) {
+    if (state.flash.known.has(v.id)) knownCount++;
+    else if (state.flash.review.has(v.id)) reviewCount++;
+    else unmarkedCount++;
+  }
+  const uc = document.getElementById('filterUnmarkedCount');
+  const kc = document.getElementById('filterKnownCount');
+  const rc = document.getElementById('filterReviewCount');
+  if (uc) uc.textContent = '(' + unmarkedCount + ')';
+  if (kc) kc.textContent = '(' + knownCount + ')';
+  if (rc) rc.textContent = '(' + reviewCount + ')';
+}
+
+function applyFlashFilter() {
+  const active = getActiveVocab();
+  const showUnmarked = document.getElementById('filterUnmarked')?.checked ?? true;
+  const showKnown = document.getElementById('filterKnown')?.checked ?? true;
+  const showReview = document.getElementById('filterReview')?.checked ?? true;
+
+  updateFlashCounts();
+
+  // Filter
+  const allShown = showUnmarked && showKnown && showReview;
+  const filtered = active.filter(v => {
+    if (state.flash.known.has(v.id)) return showKnown;
+    if (state.flash.review.has(v.id)) return showReview;
+    return showUnmarked;
+  });
+
+  state.flash.deck = state.flash.order === 'shuffle' ? shuffle(filtered) : filtered;
+
+  // Keep index in bounds
+  if (state.flash.index >= state.flash.deck.length) {
+    state.flash.index = 0;
+  }
+
+  // Show/hide filter note
+  const note = document.getElementById('flashFilterNote');
+  if (note) {
+    if (allShown) note.classList.add('hidden');
+    else {
+      note.classList.remove('hidden');
+      note.textContent = state.flash.deck.length + ' of ' + active.length + ' shown';
+    }
+  }
+}
+
+function onFlashFilterChange() {
+  const prevIndex = state.flash.index;
+  const prevCard = state.flash.deck[prevIndex];
+  applyFlashFilter();
+  // Try to stay on the same card if it's still in the filtered deck
+  if (prevCard) {
+    const newIdx = state.flash.deck.findIndex(v => v.id === prevCard.id);
+    if (newIdx >= 0) state.flash.index = newIdx;
+    else state.flash.index = 0;
+  }
+  renderFlashcard();
+}
+
+function shuffleDeck() {
+  // Shuffle in place without resetting known/review markings
+  state.flash.deck = shuffle(state.flash.deck);
+  state.flash.index = 0;
+  state.flash.order = 'shuffle';
+  renderFlashcard();
+}
+
+function renderFlashcard() {
+  const card = document.getElementById('flashcard');
+  const stage = document.getElementById('flashStage');
+  const deck = state.flash.deck;
+
+  if (deck.length === 0) {
+    const active = getActiveVocab();
+    if (active.length === 0) {
+      stage.innerHTML = '<div class="empty-state">Select at least one chapter to begin studying.</div>';
+    } else {
+      stage.innerHTML = '<div class="empty-state">No cards match your current filter. Adjust the checkboxes above to show more cards.</div>';
+    }
+    return;
+  }
+
+  // Restore stage if needed
+  if (!document.getElementById('flashcard')) {
+    stage.innerHTML = `
+      <div class="progress-bar"><div class="progress-fill" id="flashProgress"></div></div>
+      <div class="flash-meta" id="flashMeta"></div>
+      <div class="flashcard" id="flashcard" onclick="flipFlashcard()">
+        <div class="flash-inner">
+          <div class="flash-face front">
+            <span class="flash-corner left">Recto</span>
+            <span class="flash-corner right" id="flashFrontCorner">I.</span>
+            <div class="flash-content" id="flashFront"></div>
+            <span class="flash-tap-hint">Tap or press Space to flip</span>
+          </div>
+          <div class="flash-face back">
+            <span class="flash-corner left">Verso</span>
+            <span class="flash-corner right" id="flashBackCorner">I.</span>
+            <div class="flash-content" id="flashBack"></div>
+            <span class="flash-tap-hint">Tap to return</span>
+          </div>
+        </div>
+      </div>
+      <div class="flash-controls">
+        <button class="ctrl-btn ghost" onclick="prevFlashcard()">&#8592; Prev</button>
+        <button class="ctrl-btn known-btn" onclick="markFlashcard(true)">&#10003; Known</button>
+        <button class="ctrl-btn unknown-btn" onclick="markFlashcard(false)">&#8635; Review</button>
+        <button class="ctrl-btn ghost" onclick="nextFlashcard()">Next &#8594;</button>
+      </div>
+      <div style="margin-top:1rem; display:flex; gap:1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.15em; color:var(--ink-soft); text-transform:uppercase;">
+        <span>Known: <strong id="flashKnown" style="color:var(--sage)">0</strong></span>
+        <span>Review: <strong id="flashReview" style="color:var(--accent)">0</strong></span>
+        <button class="mini-btn" onclick="resetFlashcards()">Reset Deck</button>
+      </div>
+    `;
+    // Re-acquire card reference after rebuild
+    renderFlashcard();
+    return;
+  }
+
+  const v = deck[state.flash.index];
+  card.classList.remove('flipped');
+
+  let showGreekFirst;
+  if (state.flash.side === 'greek') showGreekFirst = true;
+  else if (state.flash.side === 'english') showGreekFirst = false;
+  else showGreekFirst = Math.random() < 0.5;
+
+  const front = document.getElementById('flashFront');
+  const back = document.getElementById('flashBack');
+
+  if (showGreekFirst) {
+    front.textContent = v.gr;
+    front.classList.add('greek');
+    back.textContent = v.en;
+    back.classList.remove('greek');
+  } else {
+    front.textContent = v.en;
+    front.classList.remove('greek');
+    back.textContent = v.gr;
+    back.classList.add('greek');
+  }
+
+  document.getElementById('flashFrontCorner').textContent = 'Ch. ' + romanize(v.ch);
+  document.getElementById('flashBackCorner').textContent = 'Ch. ' + romanize(v.ch);
+
+  document.getElementById('flashMeta').innerHTML =
+    `<span class="chap-tag">Chapter ${romanize(v.ch)}</span> · Card ${state.flash.index+1} of ${deck.length}`;
+
+  document.getElementById('flashProgress').style.width =
+    ((state.flash.index+1) / deck.length * 100) + '%';
+
+  document.getElementById('flashKnown').textContent = state.flash.known.size;
+  document.getElementById('flashReview').textContent = state.flash.review.size;
+
+  if (state.flash.autoFlip) {
+    clearTimeout(state.flash.autoFlipTimer);
+    state.flash.autoFlipTimer = setTimeout(() => {
+      document.getElementById('flashcard').classList.add('flipped');
+    }, 2500);
+  }
+}
+
+function flipFlashcard() {
+  document.getElementById('flashcard').classList.toggle('flipped');
+  if (state.flash.autoFlipTimer) clearTimeout(state.flash.autoFlipTimer);
+}
+
+function nextFlashcard() {
+  if (state.flash.deck.length === 0) return;
+  state.flash.index = (state.flash.index + 1) % state.flash.deck.length;
+  renderFlashcard();
+}
+
+function prevFlashcard() {
+  if (state.flash.deck.length === 0) return;
+  state.flash.index = (state.flash.index - 1 + state.flash.deck.length) % state.flash.deck.length;
+  renderFlashcard();
+}
+
+function markFlashcard(known) {
+  if (state.flash.deck.length === 0) return;
+  const v = state.flash.deck[state.flash.index];
+  if (known) {
+    state.flash.known.add(v.id);
+    state.flash.review.delete(v.id);
+  } else {
+    state.flash.review.add(v.id);
+    state.flash.known.delete(v.id);
+  }
+  saveState();
+  updateFlashCounts();
+
+  // Determine whether the card's new status is filtered out
+  const showKnown = document.getElementById('filterKnown')?.checked ?? true;
+  const showReview = document.getElementById('filterReview')?.checked ?? true;
+  const cardNowHidden = (known && !showKnown) || (!known && !showReview);
+
+  if (cardNowHidden) {
+    // Remove just this card from the deck without rebuilding the whole thing
+    state.flash.deck.splice(state.flash.index, 1);
+    if (state.flash.deck.length === 0) {
+      renderFlashcard();
+      return;
+    }
+    if (state.flash.index >= state.flash.deck.length) state.flash.index = 0;
+    renderFlashcard();
+  } else {
+    // Card stays visible — just advance to the next one, preserving deck order
+    nextFlashcard();
+  }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+
+  if (state.mode === 'flash') {
+    if (e.code === 'Space') { e.preventDefault(); flipFlashcard(); }
+    else if (e.code === 'ArrowRight') nextFlashcard();
+    else if (e.code === 'ArrowLeft') prevFlashcard();
+    else if (e.key === 'k' || e.key === 'K') markFlashcard(true);
+    else if (e.key === 'r' || e.key === 'R') markFlashcard(false);
+  }
+
+  if (state.mode === 'quiz' && state.quiz.active && !state.quiz.answered) {
+    const num = parseInt(e.key);
+    if (num >= 1 && num <= 4) {
+      const buttons = document.querySelectorAll('#quizOptions button');
+      if (buttons[num - 1]) buttons[num - 1].click();
+    }
+  }
+});
+
+// ============================================================
+// QUIZ
+// ============================================================
+function setupQuizControls() {
+  document.querySelectorAll('#quizPromptControl button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#quizPromptControl button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      state.quiz.prompt = b.dataset.prompt;
+    });
+  });
+  document.querySelectorAll('#quizLengthControl button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#quizLengthControl button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      state.quiz.length = parseInt(b.dataset.length);
+    });
+  });
+}
+
+function clearQuiz() {
+  state.quiz.active = false;
+  document.getElementById('quizStage').innerHTML =
+    '<div class="empty-state">Configure your quiz above and press <em>Begin Quiz</em> to start.</div>';
+}
+
+function startQuiz() {
+  const active = getActiveVocab();
+  if (active.length < 4) {
+    document.getElementById('quizStage').innerHTML =
+      '<div class="empty-state">Need at least 4 terms. Please select more chapters.</div>';
+    return;
+  }
+  const n = state.quiz.length === 0 ? active.length : Math.min(state.quiz.length, active.length);
+  state.quiz.questions = shuffle(active).slice(0, n);
+  state.quiz.current = 0;
+  state.quiz.correct = 0;
+  state.quiz.incorrect = 0;
+  state.quiz.streak = 0;
+  state.quiz.bestStreak = 0;
+  state.quiz.active = true;
+  state.quiz.missed = [];
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const q = state.quiz.questions[state.quiz.current];
+  const pool = getActiveVocab().filter(v => v.id !== q.id);
+  const distractors = shuffle(pool).slice(0, 3);
+  const options = shuffle([q, ...distractors]);
+
+  let promptGreek;
+  if (state.quiz.prompt === 'greek') promptGreek = true;
+  else if (state.quiz.prompt === 'english') promptGreek = false;
+  else promptGreek = Math.random() < 0.5;
+
+  const promptText = promptGreek ? q.gr : q.en;
+  const promptLang = promptGreek ? 'greek' : '';
+  const optionsGreek = !promptGreek;
+  const optionsLang = optionsGreek ? 'greek' : '';
+
+  state.quiz.answered = false;
+  state.quiz.currentCorrectId = q.id;
+
+  const stage = document.getElementById('quizStage');
+  stage.innerHTML = `
+    <div class="panel">
+      <div class="progress-bar" style="margin-bottom:1.25rem"><div class="progress-fill" style="width:${((state.quiz.current)/state.quiz.questions.length*100)}%"></div></div>
+      <div class="quiz-prompt">
+        <div class="quiz-prompt-label">Question ${state.quiz.current+1} of ${state.quiz.questions.length} · Chapter ${romanize(q.ch)}</div>
+        <div class="quiz-prompt-text ${promptLang}">${promptText}</div>
+      </div>
+      <div class="quiz-options" id="quizOptions">
+        ${options.map((opt, idx) => `
+          <button class="quiz-option ${optionsLang}" data-id="${opt.id}" onclick="answerQuiz(${opt.id}, this)">
+            <span class="letter">${String.fromCharCode(913+idx)}.</span>
+            <span class="opt-text">${optionsGreek ? opt.gr : opt.en}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+      <div class="quiz-stats">
+        <div class="stat correct"><strong>${state.quiz.correct}</strong>Correct</div>
+        <div class="stat incorrect"><strong>${state.quiz.incorrect}</strong>Wrong</div>
+        <div class="stat streak"><strong>${state.quiz.streak}</strong>Streak</div>
+      </div>
+    </div>
+  `;
+}
+
+function answerQuiz(chosenId, btn) {
+  if (state.quiz.answered) return;
+  state.quiz.answered = true;
+
+  const correctId = state.quiz.currentCorrectId;
+  const correct = chosenId === correctId;
+
+  document.querySelectorAll('#quizOptions button').forEach(b => {
+    b.disabled = true;
+    const id = parseInt(b.dataset.id);
+    if (id === correctId) b.classList.add('correct');
+    else if (id === chosenId && !correct) b.classList.add('incorrect');
+    else b.classList.add('reveal');
+  });
+
+  const feedback = document.getElementById('quizFeedback');
+  if (correct) {
+    state.quiz.correct++;
+    state.quiz.streak++;
+    state.quiz.bestStreak = Math.max(state.quiz.bestStreak, state.quiz.streak);
+    feedback.className = 'quiz-feedback correct';
+    feedback.textContent = ['Excellent.', 'Well struck.', 'Precisely so.', 'Indeed.', 'Correct.'][Math.floor(Math.random()*5)];
+  } else {
+    state.quiz.incorrect++;
+    state.quiz.streak = 0;
+    const q = state.quiz.questions[state.quiz.current];
+    state.quiz.missed.push(q);
+    feedback.className = 'quiz-feedback incorrect';
+    feedback.innerHTML = `Not quite. <em>${q.gr}</em> means "${q.en}".`;
+  }
+
+  // advance after a beat
+  setTimeout(() => {
+    state.quiz.current++;
+    if (state.quiz.current >= state.quiz.questions.length) {
+      showQuizResults();
+    } else {
+      renderQuizQuestion();
+    }
+  }, correct ? 900 : 2100);
+}
+
+function showQuizResults() {
+  const total = state.quiz.questions.length;
+  const pct = Math.round(state.quiz.correct / total * 100);
+
+  const isNewBest = state.quiz.best === null || pct > state.quiz.best;
+  if (isNewBest) state.quiz.best = pct;
+  saveState();
+
+  const epithets = [
+    { min: 95, text: 'ἄριστος — A scholar worthy of the Academy.' },
+    { min: 80, text: 'εὖ γε — Well done indeed.' },
+    { min: 65, text: 'καλῶς — A commendable showing.' },
+    { min: 50, text: 'Steady progress. The Muses reward diligence.' },
+    { min: 0,  text: 'Onward. Repetition is the mother of learning.' },
+  ];
+  const epithet = epithets.find(e => pct >= e.min).text;
+
+  let missedHTML = '';
+  if (state.quiz.missed.length > 0) {
+    missedHTML = `
+      <div style="margin-top:2rem; border-top:1px solid var(--parchment-shadow); padding-top:1.5rem;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); margin-bottom:0.75rem;">Missed Terms</div>
+        <div style="display:grid; gap:0.4rem; max-width:500px; margin:0 auto; text-align:left;">
+          ${state.quiz.missed.map(v => `
+            <div style="display:flex; gap:1rem; padding:0.5rem 0.75rem; background:rgba(139,44,31,0.05); border-left:2px solid var(--accent); font-size:0.95rem;">
+              <span class="greek" style="color:var(--accent-deep); font-family:'GFS Didot',serif; min-width:40%;">${v.gr}</span>
+              <span style="color:var(--ink-soft);">${v.en}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  const retryMissedBtn = state.quiz.missed.length > 0
+    ? `<button class="ctrl-btn" onclick="retryMissedQuiz()">Retry Missed (${state.quiz.missed.length})</button>`
+    : '';
+
+  document.getElementById('quizStage').innerHTML = `
+    <div class="results-banner">
+      <h2>Quiz Complete</h2>
+      <div class="epithet">${epithet}</div>
+      <div class="score">${state.quiz.correct}<small> / ${total}</small></div>
+      <div style="display:flex; gap:3rem; justify-content:center; margin-top:1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--ink-soft);">
+        <div><div style="font-family:'GFS Didot',serif; font-size:1.5rem; color:var(--ink); letter-spacing:0; text-transform:none;">${pct}%</div>Accuracy</div>
+        <div><div style="font-family:'GFS Didot',serif; font-size:1.5rem; color:var(--gold); letter-spacing:0; text-transform:none;">${state.quiz.bestStreak}</div>Best Streak</div>
+        <div><div style="font-family:'GFS Didot',serif; font-size:1.5rem; color:var(--sage); letter-spacing:0; text-transform:none;">${state.quiz.best}%</div>All-Time Best</div>
+      </div>
+      ${missedHTML}
+      <div style="margin-top:2rem; display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+        <button class="ctrl-btn primary" onclick="startQuiz()">Try Again</button>
+        ${retryMissedBtn}
+        <button class="ctrl-btn" onclick="clearQuiz()">Back to Settings</button>
+      </div>
+    </div>
+  `;
+}
+
+function retryMissedQuiz() {
+  const missed = [...state.quiz.missed];
+  if (missed.length < 2) {
+    // Need at least 4 options for MC; pad from active vocab
+    const active = getActiveVocab();
+    state.quiz.questions = shuffle(active).slice(0, Math.max(4, missed.length));
+    // Ensure missed are included
+    for (const m of missed) {
+      if (!state.quiz.questions.find(q => q.id === m.id)) {
+        state.quiz.questions.push(m);
+      }
+    }
+    state.quiz.questions = shuffle(state.quiz.questions);
+  } else {
+    state.quiz.questions = shuffle(missed);
+  }
+  state.quiz.current = 0;
+  state.quiz.correct = 0;
+  state.quiz.incorrect = 0;
+  state.quiz.streak = 0;
+  state.quiz.bestStreak = 0;
+  state.quiz.active = true;
+  state.quiz.missed = [];
+  renderQuizQuestion();
+}
+
+// ============================================================
+// MATCH
+// ============================================================
+function setupMatchControls() {
+  document.querySelectorAll('#matchSizeControl button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#matchSizeControl button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      state.match.size = parseInt(b.dataset.size);
+    });
+  });
+}
+
+function clearMatch() {
+  if (state.match.timer) { clearInterval(state.match.timer); state.match.timer = null; }
+  document.getElementById('matchTimerDisplay').style.display = 'none';
+  document.getElementById('matchMistakesDisplay').style.display = 'none';
+  document.getElementById('matchBestDisplay').style.display = 'none';
+  document.getElementById('matchStage').innerHTML =
+    '<div class="empty-state">Match Greek terms with their English meanings. Press <em>New Round</em> to begin.</div>';
+}
+
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+}
+
+function startMatch() {
+  const active = getActiveVocab();
+  if (active.length < state.match.size) {
+    document.getElementById('matchStage').innerHTML =
+      `<div class="empty-state">Need at least ${state.match.size} terms. Select more chapters.</div>`;
+    return;
+  }
+
+  state.match.pairs = shuffle(active).slice(0, state.match.size);
+  const greekTiles = state.match.pairs.map(p => ({ id: p.id, lang: 'greek', text: p.gr }));
+  const engTiles = state.match.pairs.map(p => ({ id: p.id, lang: 'english', text: p.en }));
+  state.match.tiles = shuffle([...greekTiles, ...engTiles]);
+  state.match.selected = null;
+  state.match.matched = new Set();
+  state.match.mistakes = 0;
+  state.match.startTime = Date.now();
+
+  if (state.match.timer) clearInterval(state.match.timer);
+  document.getElementById('matchTimerDisplay').style.display = 'flex';
+  document.getElementById('matchMistakesDisplay').style.display = 'flex';
+  document.getElementById('matchBestDisplay').style.display = 'flex';
+  document.getElementById('matchMistakes').textContent = '0';
+
+  const bestKey = state.match.size;
+  const best = state.match.bestTimes[bestKey];
+  document.getElementById('matchBest').textContent = best ? formatTime(best) : '--';
+
+  state.match.timer = setInterval(updateMatchTimer, 100);
+
+  renderMatch();
+}
+
+function updateMatchTimer() {
+  if (!state.match.startTime) return;
+  const elapsed = Math.floor((Date.now() - state.match.startTime) / 1000);
+  const mins = String(Math.floor(elapsed/60)).padStart(2,'0');
+  const secs = String(elapsed%60).padStart(2,'0');
+  document.getElementById('matchTimer').textContent = `${mins}:${secs}`;
+}
+
+function renderMatch() {
+  const stage = document.getElementById('matchStage');
+  stage.innerHTML = `
+    <div class="match-grid">
+      ${state.match.tiles.map((t, idx) => {
+        const matched = state.match.matched.has(t.id + '-' + t.lang);
+        const selected = state.match.selected && state.match.selected.idx === idx;
+        return `
+          <div class="match-tile ${t.lang} ${matched?'matched':''} ${selected?'selected':''}"
+               data-idx="${idx}" onclick="selectMatchTile(${idx})">
+            ${t.text}
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+function selectMatchTile(idx) {
+  const tile = state.match.tiles[idx];
+  const key = tile.id + '-' + tile.lang;
+  if (state.match.matched.has(key)) return;
+
+  if (!state.match.selected) {
+    state.match.selected = { idx, tile };
+    renderMatch();
+    return;
+  }
+
+  if (state.match.selected.idx === idx) {
+    state.match.selected = null;
+    renderMatch();
+    return;
+  }
+
+  const first = state.match.selected.tile;
+  const second = tile;
+
+  if (first.id === second.id && first.lang !== second.lang) {
+    // Match!
+    state.match.matched.add(first.id + '-' + first.lang);
+    state.match.matched.add(second.id + '-' + second.lang);
+    state.match.selected = null;
+    renderMatch();
+
+    if (state.match.matched.size >= state.match.size * 2) {
+      clearInterval(state.match.timer);
+      const elapsed = Math.floor((Date.now() - state.match.startTime)/1000);
+      setTimeout(() => showMatchResults(elapsed), 400);
+    }
+  } else {
+    // Wrong
+    state.match.mistakes++;
+    document.getElementById('matchMistakes').textContent = state.match.mistakes;
+    const firstIdx = state.match.selected.idx;
+    state.match.selected = null;
+    renderMatch();
+    const tiles = document.querySelectorAll('.match-tile');
+    tiles[firstIdx].classList.add('wrong');
+    tiles[idx].classList.add('wrong');
+    setTimeout(() => renderMatch(), 450);
+  }
+}
+
+function showMatchResults(seconds) {
+  const bestKey = state.match.size;
+  const prevBest = state.match.bestTimes[bestKey];
+  const isNewBest = !prevBest || seconds < prevBest;
+  if (isNewBest) state.match.bestTimes[bestKey] = seconds;
+  saveState();
+
+  const timeStr = formatTime(seconds);
+  const bestStr = formatTime(state.match.bestTimes[bestKey]);
+  const newBestHTML = isNewBest ? '<div style="font-family:\'JetBrains Mono\',monospace; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--sage); margin-top:0.5rem;">New Best Time</div>' : '';
+  const mistakeText = state.match.mistakes === 0 ? 'Flawless — no mistakes.' : `${state.match.mistakes} mistake${state.match.mistakes===1?'':'s'} along the way.`;
+
+  document.getElementById('matchStage').innerHTML = `
+    <div class="results-banner">
+      <h2>All Matched</h2>
+      <div class="epithet">Swift as Hermes. You paired ${state.match.size} terms in ${timeStr}. ${mistakeText}</div>
+      <div class="score">${timeStr}</div>
+      ${newBestHTML}
+      <div style="display:flex; gap:3rem; justify-content:center; margin-top:1.5rem; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--ink-soft);">
+        <div><div style="font-family:'GFS Didot',serif; font-size:1.5rem; color:var(--sage); letter-spacing:0; text-transform:none;">${bestStr}</div>Best (${bestKey} pairs)</div>
+        <div><div style="font-family:'GFS Didot',serif; font-size:1.5rem; color:${state.match.mistakes===0?'var(--sage)':'var(--accent)'}; letter-spacing:0; text-transform:none;">${state.match.mistakes}</div>Mistakes</div>
+      </div>
+      <div style="margin-top:1.5rem; display:flex; gap:0.75rem; justify-content:center;">
+        <button class="ctrl-btn primary" onclick="startMatch()">Play Again</button>
+        <button class="ctrl-btn" onclick="clearMatch()">Back</button>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// TYPE MODE
+// ============================================================
+function setupTypeControls() {
+  document.querySelectorAll('#typePromptControl button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#typePromptControl button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      state.type.prompt = b.dataset.prompt;
+    });
+  });
+  document.querySelectorAll('#typeAccentControl button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#typeAccentControl button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      state.type.accents = b.dataset.accent;
+    });
+  });
+}
+
+function clearType() {
+  state.type.active = false;
+  document.getElementById('typeStage').innerHTML =
+    '<div class="empty-state">Type the translation of each term. Press <em>Begin</em> to start.</div>';
+}
+
+function startType() {
+  const active = getActiveVocab();
+  if (active.length === 0) {
+    document.getElementById('typeStage').innerHTML =
+      '<div class="empty-state">Select at least one chapter.</div>';
+    return;
+  }
+  state.type.deck = shuffle(active);
+  state.type.current = 0;
+  state.type.correct = 0;
+  state.type.incorrect = 0;
+  state.type.active = true;
+  state.type.answered = false;
+  state.type.missed = [];
+  renderTypeQuestion();
+}
+
+function renderTypeQuestion() {
+  const q = state.type.deck[state.type.current];
+  let promptGreek;
+  if (state.type.prompt === 'greek') promptGreek = true;
+  else if (state.type.prompt === 'english') promptGreek = false;
+  else promptGreek = Math.random() < 0.5;
+
+  // Store the resolved direction for this question so submit can read it
+  state.type.currentPromptGreek = promptGreek;
+
+  const promptText = promptGreek ? q.gr : q.en;
+  const promptLang = promptGreek ? 'greek' : '';
+  const expectedLang = promptGreek ? 'English' : 'Greek';
+
+  state.type.answered = false;
+
+  document.getElementById('typeStage').innerHTML = `
+    <div class="panel">
+      <div class="progress-bar" style="margin-bottom:1.25rem"><div class="progress-fill" style="width:${(state.type.current/state.type.deck.length*100)}%"></div></div>
+      <div class="quiz-prompt">
+        <div class="quiz-prompt-label">Term ${state.type.current+1} of ${state.type.deck.length} · Chapter ${romanize(q.ch)}</div>
+        <div class="quiz-prompt-text ${promptLang}">${promptText}</div>
+      </div>
+      <div style="max-width:560px; margin:0 auto; padding:0 1rem;">
+        <label style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--ink-soft); display:block; margin-bottom:0.5rem;">Your answer in ${expectedLang}</label>
+        <input type="text" id="typeInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+               style="width:100%; padding:0.9rem 1rem; background:var(--parchment); border:1px solid var(--rule); font-family:${promptGreek?"'Cormorant Garamond',serif":"'GFS Didot',serif"}; font-size:1.3rem; color:var(--ink); border-radius:1px;"
+               onkeydown="if(event.key==='Enter') submitTypeAnswer()" />
+        <div class="quiz-feedback" id="typeFeedback" style="min-height:3rem;"></div>
+        <div style="display:flex; gap:0.75rem; justify-content:center; margin-top:0.5rem;">
+          <button class="ctrl-btn primary" id="typeSubmitBtn" onclick="submitTypeAnswer()">Submit</button>
+          <button class="ctrl-btn ghost" onclick="skipTypeAnswer()">Skip</button>
+        </div>
+      </div>
+      <div class="quiz-stats">
+        <div class="stat correct"><strong>${state.type.correct}</strong>Correct</div>
+        <div class="stat incorrect"><strong>${state.type.incorrect}</strong>Wrong</div>
+      </div>
+    </div>
+  `;
+  setTimeout(() => document.getElementById('typeInput')?.focus(), 50);
+}
+
+function submitTypeAnswer() {
+  if (state.type.answered) { advanceType(); return; }
+  const input = document.getElementById('typeInput');
+  const userAns = input.value.trim();
+  if (!userAns) return;
+
+  const q = state.type.deck[state.type.current];
+  const promptGreek = state.type.currentPromptGreek;
+  const correctAnswer = promptGreek ? q.en : q.gr;
+
+  let correct;
+  if (promptGreek) {
+    correct = englishMatches(userAns, q.en);
+  } else {
+    if (state.type.accents === 'strict') {
+      correct = userAns === q.gr;
+    } else {
+      correct = normalize(userAns) === normalize(q.gr);
+    }
+  }
+
+  state.type.answered = true;
+  input.disabled = true;
+  const feedback = document.getElementById('typeFeedback');
+  const btn = document.getElementById('typeSubmitBtn');
+
+  if (correct) {
+    state.type.correct++;
+    feedback.className = 'quiz-feedback correct';
+    feedback.textContent = '✓ Correct.';
+    input.style.borderColor = 'var(--correct)';
+    input.style.background = 'rgba(74, 107, 60, 0.08)';
+  } else {
+    state.type.incorrect++;
+    state.type.missed.push(q);
+    feedback.className = 'quiz-feedback incorrect';
+    feedback.innerHTML = `Correct answer: <em>${correctAnswer}</em>`;
+    input.style.borderColor = 'var(--incorrect)';
+    input.style.background = 'rgba(139, 44, 31, 0.08)';
+  }
+
+  btn.textContent = 'Continue →';
+}
+
+function skipTypeAnswer() {
+  if (state.type.answered) { advanceType(); return; }
+  state.type.incorrect++;
+  const q = state.type.deck[state.type.current];
+  const promptGreek = state.type.currentPromptGreek;
+  const correctAnswer = promptGreek ? q.en : q.gr;
+  state.type.answered = true;
+  state.type.missed.push(q);
+  document.getElementById('typeInput').disabled = true;
+  const feedback = document.getElementById('typeFeedback');
+  feedback.className = 'quiz-feedback incorrect';
+  feedback.innerHTML = `Correct answer: <em>${correctAnswer}</em>`;
+  document.getElementById('typeSubmitBtn').textContent = 'Continue →';
+}
+
+function advanceType() {
+  state.type.current++;
+  if (state.type.current >= state.type.deck.length) {
+    showTypeResults();
+  } else {
+    renderTypeQuestion();
+  }
+}
+
+function showTypeResults() {
+  const total = state.type.deck.length;
+  const pct = Math.round(state.type.correct / total * 100);
+
+  const isNewBest = state.type.best === null || pct > state.type.best;
+  if (isNewBest) state.type.best = pct;
+  saveState();
+
+  let missedHTML = '';
+  if (state.type.missed.length > 0) {
+    missedHTML = `
+      <div style="margin-top:2rem; border-top:1px solid var(--parchment-shadow); padding-top:1.5rem;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); margin-bottom:0.75rem;">Missed Terms</div>
+        <div style="display:grid; gap:0.4rem; max-width:500px; margin:0 auto; text-align:left;">
+          ${state.type.missed.map(v => `
+            <div style="display:flex; gap:1rem; padding:0.5rem 0.75rem; background:rgba(139,44,31,0.05); border-left:2px solid var(--accent); font-size:0.95rem;">
+              <span class="greek" style="color:var(--accent-deep); font-family:'GFS Didot',serif; min-width:40%;">${v.gr}</span>
+              <span style="color:var(--ink-soft);">${v.en}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  const retryMissedBtn = state.type.missed.length > 0
+    ? `<button class="ctrl-btn" onclick="retryMissedType()">Retry Missed (${state.type.missed.length})</button>`
+    : '';
+
+  document.getElementById('typeStage').innerHTML = `
+    <div class="results-banner">
+      <h2>Session Complete</h2>
+      <div class="epithet">You have reviewed every term in your selection.</div>
+      <div class="score">${state.type.correct}<small> / ${total}</small></div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--ink-soft); margin-top:0.5rem;">${pct}% Accuracy · All-Time Best: <span style="color:var(--sage)">${state.type.best}%</span></div>
+      ${missedHTML}
+      <div style="margin-top:2rem; display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+        <button class="ctrl-btn primary" onclick="startType()">Try Again</button>
+        ${retryMissedBtn}
+        <button class="ctrl-btn" onclick="clearType()">Back</button>
+      </div>
+    </div>
+  `;
+}
+
+function retryMissedType() {
+  const missed = [...state.type.missed];
+  state.type.deck = shuffle(missed);
+  state.type.current = 0;
+  state.type.correct = 0;
+  state.type.incorrect = 0;
+  state.type.active = true;
+  state.type.answered = false;
+  state.type.missed = [];
+  renderTypeQuestion();
+}
+
+// ============================================================
+// BROWSE
+// ============================================================
+const browseSort = { col: 'ch', dir: 'asc' };
+
+function toggleBrowseSort(col) {
+  if (browseSort.col === col) {
+    browseSort.dir = browseSort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    browseSort.col = col;
+    browseSort.dir = 'asc';
+  }
+  renderBrowse();
+}
+
+function getTermStatus(v) {
+  if (state.flash.known.has(v.id)) return 'known';
+  if (state.flash.review.has(v.id)) return 'review';
+  return 'unmarked';
+}
+
+function renderBrowse() {
+  const search = document.getElementById('browseSearch').value.toLowerCase().trim();
+  const active = getActiveVocab();
+  const filtered = active.filter(v => {
+    if (!search) return true;
+    return v.gr.toLowerCase().includes(search) ||
+           v.en.toLowerCase().includes(search) ||
+           normalize(v.gr).includes(normalize(search));
+  });
+
+  document.getElementById('browseCount').textContent =
+    `${filtered.length} of ${active.length} terms`;
+
+  const table = document.getElementById('browseTable');
+  if (filtered.length === 0) {
+    table.innerHTML = '<tr><td colspan="4"><div class="empty-state">No terms match your search.</div></td></tr>';
+    return;
+  }
+
+  const statusOrder = { known: 0, review: 1, unmarked: 2 };
+  const sorted = [...filtered].sort((a, b) => {
+    let cmp = 0;
+    if (browseSort.col === 'ch') cmp = a.ch - b.ch || a.gr.localeCompare(b.gr);
+    else if (browseSort.col === 'gr') cmp = a.gr.localeCompare(b.gr);
+    else if (browseSort.col === 'en') cmp = a.en.localeCompare(b.en);
+    else if (browseSort.col === 'status') {
+      const sa = statusOrder[getTermStatus(a)];
+      const sb = statusOrder[getTermStatus(b)];
+      cmp = sa - sb || a.gr.localeCompare(b.gr);
+    }
+    return browseSort.dir === 'desc' ? -cmp : cmp;
+  });
+
+  function sortArrow(col) {
+    const active = browseSort.col === col;
+    const arrow = active ? (browseSort.dir === 'asc' ? '▲' : '▼') : '▲';
+    return `<span class="sort-arrow">${arrow}</span>`;
+  }
+  function sortClass(col) {
+    return browseSort.col === col ? 'sortable sort-active' : 'sortable';
+  }
+
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th class="${sortClass('ch')}" onclick="toggleBrowseSort('ch')">Chapter ${sortArrow('ch')}</th>
+        <th class="${sortClass('gr')}" onclick="toggleBrowseSort('gr')">Greek ${sortArrow('gr')}</th>
+        <th class="${sortClass('en')}" onclick="toggleBrowseSort('en')">English ${sortArrow('en')}</th>
+        <th class="${sortClass('status')}" onclick="toggleBrowseSort('status')">Status ${sortArrow('status')}</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${sorted.map(v => {
+        const st = getTermStatus(v);
+        const dotTitle = st === 'known' ? 'Known' : st === 'review' ? 'Review' : 'Unmarked';
+        return `
+          <tr>
+            <td class="chap">Ch. ${romanize(v.ch)}</td>
+            <td class="greek">${v.gr}</td>
+            <td>${v.en}</td>
+            <td class="status-cell"><span class="status-dot ${st}" title="${dotTitle}"></span></td>
+          </tr>
+        `;
+      }).join('')}
+    </tbody>
+  `;
+}
+
+// ============================================================
+// PERSISTENCE (localStorage)
+// ============================================================
+const STORAGE_KEY = 'athenaze_v1';
+
+function saveState() {
+  try {
+    const data = {
+      flashKnown: [...state.flash.known],
+      flashReview: [...state.flash.review],
+      matchBestTimes: state.match.bestTimes,
+      selectedChapters: [...state.selectedChapters],
+      quizBest: state.quiz.best || null,
+      typeBest: state.type.best || null,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    // Storage full or unavailable — fail silently
+  }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+
+    if (data.flashKnown) state.flash.known = new Set(data.flashKnown);
+    if (data.flashReview) state.flash.review = new Set(data.flashReview);
+    if (data.matchBestTimes) state.match.bestTimes = data.matchBestTimes;
+    if (data.selectedChapters) {
+      state.selectedChapters = new Set(data.selectedChapters);
+    }
+    if (data.quizBest != null) state.quiz.best = data.quizBest;
+    if (data.typeBest != null) state.type.best = data.typeBest;
+
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function confirmClearAllData() {
+  const btn = document.getElementById('clearDataBtn');
+  if (btn.dataset.confirming === 'true') {
+    // Second click — actually clear
+    localStorage.removeItem(STORAGE_KEY);
+    btn.dataset.confirming = 'false';
+    btn.textContent = 'Clear All Saved Data';
+    btn.style.opacity = '0.7';
+    // Reset state
+    state.flash.known = new Set();
+    state.flash.review = new Set();
+    state.match.bestTimes = {};
+    state.quiz.best = null;
+    state.type.best = null;
+    state.selectedChapters = new Set([1,2,3,4,5,6,7,8,9,10]);
+    renderChapterGrid();
+    resumeFlashcards();
+    // Brief confirmation
+    btn.textContent = 'Cleared';
+    setTimeout(() => { btn.textContent = 'Clear All Saved Data'; }, 1500);
+  } else {
+    // First click — ask for confirmation
+    btn.dataset.confirming = 'true';
+    btn.textContent = 'Are you sure? Click again to confirm.';
+    btn.style.opacity = '1';
+    // Auto-cancel after 4 seconds
+    setTimeout(() => {
+      if (btn.dataset.confirming === 'true') {
+        btn.dataset.confirming = 'false';
+        btn.textContent = 'Clear All Saved Data';
+        btn.style.opacity = '0.7';
+      }
+    }, 4000);
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+loadState();
+renderChapterGrid();
+setupFlashControls();
+setupQuizControls();
+setupMatchControls();
+setupTypeControls();
+resumeFlashcards();
+</script>
+</body>
+</html>

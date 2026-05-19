@@ -1,0 +1,488 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Language Learning Apps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --parchment: #f4ecd8;
+    --parchment-deep: #e8dcc0;
+    --gold: #b08d3c;
+    --gold-bright: #d4af5a;
+    --crimson: #6b1e1e;
+    --shadow: rgba(26, 20, 16, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    background:
+      radial-gradient(ellipse at top, #1f1812 0%, #14100b 50%, #0a0806 100%);
+    color: var(--parchment);
+    min-height: 100vh;
+    line-height: 1.6;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Subtle paper-grain noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.7  0 0 0 0 0.55  0 0 0 0 0.25  0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, #14100b 0%, #1a1410 100%);
+    border-bottom: 1px solid var(--gold);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  .topbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+  }
+
+  .brand {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    font-size: 1.05rem;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .brand span { color: var(--parchment); }
+
+  nav.primary {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .nav-item {
+    position: relative;
+  }
+
+  .nav-trigger {
+    background: none;
+    border: none;
+    color: var(--parchment);
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .nav-trigger::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform 0.2s ease;
+  }
+
+  .nav-trigger:hover,
+  .nav-item:focus-within .nav-trigger,
+  .nav-item.open .nav-trigger {
+    color: var(--gold-bright);
+  }
+
+  .nav-item.open .nav-trigger::after {
+    transform: rotate(225deg) translate(-2px, -2px);
+  }
+
+  .dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    min-width: 240px;
+    background: #1a1410;
+    border: 1px solid var(--gold);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    padding: 0.5rem 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    z-index: 200;
+  }
+
+  .nav-item.open .dropdown,
+  .nav-item:hover .dropdown,
+  .nav-item:focus-within .dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .dropdown a {
+    display: block;
+    padding: 0.65rem 1.25rem;
+    color: var(--parchment);
+    text-decoration: none;
+    font-family: 'EB Garamond', serif;
+    font-size: 1.02rem;
+    letter-spacing: 0.02em;
+    border-left: 2px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .dropdown a:hover,
+  .dropdown a:focus {
+    background: rgba(176, 141, 60, 0.08);
+    border-left-color: var(--gold-bright);
+    color: var(--gold-bright);
+    outline: none;
+  }
+
+  .dropdown .dropdown-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 0.5rem 1.25rem 0.4rem;
+    border-bottom: 1px solid rgba(176, 141, 60, 0.25);
+    margin-bottom: 0.35rem;
+  }
+
+  /* ============ HERO ============ */
+  main {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 2rem 4rem;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+
+  .eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: var(--parchment);
+  }
+
+  h1 em {
+    color: var(--gold-bright);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .lede {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    max-width: 620px;
+    margin: 0 auto;
+    color: rgba(244, 236, 216, 0.75);
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2rem auto 0;
+    color: var(--gold);
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    height: 1px;
+    width: 80px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  /* ============ LANGUAGE GRID ============ */
+  .languages {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .lang-card {
+    background: rgba(244, 236, 216, 0.03);
+    border: 1px solid rgba(176, 141, 60, 0.3);
+    padding: 2rem 1.75rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    display: block;
+    position: relative;
+  }
+
+  .lang-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold-bright);
+    background: rgba(244, 236, 216, 0.05);
+  }
+
+  .lang-card .glyph {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--gold-bright);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .lang-card h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    color: var(--parchment);
+  }
+
+  .lang-card p {
+    font-size: 0.98rem;
+    color: rgba(244, 236, 216, 0.65);
+    font-style: italic;
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 3rem 2rem;
+    color: rgba(244, 236, 216, 0.5);
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(176, 141, 60, 0.2);
+    margin-top: 4rem;
+  }
+
+  footer .ornament {
+    color: var(--gold);
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* ============ MOBILE ============ */
+  @media (max-width: 768px) {
+    .topbar-inner {
+      height: auto;
+      padding: 1rem;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    nav.primary {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .nav-trigger {
+      padding: 0.5rem 0.7rem;
+      font-size: 0.72rem;
+    }
+
+    .dropdown {
+      min-width: 200px;
+    }
+
+    main { padding: 3rem 1.25rem 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="#" class="brand">Lingua <span>Antiqua</span></a>
+    <nav class="primary" aria-label="Language apps">
+
+      <div class="nav-item">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">Greek</button>
+        <div class="dropdown" role="menu">
+          <div class="dropdown-label">Koine &amp; Classical</div>
+          <!-- TODO: replace href values with your app paths, e.g. /greek/alphabet.html -->
+          <a href="GreekArticles.html" role="menuitem">Articles</a>
+          <a href="GreekVocab.html" role="menuitem">Vocabulary</a>
+
+        </div>
+      </div>
+<!-- 
+      <div class="nav-item">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">Latin</button>
+        <div class="dropdown" role="menu">
+          <div class="dropdown-label">Classical Latin</div>
+          <a href="#" role="menuitem">Declension Practice</a>
+          <a href="#" role="menuitem">Vocabulary Flashcards</a>
+          <a href="#" role="menuitem">Verb Conjugator</a>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">Hebrew</button>
+        <div class="dropdown" role="menu">
+          <div class="dropdown-label">Biblical Hebrew</div>
+          <a href="#" role="menuitem">Alphabet Trainer</a>
+          <a href="#" role="menuitem">Vocabulary Flashcards</a>
+          <a href="#" role="menuitem">Binyanim Reference</a>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">Anglo-Saxon</button>
+        <div class="dropdown" role="menu">
+          <div class="dropdown-label">Old English</div>
+          <a href="#" role="menuitem">Runic Alphabet</a>
+          <a href="#" role="menuitem">Vocabulary Flashcards</a>
+          <a href="#" role="menuitem">Reading Practice</a>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">Egyptian</button>
+        <div class="dropdown" role="menu">
+          <div class="dropdown-label">Middle Egyptian</div>
+          <a href="#" role="menuitem">Hieroglyph Trainer</a>
+          <a href="#" role="menuitem">Vocabulary Flashcards</a>
+          <a href="#" role="menuitem">Determinatives Guide</a>
+        </div>
+      </div>
+-->
+    </nav>
+  </div>
+</header>
+
+<!-- ============ MAIN ============ -->
+<main>
+  <section class="hero">
+    <div class="eyebrow">A Collection of Tools</div>
+    <h1>Languages of the <em>Ancient World</em></h1>
+    <p class="lede">A small library of applications for the study of classical, biblical, and medieval tongues, gathered into one quiet place.</p>
+    <div class="divider">&#10086;</div>
+  </section>
+
+  <section class="languages" aria-label="Featured languages">
+    <a href="GreekVocab.html" class="lang-card">
+      <span class="glyph">&#x0391;&#x03A9;</span>
+      <h2>Greek</h2>
+      <p>From Homer's hexameter to Koine prose.</p>
+    </a>
+
+    <!--
+    <a href="#" class="lang-card">
+      <span class="glyph">SPQR</span>
+      <h2>Latin</h2>
+      <p>The enduring voice of Rome and the West.</p>
+    </a>
+    <a href="#" class="lang-card">
+      <span class="glyph">&#x05D0;&#x05D1;</span>
+      <h2>Hebrew</h2>
+      <p>Scripture in its original consonants.</p>
+    </a>
+    <a href="#" class="lang-card">
+      <span class="glyph">&#x00C6;</span>
+      <h2>Anglo-Saxon</h2>
+      <p>The mother tongue, before the Conquest.</p>
+    </a>
+    <a href="#" class="lang-card">
+      <span class="glyph">&#x13153;&#x13171;</span>
+      <h2>Egyptian</h2>
+      <p>Hieroglyphs of the Middle Kingdom.</p>
+    </a>
+    -->
+  </section>
+</main>
+
+<footer>
+  <div class="ornament">&#10086;</div>
+  <div>Crafted with care &middot; All applications are free to use</div>
+</footer>
+
+<script>
+  // Click-to-toggle dropdowns (in addition to hover/focus)
+  // Useful for touch devices and keyboard users
+  const items = document.querySelectorAll('.nav-item');
+
+  items.forEach(item => {
+    const trigger = item.querySelector('.nav-trigger');
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wasOpen = item.classList.contains('open');
+      items.forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.nav-trigger').setAttribute('aria-expanded', 'false');
+      });
+      if (!wasOpen) {
+        item.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  // Close on outside click
+  document.addEventListener('click', () => {
+    items.forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.nav-trigger').setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      items.forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.nav-trigger').setAttribute('aria-expanded', 'false');
+        i.querySelector('.nav-trigger').focus();
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
