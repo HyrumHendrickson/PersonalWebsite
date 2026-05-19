@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Greek &middot; Lingua Antiqua</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --parchment: #f4ecd8;
+    --parchment-deep: #e8dcc0;
+    --gold: #b08d3c;
+    --gold-bright: #d4af5a;
+    --crimson: #6b1e1e;
+    --shadow: rgba(26, 20, 16, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    background:
+      radial-gradient(ellipse at top, #1f1812 0%, #14100b 50%, #0a0806 100%);
+    color: var(--parchment);
+    min-height: 100vh;
+    line-height: 1.6;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.7  0 0 0 0 0.55  0 0 0 0 0.25  0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ============ TOP BAR ============ */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, #14100b 0%, #1a1410 100%);
+    border-bottom: 1px solid var(--gold);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  .topbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+  }
+
+  .brand {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    font-size: 1.05rem;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .brand span { color: var(--parchment); }
+
+  nav.primary {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .nav-item {
+    position: relative;
+  }
+
+  .nav-trigger {
+    background: none;
+    border: none;
+    color: var(--parchment);
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .nav-trigger.active {
+    color: var(--gold-bright);
+  }
+
+  .nav-trigger::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform 0.2s ease;
+  }
+
+  .nav-trigger:hover,
+  .nav-item:focus-within .nav-trigger,
+  .nav-item.open .nav-trigger {
+    color: var(--gold-bright);
+  }
+
+  .nav-item.open .nav-trigger::after {
+    transform: rotate(225deg) translate(-2px, -2px);
+  }
+
+  .dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    min-width: 240px;
+    background: #1a1410;
+    border: 1px solid var(--gold);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    padding: 0.5rem 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    z-index: 200;
+  }
+
+  .nav-item.open .dropdown,
+  .nav-item:hover .dropdown,
+  .nav-item:focus-within .dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .dropdown a {
+    display: block;
+    padding: 0.65rem 1.25rem;
+    color: var(--parchment);
+    text-decoration: none;
+    font-family: 'EB Garamond', serif;
+    font-size: 1.02rem;
+    letter-spacing: 0.02em;
+    border-left: 2px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .dropdown a:hover,
+  .dropdown a:focus {
+    background: rgba(176, 141, 60, 0.08);
+    border-left-color: var(--gold-bright);
+    color: var(--gold-bright);
+    outline: none;
+  }
+
+  .dropdown .dropdown-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 0.5rem 1.25rem 0.4rem;
+    border-bottom: 1px solid rgba(176, 141, 60, 0.25);
+    margin-bottom: 0.35rem;
+  }
+
+  /* ============ BREADCRUMB ============ */
+  .breadcrumb {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem 0;
+    font-family: 'EB Garamond', serif;
+    font-size: 0.95rem;
+    color: rgba(244, 236, 216, 0.5);
+    font-style: italic;
+  }
+
+  .breadcrumb a {
+    color: var(--gold);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .breadcrumb a:hover { color: var(--gold-bright); }
+
+  .breadcrumb .sep {
+    margin: 0 0.5rem;
+    color: rgba(176, 141, 60, 0.5);
+  }
+
+  /* ============ HERO ============ */
+  main {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 4rem;
+    position: relative;
+  }
+
+  .hero-glyph {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(5rem, 12vw, 9rem);
+    line-height: 1;
+    color: var(--gold-bright);
+    opacity: 0.85;
+    margin-bottom: 1rem;
+    font-style: italic;
+    text-shadow: 0 4px 20px rgba(212, 175, 90, 0.15);
+  }
+
+  .eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+    color: var(--parchment);
+  }
+
+  h1 em {
+    color: var(--gold-bright);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .lede {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    max-width: 680px;
+    margin: 0 auto;
+    color: rgba(244, 236, 216, 0.75);
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2rem auto 0;
+    color: var(--gold);
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    height: 1px;
+    width: 80px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  /* ============ SECTION HEADING ============ */
+  .section-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+
+  .section-heading::before,
+  .section-heading::after {
+    content: '';
+    display: inline-block;
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    vertical-align: middle;
+    margin: 0 1rem;
+  }
+
+  /* ============ APP GRID ============ */
+  .apps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+
+  .app-card {
+    background: rgba(244, 236, 216, 0.03);
+    border: 1px solid rgba(176, 141, 60, 0.3);
+    padding: 2rem 1.75rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .app-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .app-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold-bright);
+    background: rgba(244, 236, 216, 0.05);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .app-card:hover::before { opacity: 1; }
+
+  .app-card .app-glyph {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--gold-bright);
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+
+  .app-card .category {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .app-card h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    color: var(--parchment);
+    line-height: 1.2;
+  }
+
+  .app-card p {
+    font-size: 1rem;
+    color: rgba(244, 236, 216, 0.65);
+    font-style: italic;
+    flex-grow: 1;
+    margin-bottom: 1.25rem;
+  }
+
+  .app-card .cta {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: gap 0.2s ease;
+  }
+
+  .app-card:hover .cta { gap: 0.85rem; }
+
+  .app-card .cta::after {
+    content: '\2192';
+    font-family: 'EB Garamond', serif;
+    font-size: 1.1rem;
+  }
+
+  /* ============ QUOTE ============ */
+  .quote {
+    text-align: center;
+    max-width: 720px;
+    margin: 5rem auto 2rem;
+    padding: 2rem;
+    border-top: 1px solid rgba(176, 141, 60, 0.25);
+    border-bottom: 1px solid rgba(176, 141, 60, 0.25);
+  }
+
+  .quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--parchment);
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+
+  .quote-greek {
+    font-family: 'EB Garamond', serif;
+    font-size: 1.15rem;
+    color: var(--gold-bright);
+    margin-bottom: 0.75rem;
+  }
+
+  .quote-attr {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 3rem 2rem;
+    color: rgba(244, 236, 216, 0.5);
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(176, 141, 60, 0.2);
+    margin-top: 4rem;
+  }
+
+  footer .ornament {
+    color: var(--gold);
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  footer a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+
+  footer a:hover { color: var(--gold-bright); }
+
+  /* ============ MOBILE ============ */
+  @media (max-width: 768px) {
+    .topbar-inner {
+      height: auto;
+      padding: 1rem;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    nav.primary {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .nav-trigger {
+      padding: 0.5rem 0.7rem;
+      font-size: 0.72rem;
+    }
+
+    .dropdown {
+      min-width: 200px;
+    }
+
+    main { padding: 2rem 1.25rem; }
+    .breadcrumb { padding: 1rem 1.25rem 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="brand">Lingua <span>Antiqua</span></a>
+    <nav class="primary" aria-label="Language apps">
+
+      <div class="nav-item">
+        <button class="nav-trigger active" aria-haspopup="true" aria-expanded="false">Greek</button>
+        <div class="dropdown" role="menu">
+          <div class="dropdown-label">Koine &amp; Classical</div>
+          <!-- TODO: replace href values with your app paths -->
+          <a href="#" role="menuitem">Alphabet Trainer</a>
+          <a href="#" role="menuitem">Vocabulary Flashcards</a>
+          <a href="#" role="menuitem">Verb Conjugator</a>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">Latin</button>
+        <div class="dropdown" role="menu">
+          <div class="dropdown-label">Classical Latin</div>
+          <a href="#" role="menuitem">Declension Practice</a>
+          <a href="#" role="menuitem">Vocabulary Flashcards</a>
+          <a href="#" role="menuitem">Verb Conjugator</a>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">Hebrew</button>
+        <div class="dropdown" role="menu">
+          <div class="dropdown-label">Biblical Hebrew</div>
+          <a href="#" role="menuitem">Alphabet Trainer</a>
+          <a href="#" role="menuitem">Vocabulary Flashcards</a>
+          <a href="#" role="menuitem">Binyanim Reference</a>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">Anglo-Saxon</button>
+        <div class="dropdown" role="menu">
+          <div class="dropdown-label">Old English</div>
+          <a href="#" role="menuitem">Runic Alphabet</a>
+          <a href="#" role="menuitem">Vocabulary Flashcards</a>
+          <a href="#" role="menuitem">Reading Practice</a>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">Egyptian</button>
+        <div class="dropdown" role="menu">
+          <div class="dropdown-label">Middle Egyptian</div>
+          <a href="#" role="menuitem">Hieroglyph Trainer</a>
+          <a href="#" role="menuitem">Vocabulary Flashcards</a>
+          <a href="#" role="menuitem">Determinatives Guide</a>
+        </div>
+      </div>
+
+    </nav>
+  </div>
+</header>
+
+<!-- ============ BREADCRUMB ============ -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="../index.html">Home</a>
+  <span class="sep">&middot;</span>
+  <span>Greek</span>
+</nav>
+
+<!-- ============ MAIN ============ -->
+<main>
+  <section class="hero">
+    <div class="hero-glyph">&#x1F0A;&#x03C9;</div>
+    <div class="eyebrow">Koine &amp; Classical</div>
+    <h1>The <em>Greek</em> Tongue</h1>
+    <p class="lede">From the hexameters of Homer to the gospels of the Evangelists. A small set of tools for learning the alphabet, the vocabulary, and the verbs that shaped Western thought.</p>
+    <div class="divider">&#10086;</div>
+  </section>
+
+  <h2 class="section-heading">Applications</h2>
+
+  <section class="apps" aria-label="Greek language applications">
+
+    <!-- TODO: Replace each href with the actual path to your app -->
+    <a href="GreekArticles.html" class="app-card">
+      <span class="app-glyph">&#x0391;&#x03B1;</span>
+      <span class="category">Foundations</span>
+      <h2>Greek Articles</h2>
+      <p>Learn cool stuff</p>
+      <span class="cta">Begin</span>
+    </a>
+
+    <a href="GreekVocab.html" class="app-card">
+      <span class="app-glyph">&#x03BB;&#x03CC;&#x03B3;&#x03BF;&#x03C2;</span>
+      <span class="category">Vocabulary</span>
+      <h2>All Vocab Words</h2>
+      <p>Learn Words</p>
+      <span class="cta">Practice</span>
+    </a>
+
+
+  </section>
+
+  <!-- ============ QUOTE ============ -->
+  <blockquote class="quote">
+    <p class="quote-greek">&#x1F18;&#x03BD; &#x1F00;&#x03C1;&#x03C7;&#x1FC7; &#x1F26;&#x03BD; &#x1F41; &#x03BB;&#x03CC;&#x03B3;&#x03BF;&#x03C2;.</p>
+    <p class="quote-text">"In the beginning was the Word."</p>
+    <p class="quote-attr">John 1:1</p>
+  </blockquote>
+
+</main>
+
+<footer>
+  <div class="ornament">&#10086;</div>
+  <div><a href="../index.html">Return Home</a> &middot; All applications are free to use</div>
+</footer>
+
+<script>
+  const items = document.querySelectorAll('.nav-item');
+
+  items.forEach(item => {
+    const trigger = item.querySelector('.nav-trigger');
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wasOpen = item.classList.contains('open');
+      items.forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.nav-trigger').setAttribute('aria-expanded', 'false');
+      });
+      if (!wasOpen) {
+        item.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  document.addEventListener('click', () => {
+    items.forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.nav-trigger').setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      items.forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.nav-trigger').setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
