@@ -1,312 +1,540 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hyrum Hendrickson - Portfolio</title>
-    <link rel="stylesheet" href="index.css">
-    <link rel="icon" href="logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "url": "https://hyrumhendrickson.com",
-      "logo": "https://hyrumhendrickson.com/logo.png"
-    }
-    </script>
-    
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hyrum Hendrickson</title>
+<style>
+  :root{
+    --parchment:#F2EDE1;
+    --parchment-deep:#E7E0CE;
+    --ink:#1C2119;
+    --ink-soft:#4A5145;
+    --green:#1E3A2B;
+    --green-mid:#3E6B4F;
+    --rule:#C8BFA7;
+    --measure:68ch;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--parchment);
+    color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    font-size:17px;
+    line-height:1.6;
+  }
+  .label{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:.68rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--green-mid);
+  }
+  a{color:var(--green);text-underline-offset:3px;}
+  a:hover{color:var(--green-mid);}
+  :focus-visible{outline:2px solid var(--green-mid);outline-offset:3px;}
+
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
+
+  /* Header */
+  header{border-bottom:1px solid var(--rule);background:var(--parchment);}
+  .masthead{display:flex;align-items:center;gap:20px;padding:36px 0 24px;}
+  .masthead img{width:68px;height:68px;object-fit:contain;flex:0 0 auto;}
+  h1{
+    margin:0;
+    font-size:clamp(1.7rem,4vw,2.3rem);
+    font-weight:600;
+    letter-spacing:.01em;
+    line-height:1.15;
+  }
+  .subtitle{margin:6px 0 0;color:var(--ink-soft);font-size:.95rem;}
+
+  /* Tabs */
+  nav[role="tablist"]{display:flex;flex-wrap:wrap;gap:2px;}
+  nav button{
+    appearance:none;
+    background:transparent;
+    border:0;
+    border-bottom:2px solid transparent;
+    padding:10px 16px;
+    margin-bottom:-1px;
+    cursor:pointer;
+    color:var(--ink-soft);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+  nav button:hover{color:var(--green);}
+  nav button[aria-selected="true"]{color:var(--green);border-bottom-color:var(--green);}
+
+  /* Panels */
+  main{padding:44px 0 72px;}
+  [role="tabpanel"][hidden]{display:none;}
+  [role="tabpanel"]{animation:fade .18s ease-out;}
+  @keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:none;}}
+  @media (prefers-reduced-motion:reduce){[role="tabpanel"]{animation:none;}}
+
+  h2{
+    margin:0 0 18px;
+    font-size:1.25rem;
+    font-weight:600;
+    color:var(--green);
+  }
+  .section + .section{margin-top:44px;}
+  p{max-width:var(--measure);}
+
+  /* Entry list with marginal notes */
+  .entry{
+    display:grid;
+    grid-template-columns:110px 1fr;
+    gap:0 24px;
+    padding:20px 0;
+    border-top:1px solid var(--rule);
+  }
+  .entry:last-child{border-bottom:1px solid var(--rule);}
+  .entry .margin{padding-top:5px;}
+  .entry h3{margin:0;font-size:1.05rem;font-weight:600;line-height:1.35;}
+  .entry p{margin:6px 0 0;color:var(--ink-soft);max-width:var(--measure);}
+  .entry .venue{margin:4px 0 0;font-size:.9rem;color:var(--ink-soft);font-style:italic;}
+  .entry .go{
+    display:inline-block;
+    margin-top:10px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:.7rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    text-decoration:none;
+    border-bottom:1px solid var(--rule);
+    padding-bottom:2px;
+  }
+  .entry .go:hover{border-bottom-color:var(--green-mid);}
+
+  /* Resume blocks */
+  .role{margin:0;font-size:1.05rem;font-weight:600;}
+  .org{margin:2px 0 0;color:var(--ink-soft);font-size:.95rem;}
+  ul.plain{margin:8px 0 0;padding-left:20px;max-width:var(--measure);color:var(--ink-soft);}
+  ul.plain li{margin:3px 0;}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0;padding:0;list-style:none;}
+  .tags li{
+    border:1px solid var(--rule);
+    background:var(--parchment-deep);
+    padding:4px 10px;
+    font-size:.85rem;
+    color:var(--ink-soft);
+  }
+
+  /* Home */
+  .lede{font-size:1.12rem;line-height:1.65;}
+  .home-lead{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:0 44px;align-items:start;}
+  .home-text > p:first-child{margin-top:0;}
+  .portrait{margin:0;}
+  .portrait img{
+    display:block;
+    width:100%;
+    height:auto;
+    background:var(--parchment-deep);
+    border:1px solid var(--rule);
+    padding:6px;
+  }
+  .portrait figcaption{margin-top:8px;}
+  .facts{margin:28px 0 0;padding:0;list-style:none;max-width:var(--measure);}
+  .facts li{display:grid;grid-template-columns:110px 1fr;gap:24px;padding:10px 0;border-top:1px solid var(--rule);}
+  .facts li:last-child{border-bottom:1px solid var(--rule);}
+
+  footer{border-top:1px solid var(--rule);padding:24px 0 40px;color:var(--ink-soft);font-size:.9rem;}
+  .colophon{margin:0;}
+
+  /* Contact */
+  .facts a{text-decoration:none;border-bottom:1px solid var(--rule);}
+  .facts a:hover{border-bottom-color:var(--green-mid);}
+
+  @media (max-width:620px){
+    .entry,.facts li{grid-template-columns:1fr;gap:4px;}
+    .entry .margin{padding-top:0;}
+    .masthead{gap:14px;padding:26px 0 18px;}
+    .masthead img{width:52px;height:52px;}
+    .home-lead{grid-template-columns:1fr;gap:0;}
+    .portrait{order:-1;max-width:190px;margin:0 0 24px;}
+  }
+</style>
 </head>
 <body>
-    <nav class="navigation">
-        <div class="nav-content">
-            <div class="logo">
-                <a href="/">
-                    <img src="logo.png" alt="Hyrum Hendrickson Logo">
-                </a>
-            </div>
-            <div class="nav-links">
-                <a href="/" class="nav-link active">Home</a>
-                <a href="projects" class="nav-link">Projects</a>
-                <a href="papers" class="nav-link">Papers</a>
-            </div>
-            <div class="nav-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
 
-    <main class="main-content">
-        <section class="hero-section">
-            <div class="hero-background">
-                <div class="floating-elements"></div>
-            </div>
-            <div class="hero-content">
-                <div class="hero-text">
-                    <div class="greeting">
-                        <span class="greeting-text"></span>
-                    </div>
-                    <h1 class="hero-title">
-                        <span class="title-main">Hyrum Hendrickson</span>
-                        <span class="title-subtitle">Data Scientist</span>
-                    </h1>
-                    <div class="hero-description">
-                        <p class="description-main">
-                            I'm studying Mathematics and Statistics at Brigham Young University - Idaho. I'm currently employed in Information Technology by the university. Additionally, I work as a freelance Data Scientist.
-                        </p>
-                       
-                    </div>
-                    <div class="hero-actions">
-                        <button class="btn btn-primary">
-                            <span>Project Repo</span>
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                        </button>
-                        <button class="btn btn-secondary">
-                            <span>LinkedIn Profile</span>
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
-                                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="hero-visual">
-                    <div class="visual-container">
-                        <img src="hyrum.jpg" alt="Hyrum Hendrickson" class="profile-image">
-                        
-                    </div>
-                </div>
-            </div>
+<header>
+  <div class="wrap">
+    <div class="masthead">
+      <img src="logo.png" alt="">
+      <div>
+        <h1 id="site-name"></h1>
+        <p class="subtitle" id="site-subtitle"></p>
+      </div>
+    </div>
+    <nav role="tablist" aria-label="Sections" id="tabs"></nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap" id="panels"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="colophon" id="colophon"></p>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   SITE DATA — edit this object only. Everything below renders it.
+   To add an item, copy an existing entry in the relevant array.
+   Any field left as "" is simply not rendered.
+   ============================================================ */
+const SITE = {
+
+  name: "Hyrum Hendrickson",
+  subtitle: "Mathematics, Brigham Young University\u2013Idaho \u00B7 Ancient Languages Cluster",
+
+  /* Shown above the list on the Contact page. Set to "" to omit. */
+  contactIntro: "The fastest way to reach me is email. I read everything and answer most messages within a few days.",
+
+  contact: [
+    { label: "Email",    url: "mailto:hendrickson.hyrum@gmail.com",         text: "hendrickson.hyrum@gmail.com" },
+    { label: "GitHub",   url: "https://github.com/HyrumHendrickson",    text: "github.com/HyrumHendrickson" },
+    { label: "LinkedIn", url: "https://linkedin.com/in/Hyrum-Hendrickson-3ab56532b", text: "linkedin.com/in/Hyrum-Hendrickson-3ab56532b" }
+  ],
+
+  home: {
+    /* Portrait on the home page. Set src to "" to hide it. */
+    portrait: {
+      src: "hyrum.jpg",
+      alt: "Portrait of Hyrum Hendrickson",
+      caption: ""
+    },
+    paragraphs: [
+      "I study mathematics at Brigham Young University\u2013Idaho, with a cluster in ancient languages. I currently work as an applications engineer for the IT Department at BYUI, where I manager several hundred computers .",
+      "Most of my work is in Applied Mathematics, statistics, data analysis, and software engineering. During down time I enjoy writing about ancient culture and history, most recently I've done some critical textual analysis for the BYU New Testemant Commentary.",
+      "On weekends my wife and I often go camping. We also enjoy hiking, fishing, gardening, and playing chess. Thanks for checking out my website, if you have any questions, please reach out!"
+    ]
+  },
+
+  education: [
+    {
+      role: "B.S. Mathematics",
+      org: "Brigham Young University\u2013Idaho",
+      dates: "Expected Graduation Spring 2027",
+      points: [
+        "Cluster in ancient languages: Greek, Hebrew, Latin.",
+        "4.0 GPA."
+      ]
+    }
+  ],
+
+  experience: [
+    {
+      role: "Applications Engineer",
+      org: "BYUI IT Department",
+      dates: "2026\u2013Current",
+      points: [
+        "We manage several hundred campus computers.",
+        "We Write PowerShell and Zsh scripts for deployment, configuration, and maintenance."
+      ]
+    },
+    {
+      role: "Teaching Assistant",
+      org: "BYU\u2013Idaho Humanities Department",
+      dates: "2026",
+      points: ["Taught classes, graded papers, tutored students."]
+    },
+     {
+      role: "Analyst",
+      org: "BYUI IT Department",
+      dates: "2025\u20132026",
+      points: ["Worked in call center fixing technology for students, emplyoees, and alumni."]
+    },
+    {
+      role: "Library Aide, Special Collections",
+      org: "David O. McKay Library, BYU\u2013Idaho",
+      dates: "2024\u20132025",
+      points: ["Worked on database system, website, and data integrity."]
+    }
+  ],
+
+  leadership: [
+    {
+      role: "President",
+      org: "BYU\u2013Idaho Philosophical Society",
+      dates: "",
+      points: ["Led discussions, planned meetings, manageed budget"]
+    },
+    {
+      role: "Vice President",
+      org: "BYU\u2013Idaho Computing Society",
+      dates: "",
+      points: ["Taught workshop classes on Python."]
+    },
+    {
+      role: "Project Manager",
+      org: "BYU\u2013Idaho Data Science Society",
+      dates: "",
+      points: [
+        "Led a research project for WECC on predicting extreme weather."
+      ]
+    }
+  ],
+
+  competitions: [
+    {
+      role: "The Mathematical Contest in Modeling",
+      org: "Succseful Submission in 2025",
+      dates: "",
+      points: []
+    },
+    {
+      role: "BYUI Hackathons",
+      org: "2024 & 2025",
+      dates: "",
+      points: []
+    }
+  ],
+
+  certifications: [
+    {
+      role: "Technician Class Radio License",
+      org: "Issued by the Federal Communications Commission",
+      dates: "",
+      points: []
+    }
+  ],
+
+  skills: [
+    {
+      heading: "Programming languages",
+      items: ["Python", "R","SQL","C","C++","C#","Java","JavaScript","HTML","CSS"]
+    },
+    {
+      heading: "Areas",
+      items: ["Data Science","Statistics","Applied Mathematics","Software Engineering","Computer Engineering","Modern Matheamtics and Proofs", "Formal Logic"]
+    },
+    {
+      heading: "Systems",
+      items: ["OS Deployment", "Linux Kernel","Virtual machine administration","PowerShell","Zsh","Bash"]
+    },
+    {
+      heading: "Ancient languages and History",
+      items: [ "Historiography", "Critical Textual Analysis", "Stylometry", "Patristics", "Greek Religion and Philosophy"]
+    }
+  ],
+
+  publications: [
+    /*
+    {
+      title: "Research Assistant",
+      note: "20XX",
+      venue: "BYU New Testament Commentary",
+      description: "Research assistant on the commentary series. Credited for the writing on the synoptic problem in the Matthew volume.",
+      link: "",
+      linkText: "View publication"
+    },
+    {
+      title: "Stylometry of the Book of Mormon",
+      note: "20XX",
+      venue: "The Interpreter Foundation",
+      description: "A stylometric study of the Book of Mormon text.",
+      link: "",
+      linkText: "View publication"
+    },
+    */
+    {
+      title: "A Statistical Analysis of the Synoptic Problem",
+      note: "",
+      venue: "COMING SOON",
+      description: "A statistical comparison of Matthew, Mark, and Luke used to test the proposed source relationships between them.",
+      link: "",
+      linkText: "View publication"
+    }
+      
+  ],
+
+  /* Tab order. To add a tab: add an id/label here and a matching
+     case in renderPanel() below. */
+  tabs: [
+    { id: "home",         label: "Home" },
+    { id: "resume",       label: "Resume" },
+    { id: "publications", label: "Publications" },
+    { id: "contact",      label: "Contact" }
+  ]
+};
+
+/* ============================================================
+   RENDERING
+   ============================================================ */
+const esc = s => String(s).replace(/[&<>"']/g, c => (
+  {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]
+));
+
+function entry(item){
+  return `
+    <article class="entry">
+      <div class="margin"><span class="label">${esc(item.note || "")}</span></div>
+      <div>
+        <h3>${esc(item.title)}</h3>
+        ${item.venue ? `<p class="venue">${esc(item.venue)}</p>` : ""}
+        ${item.description ? `<p>${esc(item.description)}</p>` : ""}
+        ${item.link ? `<a class="go" href="${esc(item.link)}">${esc(item.linkText || "Open")} \u2192</a>` : ""}
+      </div>
+    </article>`;
+}
+
+function position(p){
+  return `
+    <article class="entry">
+      <div class="margin"><span class="label">${esc(p.dates || "")}</span></div>
+      <div>
+        <p class="role">${esc(p.role)}</p>
+        <p class="org">${esc(p.org)}</p>
+        ${p.points && p.points.length
+          ? `<ul class="plain">${p.points.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`
+          : ""}
+      </div>
+    </article>`;
+}
+
+function portrait(pic){
+  if (!pic || !pic.src) return "";
+  return `
+    <figure class="portrait">
+      <img src="${esc(pic.src)}" alt="${esc(pic.alt || SITE.name)}">
+      ${pic.caption ? `<figcaption class="label">${esc(pic.caption)}</figcaption>` : ""}
+    </figure>`;
+}
+
+function renderPanel(id){
+  switch(id){
+    case "home":
+      return `
+        <section class="section home-lead">
+          <div class="home-text">
+            ${SITE.home.paragraphs.map((t,i) =>
+              `<p class="${i === 0 ? "lede" : ""}">${esc(t)}</p>`).join("")}
+          </div>
+          ${portrait(SITE.home.portrait)}
+        </section>`;
+
+        case "resume":
+      return `
+        <section class="section">
+          <h2>Education</h2>
+          ${SITE.education.map(position).join("")}
         </section>
-
-<!--
-
-		<section class="leadership-section">
-		            <div class="section-header">
-		                <h2 class="section-title">Experience</h2>
-		                <p class="section-subtitle"></p>
-		            </div>
-
-		            
-		            
-		            <div class="leadership-timeline">
-
-					<div class="timeline-item">
-							            		                    <div class="timeline-marker"></div>
-							            		                    <div class="timeline-content">
-							            		                        <h3>Information Technology Student Engineer</h3>
-							            		                        <p>I currently work as a student engineer for the information technology department.</p>
-							            		                    </div>
-							            		                </div>
-							            		            
-
-		            
-		                <div class="timeline-item">
-		                    <div class="timeline-marker"></div>
-		                    <div class="timeline-content">
-		                        <h3>Information Technology Analyst</h3>
-		                        <p>Assisted students, employees, and faculty with technology issues. Worked with computer hardware, operating systems, software, and websites. Wrote scripts to handle complex errors.</p>
-		                    </div>
-		                </div>
-		                
-		    
-		                
-		                <div class="timeline-item">
-		                    <div class="timeline-marker"></div>
-		                    <div class="timeline-content">
-		                        <h3>Teaching Assistant</h3>
-		                        <p>Worked as a teaching assistant in the Humanities department, read and graded essays, tutored students, taught classes.</p>
-		                    </div>
-		                </div>
-
-
-
-
-		                 <div class="timeline-item">
-		                    <div class="timeline-marker"></div>
-		                    <div class="timeline-content">
-		                        <h3>Library Aid - Special Collections Department</h3>
-		                        <p>Focused on data integrity and management, improved data entry pipline, worked on library website.</p>
-		                    </div>
-		                </div>
-		                </div>
-		                
-		        </section>
-
-
-        
-		
-        <section class="featured-work">
-            <div class="section-header">
-                <h2 class="section-title">Featured Work</h2>
-                <p class="section-subtitle">Selected projects and research</p>
+        <section class="section">
+          <h2>Skills</h2>
+          ${SITE.skills.map(g => `
+            <div style="margin-top:18px">
+              <span class="label">${esc(g.heading)}</span>
+              <ul class="tags">${g.items.map(i => `<li>${esc(i)}</li>`).join("")}</ul>
             </div>
-            <div class="work-grid">
-                <article class="work-card" data-url="https://hyrumhendrickson.com/axis.html">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <span class="card-category">AI Systems</span>
-                    </div>
-                    <h3 class="card-title">Remote ML Server</h3>
-                    <p class="card-description">
-                        Developed a cloud-based machine learning server optimized for speed and efficiency, 
-                        enabling remote model deployment and inference.
-                    </p>
-                    <div class="card-tags">
-                        <span class="tag">TensorFlow</span>
-                        <span class="tag">Node.js</span>
-                        <span class="tag">SQL</span>
-                    </div>
-                </article>
-
-                <article class="work-card" data-url="https://assortedprojects.org/weather.html">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M3 3v18h18" stroke="currentColor" stroke-width="2"/>
-                                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <span class="card-category">Data Analytics</span>
-                    </div>
-                    <h3 class="card-title">Weather Analytics</h3>
-                    <p class="card-description">
-                        Comprehensive weather data analysis with web scraping, data cleaning, 
-                        visualization, and predictive modeling capabilities.
-                    </p>
-                    <div class="card-tags">
-                        <span class="tag">R Studio</span>
-                        <span class="tag">Analytics</span>
-                        <span class="tag">Web Scraping</span>
-                    </div>
-                </article>
-
-                <article class="work-card" data-url="https://scatteredgames.com/life.html">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2"/>
-                                <path d="M2 17l10 5 10-5" stroke="currentColor" stroke-width="2"/>
-                                <path d="M2 12l10 5 10-5" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <span class="card-category">Mathematical Research</span>
-                    </div>
-                    <h3 class="card-title">Cellular Automaton Research</h3>
-                    <p class="card-description">
-                        Research tool for studying cellular automatons and analyzing mathematical 
-                        properties across different rule sets using graph theory and statistics.
-                    </p>
-                    <div class="card-tags">
-                        <span class="tag">Python</span>
-                        <span class="tag">Graph Theory</span>
-                        <span class="tag">Statistics</span>
-                    </div>
-                </article>
-            </div>
+          `).join("")}
         </section>
-		
-        <section class="capabilities-section">
-            <div class="section-header">
-                <h2 class="section-title">Areas of Expertise</h2>
-                <p class="section-subtitle"></p>
-            </div>
-            <div class="capabilities-grid">
-                <div class="capability-item">
-                    <div class="capability-icon">
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M9 11H3l3-3m0 6l-3-3m6 0h12" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </div>
-                    <h3>Statistics and Analytics</h3>
-                    <p>Advanced statistical science, time series analysis, linear regression, data visualization.</p>
-                </div>
-                <div class="capability-item">
-                    <div class="capability-icon">
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2"/>
-                            <path d="M2 17l10 5 10-5" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </div>
-                    <h3>Machine Learning</h3>
-                    <p>Model development, optimization, and deployment for real-world applications.</p>
-                </div>
-                <div class="capability-item">
-                    <div class="capability-icon">
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </div>
-                    <h3>Data Engineering and Automation</h3>
-                    <p>Database manangement, API development, pipeline systems, and server administration.</p>
-                </div>
-                <div class="capability-item">
-                    <div class="capability-icon">
-                        <svg viewBox="0 0 24 24" fill="none">
-                            <path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="currentColor" stroke-width="2"/>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </div>
-                    <h3>Computer Enginnering</h3>
-                    <p>From CPU architecture and transitor design to operating systems and driver development.</p>
-                </div>
-            </div>
+        <section class="section">
+          <h2>Experience</h2>
+          ${SITE.experience.map(position).join("")}
         </section>
-
-
-
-
-
-
-
-		
-        <section class="interests-section">
-            <div class="section-header">
-                <h2 class="section-title">Tools and Software</h2>
-                <p class="section-subtitle"></p>
-            </div>
-            
-            <div class="interests-container">
-                <div class="interests-grid">
-                    <span class="interest-tag">Python</span>
-                    <span class="interest-tag">SQL</span>
-                    <span class="interest-tag">R Language</span>
-                    <span class="interest-tag">C++ and C</span>
-                     <span class="interest-tag">x86 Assembly</span>
-                    <span class="interest-tag">Javascript</span>
-                    <span class="interest-tag">Linux</span>
-                    <span class="interest-tag">Bash Scripting</span>
-                    <span class="interest-tag">Powershell Scripting</span>
-                    <span class="interest-tag">Amazon Web Services</span>
-                    <span class="interest-tag">Docker</span>
-                    <span class="interest-tag">Apache</span>
-                    <span class="interest-tag">VMware</span>
-                </div>
-            </div>
+        <section class="section">
+          <h2>Leadership</h2>
+          ${SITE.leadership.map(position).join("")}
         </section>
+        <section class="section">
+          <h2>Competitions</h2>
+          ${SITE.competitions.map(position).join("")}
+        </section>
+        <section class="section">
+          <h2>Certifications</h2>
+          ${SITE.certifications.map(position).join("")}
+        </section>`;
 
+    case "publications":
+      return `
+        <section class="section">
+          <h2>Publications</h2>
+          ${SITE.publications.map(entry).join("")}
+        </section>`;
 
+    case "contact":
+      return `
+        <section class="section">
+          <h2>Contact</h2>
+          ${SITE.contactIntro ? `<p>${esc(SITE.contactIntro)}</p>` : ""}
+          <ul class="facts">
+            ${SITE.contact.map(c => `
+              <li>
+                <span class="label">${esc(c.label)}</span>
+                <span><a href="${esc(c.url)}">${esc(c.text)}</a></span>
+              </li>`).join("")}
+          </ul>
+        </section>`;
 
--->
+    default:
+      return `<section class="section"><p>Nothing here yet.</p></section>`;
+  }
+}
 
-        
-    </main>
+/* Header and contact */
+document.getElementById("site-name").textContent = SITE.name;
+document.getElementById("site-subtitle").textContent = SITE.subtitle;
+document.querySelector(".masthead img").alt = SITE.name + " logo";
+document.getElementById("colophon").textContent =
+  "\u00A9 " + new Date().getFullYear() + " " + SITE.name;
 
-    <footer class="site-footer">
-        <div class="footer-content">
-            <p>Get in touch at <a href="mailto:contact@hyrumhendrickson.com">contact@hyrumhendrickson.com</a></p>
-        </div>
-    </footer>
+/* Tabs */
+const tabBar = document.getElementById("tabs");
+const panelBox = document.getElementById("panels");
 
+tabBar.innerHTML = SITE.tabs.map((t,i) => `
+  <button role="tab" id="tab-${t.id}" aria-controls="panel-${t.id}"
+          aria-selected="false" tabindex="-1">${esc(t.label)}</button>
+`).join("");
 
-    <script src="js/main.js"></script>
-    <script src="js/index.js"></script>
+panelBox.innerHTML = SITE.tabs.map(t => `
+  <div role="tabpanel" id="panel-${t.id}" aria-labelledby="tab-${t.id}" tabindex="0" hidden>
+    ${renderPanel(t.id)}
+  </div>
+`).join("");
+
+const buttons = [...tabBar.querySelectorAll("button")];
+
+function show(id, push){
+  const valid = SITE.tabs.some(t => t.id === id) ? id : SITE.tabs[0].id;
+  SITE.tabs.forEach(t => {
+    const on = t.id === valid;
+    const btn = document.getElementById("tab-" + t.id);
+    btn.setAttribute("aria-selected", on);
+    btn.tabIndex = on ? 0 : -1;
+    document.getElementById("panel-" + t.id).hidden = !on;
+  });
+  if (push && location.hash.slice(1) !== valid) history.pushState(null, "", "#" + valid);
+  document.title = SITE.name + " \u2014 " +
+    SITE.tabs.find(t => t.id === valid).label;
+}
+
+buttons.forEach((btn, i) => {
+  btn.addEventListener("click", () => show(SITE.tabs[i].id, true));
+  btn.addEventListener("keydown", e => {
+    const keys = {ArrowRight:1, ArrowLeft:-1, Home:"first", End:"last"};
+    if (!(e.key in keys)) return;
+    e.preventDefault();
+    let n = keys[e.key] === "first" ? 0
+          : keys[e.key] === "last"  ? buttons.length - 1
+          : (i + keys[e.key] + buttons.length) % buttons.length;
+    buttons[n].focus();
+    show(SITE.tabs[n].id, true);
+  });
+});
+
+window.addEventListener("hashchange", () => show(location.hash.slice(1), false));
+show(location.hash.slice(1) || SITE.tabs[0].id, false);
+</script>
 </body>
 </html>
