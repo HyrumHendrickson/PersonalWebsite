@@ -37,18 +37,7 @@
     position: relative;
   }
 
-  .latin-app::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.1 0 0 0 0 0.07 0 0 0 0.07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-    opacity: 0.55;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .latin-app > * { position: relative; z-index: 1; }
-  .container { max-width: 1100px; margin: 0 auto; }
+  .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
 
   .masthead {
     text-align: center;
@@ -458,6 +447,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
   }
   .match-tile.latin {
     font-size: 1.5rem;
@@ -511,80 +501,61 @@
     text-transform: uppercase;
     color: var(--ink-soft);
   }
-
-  #loading {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--vellum);
-    font-family: 'EB Garamond', serif;
-    font-size: 1.5rem;
-    color: var(--ink-soft);
-    font-style: italic;
-    z-index: 100;
-  }
 </style>
 </head>
 <body>
-<div id="loading">Loading…</div>
-<div id="root"></div>
+<div class="latin-app">
+  <div class="container">
+    <header class="masthead">
+      <div class="eyebrow">Pronomen · Lingua Latina</div>
+      <h1 class="title"><em>Is · Ea · Id</em></h1>
+      <p class="subtitle">A study apparatus for the Latin demonstrative pronoun in all cases and numbers</p>
+    </header>
 
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <nav class="tabs" id="tabs"></nav>
 
-<script type="text/babel" data-presets="react">
-const { useState, useEffect } = React;
+    <div id="panel-root"></div>
 
-// ─── DATA ─────────────────────────────────────────────────────────────────────
-// The Latin pronoun is, ea, id ("he, she, it / this, that"). Used both as
-// a personal pronoun (3rd person) and as a weak demonstrative adjective.
-//
-// Variant note: the dat./abl. plural form 'eis' is also attested as 'iis'
-// (older) and 'is' (in inscriptions and some texts). We treat 'eis' as
-// primary and accept 'iis' as a variant, displayed in the paradigm view.
+    <footer class="colophon">Is · Ea · Id · A study apparatus for the Latin pronoun</footer>
+  </div>
+</div>
 
+<script>
+'use strict';
+
+// ─── DATA ─────────────────────────────────────────────────────────────────
 const FORMS = [
-  // ── SINGULAR ──
-  // Masculine
+  // SINGULAR — Masculine
   { form: "is",    gender: "Masculine", number: "Singular", case: "Nominative", gloss: "he, this/that man" },
   { form: "eius",  gender: "Masculine", number: "Singular", case: "Genitive",   gloss: "of him, his" },
   { form: "ei",    gender: "Masculine", number: "Singular", case: "Dative",     gloss: "to/for him" },
   { form: "eum",   gender: "Masculine", number: "Singular", case: "Accusative", gloss: "him" },
   { form: "eo",    gender: "Masculine", number: "Singular", case: "Ablative",   gloss: "by/with/from him" },
-
-  // Feminine
+  // SINGULAR — Feminine
   { form: "ea",    gender: "Feminine",  number: "Singular", case: "Nominative", gloss: "she, this/that woman" },
   { form: "eius",  gender: "Feminine",  number: "Singular", case: "Genitive",   gloss: "of her, her" },
   { form: "ei",    gender: "Feminine",  number: "Singular", case: "Dative",     gloss: "to/for her" },
   { form: "eam",   gender: "Feminine",  number: "Singular", case: "Accusative", gloss: "her" },
   { form: "ea",    gender: "Feminine",  number: "Singular", case: "Ablative",   gloss: "by/with/from her" },
-
-  // Neuter
+  // SINGULAR — Neuter
   { form: "id",    gender: "Neuter",    number: "Singular", case: "Nominative", gloss: "it, this/that thing" },
   { form: "eius",  gender: "Neuter",    number: "Singular", case: "Genitive",   gloss: "of it, its" },
   { form: "ei",    gender: "Neuter",    number: "Singular", case: "Dative",     gloss: "to/for it" },
   { form: "id",    gender: "Neuter",    number: "Singular", case: "Accusative", gloss: "it" },
   { form: "eo",    gender: "Neuter",    number: "Singular", case: "Ablative",   gloss: "by/with/from it" },
-
-  // ── PLURAL ──
-  // Masculine
+  // PLURAL — Masculine
   { form: "ei",    gender: "Masculine", number: "Plural",   case: "Nominative", gloss: "they, those men", variant: "ii" },
   { form: "eorum", gender: "Masculine", number: "Plural",   case: "Genitive",   gloss: "of them, their" },
   { form: "eis",   gender: "Masculine", number: "Plural",   case: "Dative",     gloss: "to/for them", variant: "iis" },
   { form: "eos",   gender: "Masculine", number: "Plural",   case: "Accusative", gloss: "them" },
   { form: "eis",   gender: "Masculine", number: "Plural",   case: "Ablative",   gloss: "by/with/from them", variant: "iis" },
-
-  // Feminine
+  // PLURAL — Feminine
   { form: "eae",   gender: "Feminine",  number: "Plural",   case: "Nominative", gloss: "they, those women" },
   { form: "earum", gender: "Feminine",  number: "Plural",   case: "Genitive",   gloss: "of them, their" },
   { form: "eis",   gender: "Feminine",  number: "Plural",   case: "Dative",     gloss: "to/for them", variant: "iis" },
   { form: "eas",   gender: "Feminine",  number: "Plural",   case: "Accusative", gloss: "them" },
   { form: "eis",   gender: "Feminine",  number: "Plural",   case: "Ablative",   gloss: "by/with/from them", variant: "iis" },
-
-  // Neuter
+  // PLURAL — Neuter
   { form: "ea",    gender: "Neuter",    number: "Plural",   case: "Nominative", gloss: "they, those things" },
   { form: "eorum", gender: "Neuter",    number: "Plural",   case: "Genitive",   gloss: "of them, their" },
   { form: "eis",   gender: "Neuter",    number: "Plural",   case: "Dative",     gloss: "to/for them", variant: "iis" },
@@ -597,571 +568,434 @@ const CASES = ["Nominative", "Genitive", "Dative", "Accusative", "Ablative"];
 const GENDERS = ["Masculine", "Feminine", "Neuter"];
 const NUMBERS = ["Singular", "Plural"];
 
-// ─── UTILITIES ────────────────────────────────────────────────────────────────
-const shuffle = (arr) => {
-  const a = [...arr];
+// ─── UTILITIES ──────────────────────────────────────────────────────────────
+function shuffle(arr) {
+  const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
-};
+}
 
-// Two parsings are equivalent if they yield the same form, case, and number.
-// Gender is treated as the disambiguated axis: if 'eius' is shown, any of
-// M/F/N + Genitive Singular is a correct parsing. Likewise 'eis' covers
-// M/F/N + (Dative OR Ablative) Plural — but case still matters: dative
-// and ablative are distinct parsings even when written the same way.
-const equivalentParse = (a, b) =>
-  a.form === b.form && a.case === b.case && a.number === b.number;
+function equivalentParse(a, b) {
+  return a.form === b.form && a.case === b.case && a.number === b.number;
+}
 
-const allParsingsOf = (article) =>
-  STUDY_SET.filter((a) => a.form === article.form);
+function allParsingsOf(article) {
+  return STUDY_SET.filter((a) => a.form === article.form);
+}
 
-// Returns all (case, number) pairs that match a given form across genders.
-// Used for the form-to-label feedback so we can say "eis can be Dat. Pl.
-// OR Abl. Pl." properly.
-const allCaseNumberSlots = (form) => {
+function allCaseNumberSlots(form) {
   const seen = new Set();
   const out = [];
   for (const a of STUDY_SET.filter((x) => x.form === form)) {
-    const key = `${a.case}-${a.number}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      out.push({ case: a.case, number: a.number });
-    }
+    const key = a.case + "-" + a.number;
+    if (!seen.has(key)) { seen.add(key); out.push({ case: a.case, number: a.number }); }
   }
   return out;
-};
+}
 
-const uniqueForms = (articles) => {
+function uniqueForms(articles) {
   const seen = new Set();
   const out = [];
   for (const a of articles) {
-    if (!seen.has(a.form)) {
-      seen.add(a.form);
-      out.push(a);
-    }
+    if (!seen.has(a.form)) { seen.add(a.form); out.push(a); }
   }
   return out;
-};
-
-// ─── HEADER & TABS ────────────────────────────────────────────────────────────
-function Masthead() {
-  return (
-    <header className="masthead">
-      <div className="eyebrow">Pronomen · Lingua Latina</div>
-      <h1 className="title"><em>Is · Ea · Id</em></h1>
-      <p className="subtitle">A study apparatus for the Latin demonstrative pronoun in all cases and numbers</p>
-    </header>
-  );
 }
 
-function Tabs({ mode, setMode }) {
-  const tabs = [
-    { id: "flashcard", label: "Flashcards", num: "I" },
-    { id: "quiz", label: "Quiz", num: "II" },
-    { id: "browse", label: "Paradigm", num: "III" },
-    { id: "match", label: "Match", num: "IV" },
-  ];
-  return (
-    <nav className="tabs">
-      {tabs.map((t) => (
-        <button
-          key={t.id}
-          className={`tab ${mode === t.id ? "active" : ""}`}
-          onClick={() => setMode(t.id)}
-        >
-          <span className="tab-num">{t.num}</span>
-          {t.label}
-        </button>
-      ))}
-    </nav>
-  );
+function el(tag, attrs, children) {
+  const e = document.createElement(tag);
+  if (attrs) {
+    for (const k in attrs) {
+      if (k === "class") e.className = attrs[k];
+      else if (k === "html") e.innerHTML = attrs[k];
+      else if (k.startsWith("on") && typeof attrs[k] === "function") e.addEventListener(k.slice(2), attrs[k]);
+      else e.setAttribute(k, attrs[k]);
+    }
+  }
+  (children || []).forEach((c) => {
+    if (c === null || c === undefined) return;
+    e.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+  });
+  return e;
 }
 
-function PanelFrame({ title, meta, children }) {
-  return (
-    <section className="panel">
-      <span className="panel-corner tl" />
-      <span className="panel-corner tr" />
-      <span className="panel-corner bl" />
-      <span className="panel-corner br" />
-      <div className="panel-header">
-        <h2 className="panel-title">{title}</h2>
-        <div className="panel-meta">{meta}</div>
-      </div>
-      {children}
-    </section>
-  );
+function panelFrame(title, meta, contentEl) {
+  const panel = el("section", { class: "panel" }, [
+    el("span", { class: "panel-corner tl" }),
+    el("span", { class: "panel-corner tr" }),
+    el("span", { class: "panel-corner bl" }),
+    el("span", { class: "panel-corner br" }),
+    el("div", { class: "panel-header" }, [
+      el("h2", { class: "panel-title" }, [title]),
+      el("div", { class: "panel-meta" }, [meta]),
+    ]),
+    contentEl,
+  ]);
+  return panel;
 }
 
-// ─── FLASHCARD MODE ───────────────────────────────────────────────────────────
-function FlashcardMode() {
-  const [deck, setDeck] = useState(() => shuffle(STUDY_SET));
-  const [index, setIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-  const [direction, setDirection] = useState("latin-first");
+const root = document.getElementById("panel-root");
+function renderPanel(node) {
+  root.innerHTML = "";
+  root.appendChild(node);
+}
 
-  const card = deck[index];
-  const syncretic = allCaseNumberSlots(card.form);
+// ─── FLASHCARD MODE ─────────────────────────────────────────────────────────
+const flashState = { deck: shuffle(STUDY_SET), index: 0, flipped: false, direction: "latin-first" };
+
+function renderFlashcards() {
+  const card = flashState.deck[flashState.index];
   const isSyncretic = allParsingsOf(card).length > 1;
 
-  const next = () => {
-    setFlipped(false);
-    setTimeout(() => setIndex((i) => (i + 1) % deck.length), 200);
-  };
-  const prev = () => {
-    setFlipped(false);
-    setTimeout(() => setIndex((i) => (i - 1 + deck.length) % deck.length), 200);
-  };
-  const reshuffle = () => {
-    setFlipped(false);
-    setDeck(shuffle(STUDY_SET));
-    setIndex(0);
-  };
-  const toggleDir = () => {
-    setFlipped(false);
-    setDirection((d) => (d === "latin-first" ? "label-first" : "latin-first"));
-  };
+  const frontInner = flashState.direction === "latin-first"
+    ? el("span", { class: "flashcard-latin" }, [card.form])
+    : el("span", { class: "flashcard-prompt" }, [
+        el("em", {}, [card.case]), el("br"), document.createTextNode(card.gender + " · " + card.number),
+      ]);
 
-  return (
-    <PanelFrame title="Flashcards" meta={`Card ${index + 1} of ${deck.length}`}>
-      <div className="flashcard-wrap">
-        <div
-          className={`flashcard ${flipped ? "flipped" : ""}`}
-          onClick={() => setFlipped((f) => !f)}
-        >
-          <div className="flashcard-inner">
-            <div className="flashcard-face">
-              {direction === "latin-first" ? (
-                <span className="flashcard-latin">{card.form}</span>
-              ) : (
-                <span className="flashcard-prompt">
-                  <em>{card.case}</em><br />
-                  {card.gender} · {card.number}
-                </span>
-              )}
-              <span className="flashcard-hint">Tap to reveal</span>
-            </div>
-            <div className="flashcard-face back">
-              {direction === "latin-first" ? (
-                <React.Fragment>
-                  <span className="flashcard-prompt">
-                    <em>{card.case}</em><br />
-                    {card.gender} · {card.number}
-                  </span>
-                  <span className="flashcard-gloss">{card.gloss}</span>
-                  {isSyncretic && (
-                    <span className="flashcard-syncretic">
-                      Also: {allParsingsOf(card)
-                        .filter((p) => !(p.case === card.case && p.gender === card.gender && p.number === card.number))
-                        .map((p) => `${p.case.slice(0,3)}. ${p.gender[0]} ${p.number.slice(0,2)}.`)
-                        .join(" / ")}
-                    </span>
-                  )}
-                </React.Fragment>
-              ) : (
-                <React.Fragment>
-                  <span className="flashcard-latin">{card.form}</span>
-                  {card.variant && (
-                    <span className="flashcard-syncretic">variant: {card.variant}</span>
-                  )}
-                </React.Fragment>
-              )}
-            </div>
-          </div>
-        </div>
+  const front = el("div", { class: "flashcard-face" }, [frontInner, el("span", { class: "flashcard-hint" }, ["Tap to reveal"])]);
 
-        <div className="nav-row">
-          <button className="btn" onClick={prev}>‹ Previous</button>
-          <button className="btn primary" onClick={() => setFlipped((f) => !f)}>
-            {flipped ? "Hide" : "Reveal"}
-          </button>
-          <button className="btn" onClick={next}>Next ›</button>
-        </div>
-        <div className="nav-row">
-          <button className="btn bronze" onClick={toggleDir}>
-            {direction === "latin-first" ? "Switch: Label → Latin" : "Switch: Latin → Label"}
-          </button>
-          <button className="btn bronze" onClick={reshuffle}>Reshuffle Deck</button>
-        </div>
-      </div>
-    </PanelFrame>
-  );
+  let backChildren;
+  if (flashState.direction === "latin-first") {
+    backChildren = [
+      el("span", { class: "flashcard-prompt" }, [el("em", {}, [card.case]), el("br"), document.createTextNode(card.gender + " · " + card.number)]),
+      el("span", { class: "flashcard-gloss" }, [card.gloss]),
+    ];
+    if (isSyncretic) {
+      const others = allParsingsOf(card)
+        .filter((p) => !(p.case === card.case && p.gender === card.gender && p.number === card.number))
+        .map((p) => p.case.slice(0, 3) + ". " + p.gender[0] + " " + p.number.slice(0, 2) + ".")
+        .join(" / ");
+      backChildren.push(el("span", { class: "flashcard-syncretic" }, ["Also: " + others]));
+    }
+  } else {
+    backChildren = [el("span", { class: "flashcard-latin" }, [card.form])];
+    if (card.variant) backChildren.push(el("span", { class: "flashcard-syncretic" }, ["variant: " + card.variant]));
+  }
+  const back = el("div", { class: "flashcard-face back" }, backChildren);
+
+  const inner = el("div", { class: "flashcard-inner" }, [front, back]);
+  const flashcard = el("div", { class: "flashcard" + (flashState.flipped ? " flipped" : "") }, [inner]);
+  flashcard.addEventListener("click", () => { flashState.flipped = !flashState.flipped; renderFlashcards(); });
+
+  const next = () => { flashState.flipped = false; setTimeout(() => { flashState.index = (flashState.index + 1) % flashState.deck.length; renderFlashcards(); }, 200); };
+  const prev = () => { flashState.flipped = false; setTimeout(() => { flashState.index = (flashState.index - 1 + flashState.deck.length) % flashState.deck.length; renderFlashcards(); }, 200); };
+  const reshuffle = () => { flashState.flipped = false; flashState.deck = shuffle(STUDY_SET); flashState.index = 0; renderFlashcards(); };
+  const toggleDir = () => { flashState.flipped = false; flashState.direction = flashState.direction === "latin-first" ? "label-first" : "latin-first"; renderFlashcards(); };
+
+  const wrap = el("div", { class: "flashcard-wrap" }, [
+    flashcard,
+    el("div", { class: "nav-row" }, [
+      el("button", { class: "btn", onclick: prev }, ["‹ Previous"]),
+      el("button", { class: "btn primary", onclick: () => { flashState.flipped = !flashState.flipped; renderFlashcards(); } }, [flashState.flipped ? "Hide" : "Reveal"]),
+      el("button", { class: "btn", onclick: next }, ["Next ›"]),
+    ]),
+    el("div", { class: "nav-row" }, [
+      el("button", { class: "btn bronze", onclick: toggleDir }, [flashState.direction === "latin-first" ? "Switch: Label → Latin" : "Switch: Latin → Label"]),
+      el("button", { class: "btn bronze", onclick: reshuffle }, ["Reshuffle Deck"]),
+    ]),
+  ]);
+
+  renderPanel(panelFrame("Flashcards", "Card " + (flashState.index + 1) + " of " + flashState.deck.length, wrap));
 }
 
-// ─── QUIZ MODE ────────────────────────────────────────────────────────────────
-function QuizMode() {
-  const [direction, setDirection] = useState("form-to-label");
-  const [question, setQuestion] = useState(null);
-  const [choices, setChoices] = useState([]);
-  const [selected, setSelected] = useState(null);
-  const [score, setScore] = useState({ correct: 0, total: 0 });
+// ─── QUIZ MODE ──────────────────────────────────────────────────────────────
+const quizState = { direction: "form-to-label", question: null, choices: [], selected: null, score: { correct: 0, total: 0 } };
 
-  const generateQuestion = (dir) => {
-    const answer = STUDY_SET[Math.floor(Math.random() * STUDY_SET.length)];
-    let options;
+function generateQuestion() {
+  const dir = quizState.direction;
+  const answer = STUDY_SET[Math.floor(Math.random() * STUDY_SET.length)];
+  let options;
 
-    if (dir === "form-to-label") {
-      // Distractors are parsings whose surface form differs from the answer's.
-      // Each option is a distinct (case, gender, number) slot.
-      const wrongPool = STUDY_SET.filter((a) => a.form !== answer.form);
-      const distractors = [];
-      const seenSlots = new Set([`${answer.case}-${answer.gender}-${answer.number}`]);
-      for (const a of shuffle(wrongPool)) {
-        if (distractors.length >= 3) break;
-        const key = `${a.case}-${a.gender}-${a.number}`;
-        if (!seenSlots.has(key)) {
-          distractors.push(a);
-          seenSlots.add(key);
-        }
-      }
-      options = shuffle([answer, ...distractors]);
-    } else {
-      // Distractors are forms different from the answer's, deduplicated.
-      const wrongPool = STUDY_SET.filter((a) => a.form !== answer.form);
-      const distinctWrong = uniqueForms(shuffle(wrongPool));
-      const distractors = distinctWrong.slice(0, 3);
-      options = shuffle([answer, ...distractors]);
+  if (dir === "form-to-label") {
+    const wrongPool = STUDY_SET.filter((a) => a.form !== answer.form);
+    const distractors = [];
+    const seenSlots = new Set([answer.case + "-" + answer.gender + "-" + answer.number]);
+    for (const a of shuffle(wrongPool)) {
+      if (distractors.length >= 3) break;
+      const key = a.case + "-" + a.gender + "-" + a.number;
+      if (!seenSlots.has(key)) { distractors.push(a); seenSlots.add(key); }
     }
+    options = shuffle([answer].concat(distractors));
+  } else {
+    const wrongPool = STUDY_SET.filter((a) => a.form !== answer.form);
+    const distinctWrong = uniqueForms(shuffle(wrongPool));
+    options = shuffle([answer].concat(distinctWrong.slice(0, 3)));
+  }
 
-    setQuestion({ ...answer, direction: dir });
-    setChoices(options);
-    setSelected(null);
+  quizState.question = Object.assign({}, answer, { direction: dir });
+  quizState.choices = options;
+  quizState.selected = null;
+}
+
+function isCorrectChoice(c) {
+  const q = quizState.question;
+  return quizState.direction === "form-to-label" ? equivalentParse(c, q) : c.form === q.form;
+}
+
+function renderQuiz() {
+  const q = quizState.question;
+  const pct = quizState.score.total ? Math.round((quizState.score.correct / quizState.score.total) * 100) : 0;
+
+  const statsRow = el("div", { class: "quiz-stats" }, [
+    el("span", {}, ["Correct: ", el("strong", {}, [String(quizState.score.correct)])]),
+    el("span", {}, ["Asked: ", el("strong", {}, [String(quizState.score.total)])]),
+    el("span", {}, ["Accuracy: ", el("strong", {}, [pct + "%"])]),
+  ]);
+
+  const setDir = (d) => {
+    if (quizState.direction === d) return;
+    quizState.direction = d;
+    generateQuestion();
+    renderQuiz();
   };
+  const resetScore = () => { quizState.score = { correct: 0, total: 0 }; renderQuiz(); };
 
-  useEffect(() => {
-    generateQuestion(direction);
-  }, [direction]);
+  const dirRow = el("div", { class: "nav-row", style: "margin-bottom:1rem;" }, [
+    el("button", { class: "btn bronze", onclick: () => setDir("form-to-label"), disabled: quizState.direction === "form-to-label" ? "true" : null }, ["Form → Identify"]),
+    el("button", { class: "btn bronze", onclick: () => setDir("label-to-form"), disabled: quizState.direction === "label-to-form" ? "true" : null }, ["Identify → Form"]),
+    el("button", { class: "btn bronze", onclick: resetScore }, ["Reset Score"]),
+  ]);
+  if (quizState.direction === "form-to-label") dirRow.children[0].disabled = true;
+  if (quizState.direction === "label-to-form") dirRow.children[1].disabled = true;
 
-  const isCorrect = (c) =>
-    direction === "form-to-label"
-      ? equivalentParse(c, question)
-      : c.form === question.form;
+  let promptEl;
+  if (quizState.direction === "form-to-label") {
+    promptEl = el("div", { class: "quiz-prompt" }, ["Parse this pronoun:", el("span", { class: "big" }, [q.form])]);
+  } else {
+    promptEl = el("div", { class: "quiz-prompt" }, ["Give the form for ", el("em", {}, [q.case + " " + q.gender + " " + q.number])]);
+  }
 
   const choose = (c) => {
-    if (selected) return;
-    setSelected(c);
-    const correct = isCorrect(c);
-    setScore((s) => ({ correct: s.correct + (correct ? 1 : 0), total: s.total + 1 }));
+    if (quizState.selected) return;
+    quizState.selected = c;
+    const correct = isCorrectChoice(c);
+    quizState.score.total += 1;
+    if (correct) quizState.score.correct += 1;
+    renderQuiz();
   };
 
-  const next = () => generateQuestion(direction);
+  const optionsGrid = el("div", { class: "options" }, quizState.choices.map((c) => {
+    const correct = isCorrectChoice(c);
+    const picked = quizState.selected === c;
+    let cls = "option" + (quizState.direction === "label-to-form" ? " italic" : "");
+    if (quizState.selected) {
+      if (correct) cls += " correct";
+      else if (picked) cls += " incorrect";
+    }
+    const label = quizState.direction === "form-to-label" ? (c.case + " · " + c.gender + " " + c.number) : c.form;
+    const btn = el("button", { class: cls, onclick: () => choose(c) }, [label]);
+    if (quizState.selected) btn.disabled = true;
+    return btn;
+  }));
 
-  if (!question) return null;
-  const pct = score.total ? Math.round((score.correct / score.total) * 100) : 0;
+  const panelChildren = [statsRow, dirRow, promptEl, optionsGrid];
 
-  return (
-    <PanelFrame title="Quiz" meta="Multiple choice · advances with Next">
-      <div className="quiz-stats">
-        <span>Correct: <strong>{score.correct}</strong></span>
-        <span>Asked: <strong>{score.total}</strong></span>
-        <span>Accuracy: <strong>{pct}%</strong></span>
-      </div>
-
-      <div className="nav-row" style={{ marginBottom: "1rem" }}>
-        <button className="btn bronze" onClick={() => setDirection("form-to-label")} disabled={direction === "form-to-label"}>
-          Form → Identify
-        </button>
-        <button className="btn bronze" onClick={() => setDirection("label-to-form")} disabled={direction === "label-to-form"}>
-          Identify → Form
-        </button>
-        <button className="btn bronze" onClick={() => setScore({ correct: 0, total: 0 })}>
-          Reset Score
-        </button>
-      </div>
-
-      <div className="quiz-prompt">
-        {direction === "form-to-label" ? (
-          <React.Fragment>
-            Parse this pronoun:
-            <span className="big">{question.form}</span>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            Give the form for{" "}
-            <em>{question.case} {question.gender} {question.number}</em>
-          </React.Fragment>
-        )}
-      </div>
-
-      <div className="options">
-        {choices.map((c, i) => {
-          const correct = isCorrect(c);
-          const picked = selected === c;
-          let cls = "option";
-          if (direction === "label-to-form") cls += " italic";
-          if (selected) {
-            if (correct) cls += " correct";
-            else if (picked) cls += " incorrect";
-          }
-          return (
-            <button key={i} className={cls} onClick={() => choose(c)} disabled={!!selected}>
-              {direction === "form-to-label"
-                ? `${c.case} · ${c.gender} ${c.number}`
-                : c.form}
-            </button>
-          );
-        })}
-      </div>
-
-      {selected && (
-        <React.Fragment>
-          <div className={`feedback ${isCorrect(selected) ? "correct" : "incorrect"}`}>
-            {isCorrect(selected)
-              ? (() => {
-                  const parsings = allParsingsOf(question);
-                  if (direction === "form-to-label" && parsings.length > 1) {
-                    // List all valid gender interpretations for this (case, number)
-                    const matchingGenders = parsings
-                      .filter((p) => p.case === question.case && p.number === question.number)
-                      .map((p) => p.gender);
-                    if (matchingGenders.length > 1) {
-                      return `Recte! "${question.form}" is ${question.case} ${question.number} — valid for ${matchingGenders.join(", ")}.`;
-                    }
-                  }
-                  return `Recte! "${question.form}" — ${question.case}, ${question.gender}, ${question.number}.`;
-                })()
-              : direction === "form-to-label"
-                ? (() => {
-                    const slots = allCaseNumberSlots(question.form);
-                    const description = slots
-                      .map((s) => {
-                        const genders = allParsingsOf(question)
-                          .filter((p) => p.case === s.case && p.number === s.number)
-                          .map((p) => p.gender[0])
-                          .join("/");
-                        return `${s.case} ${s.number} (${genders})`;
-                      })
-                      .join(" or ");
-                    return `Not quite. "${question.form}" can be parsed as: ${description}.`;
-                  })()
-                : `Not quite. The form for ${question.case} ${question.gender} ${question.number} is "${question.form}".`}
-          </div>
-          <div className="nav-row" style={{ marginTop: "1rem" }}>
-            <button className="btn primary" onClick={next}>Next Question ›</button>
-          </div>
-        </React.Fragment>
-      )}
-    </PanelFrame>
-  );
-}
-
-// ─── BROWSE MODE ──────────────────────────────────────────────────────────────
-function BrowseMode() {
-  const getCell = (num, gen, cs) =>
-    STUDY_SET.find((a) => a.number === num && a.gender === gen && a.case === cs);
-
-  const renderTable = (num) => (
-    <div className="paradigm-section">
-      <div className="paradigm-label">{num}</div>
-      <table className="paradigm-table">
-        <thead>
-          <tr>
-            <th className="case-th">Case</th>
-            {GENDERS.map((g) => <th key={g}>{g}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {CASES.map((cs) => (
-            <tr key={cs}>
-              <td className="case-td">{cs}</td>
-              {GENDERS.map((g) => {
-                const cell = getCell(num, g, cs);
-                if (!cell) return <td key={g}>—</td>;
-                return (
-                  <td key={g}>
-                    <span className="paradigm-latin">{cell.form}</span>
-                    {cell.variant && (
-                      <span className="paradigm-variant">or {cell.variant}</span>
-                    )}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-
-  return (
-    <PanelFrame title="Paradigm" meta="The full declension at a glance">
-      {NUMBERS.map((n) => (
-        <React.Fragment key={n}>{renderTable(n)}</React.Fragment>
-      ))}
-      <div style={{ marginTop: "1.5rem", fontSize: "0.95rem", color: "var(--ink-soft)", maxWidth: "780px", margin: "1.5rem auto 0" }}>
-        <p style={{ textAlign: "center", fontStyle: "italic" }}>
-          <em>Is, ea, id</em> functions as both the third-person personal pronoun
-          and a weak demonstrative ("that, this"). Note the syncretisms:
-          <em> eius</em> is genitive singular for all three genders;
-          <em> ei</em> is dative singular for all three genders (and also masc.
-          nom. pl.); <em> eis</em> covers dative and ablative plural for all
-          three genders.
-        </p>
-        <p style={{ textAlign: "center", fontStyle: "italic", marginTop: "0.75rem" }}>
-          The variants <em>ii</em> (m. nom. pl.) and <em>iis</em> (dat./abl. pl.)
-          are older forms still seen in classical authors and many editions.
-        </p>
-      </div>
-    </PanelFrame>
-  );
-}
-
-// ─── MATCH MODE ───────────────────────────────────────────────────────────────
-function MatchMode() {
-  const ROUND_SIZE = 6;
-
-  const buildRound = () => {
-    // Draw distinct surface forms so no ambiguity within a round.
-    const picks = uniqueForms(shuffle(STUDY_SET)).slice(0, ROUND_SIZE);
-    return {
-      pairs: picks.map((p, i) => ({ id: i, ...p })),
-      latinTiles: shuffle(picks.map((p, i) => ({ id: i, ...p }))),
-      labelTiles: shuffle(picks.map((p, i) => ({ id: i, ...p }))),
-    };
-  };
-
-  const [round, setRound] = useState(buildRound);
-  const [matched, setMatched] = useState(new Set());
-  const [selLatin, setSelLatin] = useState(null);
-  const [selLabel, setSelLabel] = useState(null);
-  const [flash, setFlash] = useState({ ids: [], kind: null });
-  const [attempts, setAttempts] = useState(0);
-  const [wrong, setWrong] = useState(0);
-
-  useEffect(() => {
-    if (selLatin !== null && selLabel !== null) {
-      setAttempts((a) => a + 1);
-      if (selLatin === selLabel) {
-        setFlash({ ids: [selLatin], kind: "correct" });
-        setTimeout(() => {
-          setMatched((m) => new Set([...m, selLatin]));
-          setSelLatin(null);
-          setSelLabel(null);
-          setFlash({ ids: [], kind: null });
-        }, 400);
-      } else {
-        setWrong((w) => w + 1);
-        setFlash({ ids: [selLatin, selLabel], kind: "wrong" });
-        setTimeout(() => {
-          setSelLatin(null);
-          setSelLabel(null);
-          setFlash({ ids: [], kind: null });
-        }, 600);
+  if (quizState.selected) {
+    const correct = isCorrectChoice(quizState.selected);
+    let text;
+    if (correct) {
+      const parsings = allParsingsOf(q);
+      if (quizState.direction === "form-to-label" && parsings.length > 1) {
+        const matchingGenders = parsings.filter((p) => p.case === q.case && p.number === q.number).map((p) => p.gender);
+        if (matchingGenders.length > 1) {
+          text = 'Recte! "' + q.form + '" is ' + q.case + " " + q.number + " — valid for " + matchingGenders.join(", ") + ".";
+        }
       }
+      if (!text) text = 'Recte! "' + q.form + '" — ' + q.case + ", " + q.gender + ", " + q.number + ".";
+    } else if (quizState.direction === "form-to-label") {
+      const slots = allCaseNumberSlots(q.form);
+      const description = slots.map((s) => {
+        const genders = allParsingsOf(q).filter((p) => p.case === s.case && p.number === s.number).map((p) => p.gender[0]).join("/");
+        return s.case + " " + s.number + " (" + genders + ")";
+      }).join(" or ");
+      text = 'Not quite. "' + q.form + '" can be parsed as: ' + description + ".";
+    } else {
+      text = "Not quite. The form for " + q.case + " " + q.gender + " " + q.number + ' is "' + q.form + '".';
     }
-  }, [selLatin, selLabel]);
 
-  const newRound = () => {
-    setRound(buildRound());
-    setMatched(new Set());
-    setSelLatin(null);
-    setSelLabel(null);
-    setFlash({ ids: [], kind: null });
-    setAttempts(0);
-    setWrong(0);
-  };
+    panelChildren.push(el("div", { class: "feedback " + (correct ? "correct" : "incorrect") }, [text]));
+    panelChildren.push(el("div", { class: "nav-row", style: "margin-top:1rem;" }, [
+      el("button", { class: "btn primary", onclick: () => { generateQuestion(); renderQuiz(); } }, ["Next Question ›"]),
+    ]));
+  }
 
-  const tileClass = (id, side) => {
-    let cls = `match-tile ${side}`;
-    if (matched.has(id)) cls += " matched";
-    else if (
-      (side === "latin" && selLatin === id) ||
-      (side === "label" && selLabel === id)
-    ) cls += " selected";
-    if (flash.ids.includes(id)) {
-      cls += flash.kind === "correct" ? " flash-correct" : " flash-wrong";
-    }
+  const content = el("div", {}, panelChildren);
+  renderPanel(panelFrame("Quiz", "Multiple choice · advances with Next", content));
+}
+
+// ─── BROWSE MODE ────────────────────────────────────────────────────────────
+function getCell(num, gen, cs) {
+  return STUDY_SET.find((a) => a.number === num && a.gender === gen && a.case === cs);
+}
+
+function renderTable(num) {
+  const thead = el("thead", {}, [
+    el("tr", {}, [el("th", { class: "case-th" }, ["Case"])].concat(GENDERS.map((g) => el("th", {}, [g])))),
+  ]);
+  const tbody = el("tbody", {}, CASES.map((cs) => {
+    const cells = GENDERS.map((g) => {
+      const cell = getCell(num, g, cs);
+      if (!cell) return el("td", {}, ["—"]);
+      const children = [el("span", { class: "paradigm-latin" }, [cell.form])];
+      if (cell.variant) children.push(el("span", { class: "paradigm-variant" }, ["or " + cell.variant]));
+      return el("td", {}, children);
+    });
+    return el("tr", {}, [el("td", { class: "case-td" }, [cs])].concat(cells));
+  }));
+  return el("div", { class: "paradigm-section" }, [
+    el("div", { class: "paradigm-label" }, [num]),
+    el("table", { class: "paradigm-table" }, [thead, tbody]),
+  ]);
+}
+
+function renderBrowse() {
+  const tables = NUMBERS.map(renderTable);
+  const note = el("div", { style: "margin-top:1.5rem; font-size:0.95rem; color:var(--ink-soft); max-width:780px; margin-left:auto; margin-right:auto;" }, [
+    el("p", { style: "text-align:center; font-style:italic;" }, [
+      el("em", {}, ["Is, ea, id"]),
+      " functions as both the third-person personal pronoun and a weak demonstrative (\"that, this\"). Note the syncretisms: ",
+      el("em", {}, ["eius"]), " is genitive singular for all three genders; ",
+      el("em", {}, ["ei"]), " is dative singular for all three genders (and also masc. nom. pl.); ",
+      el("em", {}, ["eis"]), " covers dative and ablative plural for all three genders.",
+    ]),
+    el("p", { style: "text-align:center; font-style:italic; margin-top:0.75rem;" }, [
+      "The variants ", el("em", {}, ["ii"]), " (m. nom. pl.) and ", el("em", {}, ["iis"]),
+      " (dat./abl. pl.) are older forms still seen in classical authors and many editions.",
+    ]),
+  ]);
+  const content = el("div", {}, tables.concat([note]));
+  renderPanel(panelFrame("Paradigm", "The full declension at a glance", content));
+}
+
+// ─── MATCH MODE ─────────────────────────────────────────────────────────────
+const ROUND_SIZE = 6;
+const matchState = {};
+
+function buildRound() {
+  const picks = uniqueForms(shuffle(STUDY_SET)).slice(0, ROUND_SIZE);
+  matchState.pairs = picks.map((p, i) => Object.assign({ id: i }, p));
+  matchState.latinTiles = shuffle(matchState.pairs.slice());
+  matchState.labelTiles = shuffle(matchState.pairs.slice());
+  matchState.matched = new Set();
+  matchState.selLatin = null;
+  matchState.selLabel = null;
+  matchState.attempts = 0;
+  matchState.wrong = 0;
+  matchState.flash = { ids: [], kind: null };
+}
+
+function renderMatch() {
+  const done = matchState.matched.size === ROUND_SIZE;
+
+  const statsRow = el("div", { class: "quiz-stats" }, [
+    el("span", {}, ["Attempts: ", el("strong", {}, [String(matchState.attempts)])]),
+    el("span", {}, ["Errors: ", el("strong", {}, [String(matchState.wrong)])]),
+  ]);
+
+  function tileClass(id, side) {
+    let cls = "match-tile " + side;
+    if (matchState.matched.has(id)) cls += " matched";
+    else if ((side === "latin" && matchState.selLatin === id) || (side === "label" && matchState.selLabel === id)) cls += " selected";
+    if (matchState.flash.ids.includes(id)) cls += matchState.flash.kind === "correct" ? " flash-correct" : " flash-wrong";
     return cls;
-  };
+  }
 
-  const done = matched.size === ROUND_SIZE;
+  function pickLatin(id) {
+    if (matchState.flash.kind !== null || matchState.matched.has(id)) return;
+    matchState.selLatin = id;
+    checkPair();
+  }
+  function pickLabel(id) {
+    if (matchState.flash.kind !== null || matchState.matched.has(id)) return;
+    matchState.selLabel = id;
+    checkPair();
+  }
+  function checkPair() {
+    if (matchState.selLatin === null || matchState.selLabel === null) { renderMatch(); return; }
+    matchState.attempts += 1;
+    if (matchState.selLatin === matchState.selLabel) {
+      matchState.flash = { ids: [matchState.selLatin], kind: "correct" };
+      renderMatch();
+      setTimeout(() => {
+        matchState.matched.add(matchState.selLatin);
+        matchState.selLatin = null;
+        matchState.selLabel = null;
+        matchState.flash = { ids: [], kind: null };
+        renderMatch();
+      }, 400);
+    } else {
+      matchState.wrong += 1;
+      matchState.flash = { ids: [matchState.selLatin, matchState.selLabel], kind: "wrong" };
+      renderMatch();
+      setTimeout(() => {
+        matchState.selLatin = null;
+        matchState.selLabel = null;
+        matchState.flash = { ids: [], kind: null };
+        renderMatch();
+      }, 600);
+    }
+  }
 
-  return (
-    <PanelFrame title="Match" meta={`Pair Latin forms with their grammatical labels · ${matched.size} / ${ROUND_SIZE}`}>
-      <div className="quiz-stats">
-        <span>Attempts: <strong>{attempts}</strong></span>
-        <span>Errors: <strong>{wrong}</strong></span>
-      </div>
+  const latinCol = el("div", {}, [
+    el("div", { class: "match-column-label" }, ["Latin"]),
+    el("div", { class: "match-list" }, matchState.latinTiles.map((t) =>
+      el("button", { class: tileClass(t.id, "latin"), onclick: () => pickLatin(t.id) }, [t.form])
+    )),
+  ]);
+  const labelCol = el("div", {}, [
+    el("div", { class: "match-column-label" }, ["Parsing"]),
+    el("div", { class: "match-list" }, matchState.labelTiles.map((t) =>
+      el("button", { class: tileClass(t.id, "label"), onclick: () => pickLabel(t.id) }, [t.case + " · " + t.gender + " " + (t.number === "Plural" ? "Pl." : "Sg.")])
+    )),
+  ]);
+  const board = el("div", { class: "match-board" }, [latinCol, labelCol]);
 
-      <div className="match-board">
-        <div>
-          <div className="match-column-label">Latin</div>
-          <div className="match-list">
-            {round.latinTiles.map((t) => (
-              <button
-                key={`l-${t.id}`}
-                className={tileClass(t.id, "latin")}
-                disabled={matched.has(t.id) || flash.kind !== null}
-                onClick={() => setSelLatin(t.id)}
-              >
-                {t.form}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div>
-          <div className="match-column-label">Parsing</div>
-          <div className="match-list">
-            {round.labelTiles.map((t) => (
-              <button
-                key={`p-${t.id}`}
-                className={tileClass(t.id, "label")}
-                disabled={matched.has(t.id) || flash.kind !== null}
-                onClick={() => setSelLabel(t.id)}
-              >
-                {t.case} · {t.gender} {t.number === "Plural" ? "Pl." : "Sg."}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+  const children = [statsRow, board];
 
-      {done && (
-        <div className="victory">
-          <h3 className="victory-title">Optimē!</h3>
-          <p className="victory-text">
-            Round complete in {attempts} attempts ({wrong} {wrong === 1 ? "error" : "errors"}).
-          </p>
-          <button className="btn primary" onClick={newRound}>New Round ›</button>
-        </div>
-      )}
+  if (done) {
+    children.push(el("div", { class: "victory" }, [
+      el("h3", { class: "victory-title" }, ["Optimē!"]),
+      el("p", { class: "victory-text" }, ["Round complete in " + matchState.attempts + " attempts (" + matchState.wrong + " " + (matchState.wrong === 1 ? "error" : "errors") + ")."]),
+      el("button", { class: "btn primary", onclick: () => { buildRound(); renderMatch(); } }, ["New Round ›"]),
+    ]));
+  } else {
+    children.push(el("div", { class: "nav-row", style: "margin-top:1.5rem;" }, [
+      el("button", { class: "btn bronze", onclick: () => { buildRound(); renderMatch(); } }, ["Restart Round"]),
+    ]));
+  }
 
-      {!done && (
-        <div className="nav-row" style={{ marginTop: "1.5rem" }}>
-          <button className="btn bronze" onClick={newRound}>Restart Round</button>
-        </div>
-      )}
-    </PanelFrame>
-  );
+  const content = el("div", {}, children);
+  renderPanel(panelFrame("Match", "Pair Latin forms with their grammatical labels · " + matchState.matched.size + " / " + ROUND_SIZE, content));
 }
 
-// ─── ROOT ─────────────────────────────────────────────────────────────────────
-function App() {
-  const [mode, setMode] = useState("flashcard");
+// ─── TABS / APP ─────────────────────────────────────────────────────────────
+const MODES = [
+  { id: "flashcard", label: "Flashcards", num: "I", render: renderFlashcards },
+  { id: "quiz", label: "Quiz", num: "II", render: () => { generateQuestion(); renderQuiz(); } },
+  { id: "browse", label: "Paradigm", num: "III", render: renderBrowse },
+  { id: "match", label: "Match", num: "IV", render: () => { buildRound(); renderMatch(); } },
+];
 
-  return (
-    <div className="latin-app">
-      <div className="container">
-        <Masthead />
-        <Tabs mode={mode} setMode={setMode} />
-        {mode === "flashcard" && <FlashcardMode />}
-        {mode === "quiz" && <QuizMode />}
-        {mode === "browse" && <BrowseMode />}
-        {mode === "match" && <MatchMode />}
-        <footer className="colophon">
-          Is · Ea · Id · A study apparatus for the Latin pronoun
-        </footer>
-      </div>
-    </div>
-  );
+let currentMode = "flashcard";
+
+function renderTabs() {
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = "";
+  MODES.forEach((m) => {
+    const tab = el("button", {
+      class: "tab" + (currentMode === m.id ? " active" : ""),
+      onclick: () => { currentMode = m.id; renderTabs(); m.render(); },
+    }, [el("span", { class: "tab-num" }, [m.num]), m.label]);
+    tabsEl.appendChild(tab);
+  });
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
-document.getElementById("loading").style.display = "none";
+renderTabs();
+renderFlashcards();
 </script>
 </body>
 </html>
