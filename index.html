@@ -215,8 +215,8 @@ const SITE = {
       caption: ""
     },
     paragraphs: [
-      "I study mathematics at Brigham Young University\u2013Idaho, with a cluster in ancient languages. I currently work as an applications engineer for the IT Department at BYUI, where I manage several hundred computers.",
-      "Most of my work is in Applied Mathematics, statistics, data analysis, and software engineering. During down time I enjoy writing about ancient culture and history, most recently I've done some writing for the BYU New Testamant Commentary.",
+      "I study Mathematics at Brigham Young University\u2013Idaho, with a cluster in Ancient Languages. I currently work as an Applications Engineer for the IT Department at BYUI, where my team and I manage several hundred computers.",
+      "Most of my work is in applied mathematics, statistics, data analysis, and software engineering. During down time I enjoy writing about ancient culture and history, most recently I've done some writing for the BYU New Testamant Commentary.",
       "On weekends my wife and I often go camping. We also enjoy hiking, fishing, gardening, and playing chess. Thanks for checking out my website, if you have any questions, please reach out!"
     ]
   },
@@ -240,26 +240,26 @@ const SITE = {
       dates: "2026\u2013Current",
       points: [
         "We manage several hundred campus computers.",
-        "We Write PowerShell and Zsh scripts for deployment, configuration, and maintenance."
+        "We write PowerShell and Zsh scripts for deployment and maintenance."
       ]
     },
     {
       role: "Teaching Assistant",
       org: "Humanities Department at BYUI",
       dates: "2026",
-      points: ["Taught classes, graded papers, tutored students."]
+      points: ["Taught Philosophy class, graded papers, and tutored students."]
     },
      {
       role: "Analyst",
       org: "Information Technology Department at BYUI",
       dates: "2025\u20132026",
-      points: ["Worked in call center fixing technology for students, emplyoees, and alumni."]
+      points: ["Worked in call center fixing technology for callers."]
     },
     {
       role: "Library Aide, Special Collections",
       org: "David O. McKay Library at BYUI",
       dates: "2024\u20132025",
-      points: ["Worked on database system, website, and data integrity."]
+      points: ["Worked on database system, library website, and records digitization."]
     }
   ],
 
@@ -268,7 +268,7 @@ const SITE = {
       role: "President",
       org: "BYUI Philosophical Society",
       dates: "",
-      points: ["Led discussions, planned meetings, manageed budget."]
+      points: ["Led discussions, planned meetings, and managed the budget."]
     },
     {
       role: "Vice President",
@@ -285,7 +285,7 @@ const SITE = {
       ]
     }
   ],
-
+    
   competitions: [
     {
       role: "The Mathematical Contest in Modeling",
@@ -486,8 +486,8 @@ function renderPanel(id){
 document.getElementById("site-name").textContent = SITE.name;
 document.getElementById("site-subtitle").textContent = SITE.subtitle;
 document.querySelector(".masthead img").alt = SITE.name + " logo";
-document.getElementById("colophon").textContent =
-  "\u00A9 " + new Date().getFullYear() + " " + SITE.name;
+document.getElementById("colophon").textContent = 
+  /* "\u00A9 " + */  SITE.name + " " + new Date().getFullYear();
 
 /* Tabs */
 const tabBar = document.getElementById("tabs");
