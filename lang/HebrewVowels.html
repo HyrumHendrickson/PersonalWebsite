@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hebrew Vowel Flashcards</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=Noto+Serif+Hebrew:wght@400;700&family=Noto+Sans+Hebrew:wght@400;700&family=Miriam+Libre:wght@400;700&display=swap" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      color: #e2e8f0;
+    }
+
+    h1 {
+      color: #e2b96f;
+      font-size: 1.6rem;
+      margin-bottom: 4px;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      color: #7a8fa0;
+      font-size: 0.85rem;
+      font-style: italic;
+      margin-bottom: 6px;
+    }
+
+    #counter {
+      color: #a0aec0;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    /* Font selector */
+    #font-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    #font-row label { color: #a0aec0; font-size: 0.85rem; }
+
+    #font-select {
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(226,185,111,0.3);
+      background: rgba(255,255,255,0.08);
+      color: #e2b96f;
+      font-size: 0.85rem;
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* Mode toggle */
+    #mode-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .mode-btn {
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.1);
+      color: #e2e8f0;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: #e2b96f;
+      color: #1a1a2e;
+    }
+
+    /* Card */
+    #card {
+      width: 340px;
+      min-height: 240px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #2a2a5a, #1a1a4a);
+      border: 2px solid #e2b96f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      transition: background 0.3s ease, border-color 0.3s ease;
+      user-select: none;
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    #card.flipped {
+      background: linear-gradient(135deg, #2d4a22, #1a3a12);
+      border-color: #6abf45;
+    }
+
+    #card-front { display: flex; flex-direction: column; align-items: center; }
+    #card-back  { display: none;  flex-direction: column; align-items: center; }
+    #card.flipped #card-front { display: none; }
+    #card.flipped #card-back  { display: flex; }
+
+    /* The big display: base letter + vowel mark */
+    #front-symbol {
+      font-size: 6rem;
+      color: #e2b96f;
+      line-height: 1.3;
+      direction: rtl;
+    }
+
+    /* When showing the name on the front (name→symbol mode) */
+    #front-symbol.name-mode {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #e2b96f;
+      direction: ltr;
+      font-family: 'Segoe UI', sans-serif !important;
+      line-height: 1.4;
+    }
+
+    #front-hint {
+      color: #718096;
+      font-size: 0.8rem;
+      margin-top: 14px;
+    }
+
+    /* Back */
+    #back-symbol {
+      font-size: 5rem;
+      color: #9ae672;
+      line-height: 1.3;
+      direction: rtl;
+      margin-bottom: 8px;
+    }
+
+    #back-name {
+      font-size: 1.4rem;
+      color: #9ae672;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    #back-sound {
+      font-size: 1rem;
+      color: #b9f5a0;
+      margin-bottom: 4px;
+    }
+
+    #back-type {
+      font-size: 0.82rem;
+      color: #6abf45;
+      font-style: italic;
+      margin-bottom: 4px;
+    }
+
+    #back-example {
+      font-size: 0.85rem;
+      color: #88d68a;
+      margin-top: 4px;
+    }
+
+    /* Navigation */
+    #nav-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 24px;
+      align-items: center;
+    }
+
+    .nav-btn {
+      padding: 12px 28px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.1);
+      color: #e2e8f0;
+      transition: all 0.2s;
+    }
+
+    #btn-next {
+      background: #e2b96f;
+      color: #1a1a2e;
+    }
+
+    /* Utility */
+    #utility-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .small-btn {
+      padding: 8px 18px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      font-size: 0.85rem;
+      background: transparent;
+      color: #a0aec0;
+      transition: all 0.2s;
+    }
+
+    /* Category filter */
+    #filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .filter-btn {
+      padding: 5px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(226,185,111,0.25);
+      cursor: pointer;
+      font-size: 0.78rem;
+      background: transparent;
+      color: #a0aec0;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active {
+      background: rgba(226,185,111,0.15);
+      border-color: #e2b96f;
+      color: #e2b96f;
+    }
+
+    /* Progress bar */
+    #progress-track {
+      width: 340px;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+
+    #progress-fill {
+      height: 100%;
+      background: #e2b96f;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Hebrew Vowels — נִיקּוּד</h1>
+  <p class="subtitle">Niqqud · Masoretic pointing system</p>
+  <p id="counter">Card 1 of 13</p>
+
+  <div id="font-row">
+    <label for="font-select">Font:</label>
+    <select id="font-select">
+      <option value="'Frank Ruhl Libre', 'Times New Roman', serif">Frank Rühl (Classic Print)</option>
+      <option value="'Noto Serif Hebrew', 'David', serif">Noto Serif Hebrew</option>
+      <option value="'Noto Sans Hebrew', 'Arial Hebrew', sans-serif">Noto Sans Hebrew</option>
+      <option value="'Miriam Libre', 'Courier New', monospace">Miriam (Block)</option>
+      <option value="'Arial Hebrew', 'Helvetica', sans-serif">System Default</option>
+    </select>
+  </div>
+
+  <div id="filter-row">
+    <button class="filter-btn active" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" onclick="setFilter('long')">Long vowels</button>
+    <button class="filter-btn" onclick="setFilter('short')">Short vowels</button>
+    <button class="filter-btn" onclick="setFilter('reduced')">Reduced / Shva</button>
+  </div>
+
+  <div id="mode-row">
+    <button class="mode-btn active" id="btn-mode-symbol" onclick="setMode('symbol')">Symbol → Name</button>
+    <button class="mode-btn"        id="btn-mode-name"   onclick="setMode('name')">Name → Symbol</button>
+  </div>
+
+  <div id="card" onclick="toggleFlip()">
+    <div id="card-front">
+      <div id="front-symbol"></div>
+      <div id="front-hint">tap to reveal</div>
+    </div>
+    <div id="card-back">
+      <div id="back-symbol"></div>
+      <div id="back-name"></div>
+      <div id="back-sound"></div>
+      <div id="back-type"></div>
+      <div id="back-example"></div>
+    </div>
+  </div>
+
+  <div id="nav-row">
+    <button class="nav-btn" onclick="navigate(-1)">← Prev</button>
+    <button class="nav-btn" id="btn-next" onclick="navigate(1)">Next →</button>
+  </div>
+
+  <div id="utility-row">
+    <button class="small-btn" onclick="shuffleDeck()">🔀 Shuffle</button>
+    <button class="small-btn" onclick="resetDeck()">↺ Reset Order</button>
+  </div>
+
+  <div id="progress-track">
+    <div id="progress-fill"></div>
+  </div>
+
+  <script>
+    // ◌ U+25CC — standard dotted circle placeholder for diacritics shown in isolation
+    const DC = "\u25CC";
+
+    // Each card has one symbol. Where two names share the same symbol (e.g. Qamats /
+    // Qamats Hatuf, Tsere / Tsere Male, Hiriq / Hiriq Male), they are merged into a
+    // single card. The `readings` array holds all possible name+sound+type+example
+    // combinations for that symbol, rendered together on the back.
+    const ALL_VOWELS = [
+      // ── LONG / AMBIGUOUS ──
+      {
+        symbol: DC + "\u05B8",
+        category: "long",
+        readings: [
+          { name: "Qamats",      sound: "AH  (as in 'father')",                              type: "Long A",  example: "שָׁלוֹם  shalom — peace" },
+          { name: "Qamats Hatuf",sound: "O  (short) — only in closed unstressed syllable",   type: "Short O", example: "חָכְמָה  hokhmah — wisdom" },
+        ]
+      },
+      {
+        symbol: DC + "\u05B5",
+        category: "long",
+        readings: [
+          { name: "Tsere",      sound: "EY  (as in 'they')",                        type: "Long E", example: "אֵם  em — mother" },
+          { name: "Tsere Male", sound: "EY — same sound, lengthened by following Yod", type: "Long E", example: "בֵּית  beit — house (written ◌ֵי)" },
+        ]
+      },
+      {
+        symbol: DC + "\u05B4",
+        category: "long",
+        readings: [
+          { name: "Hiriq",      sound: "I  (as in 'bit') — short",                     type: "Short I", example: "מִן  min — from" },
+          { name: "Hiriq Male", sound: "EE  (as in 'machine') — long, with following Yod", type: "Long I",  example: "שִׁיר  shir — song (written ◌ִי)" },
+        ]
+      },
+      // ── UNIQUE LONG VOWELS ──
+      {
+        symbol: DC + "\u05B9",
+        category: "long",
+        readings: [{ name: "Holem", sound: "OH  (as in 'tone')", type: "Long O", example: "כֹּל  kol — all" }]
+      },
+      {
+        symbol: "\u05D5\u05BC",
+        category: "long",
+        readings: [{ name: "Shuruq", sound: "OO  (as in 'rule') — Vav with dagesh", type: "Long U", example: "רוּחַ  ruach — spirit" }]
+      },
+      // ── SHORT VOWELS ──
+      {
+        symbol: DC + "\u05B7",
+        category: "short",
+        readings: [{ name: "Patah", sound: "A  (as in 'cat')", type: "Short A", example: "בַּיִת  bayit — house" }]
+      },
+      {
+        symbol: DC + "\u05B6",
+        category: "short",
+        readings: [{ name: "Segol", sound: "E  (as in 'bed')", type: "Short E", example: "מֶלֶךְ  melekh — king" }]
+      },
+      {
+        symbol: DC + "\u05BB",
+        category: "short",
+        readings: [{ name: "Qibbuts", sound: "U  (as in 'put')", type: "Short U", example: "סֻכָּה  sukkah — booth" }]
+      },
+      // ── REDUCED / SHVA ──
+      {
+        symbol: DC + "\u05B0",
+        category: "reduced",
+        readings: [{ name: "Shva", sound: "Ə  (brief neutral) or silent — depends on syllable position", type: "Reduced", example: "בְּרֵאשִׁית  bereshit — in the beginning" }]
+      },
+      {
+        symbol: DC + "\u05B2",
+        category: "reduced",
+        readings: [{ name: "Hataf Patah", sound: "A  (ultra-short, as in 'cat')", type: "Reduced A", example: "אֲנִי  ani — I" }]
+      },
+      {
+        symbol: DC + "\u05B1",
+        category: "reduced",
+        readings: [{ name: "Hataf Segol", sound: "E  (ultra-short, as in 'bed')", type: "Reduced E", example: "אֱלֹהִים  Elohim — God" }]
+      },
+      {
+        symbol: DC + "\u05B3",
+        category: "reduced",
+        readings: [{ name: "Hataf Qamats", sound: "O  (ultra-short, as in 'not')", type: "Reduced O", example: "אֳנִיָּה  oniyah — ship" }]
+      },
+    ];
+
+    let currentFilter = 'all';
+    let mode = 'symbol';
+    let deck = [...ALL_VOWELS];
+    let index = 0;
+    let flipped = false;
+
+    function filteredVowels() {
+      if (currentFilter === 'all') return [...ALL_VOWELS];
+      // For filter purposes, a card with ANY reading in that category is included
+      return ALL_VOWELS.filter(v =>
+        v.category === currentFilter ||
+        v.readings.some(r => r.type.toLowerCase().includes(currentFilter))
+      );
+    }
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function currentFont() {
+      return document.getElementById('font-select').value;
+    }
+
+    function buildBackHTML(card, font) {
+      const multi = card.readings.length > 1;
+      if (!multi) {
+        const r = card.readings[0];
+        return `
+          <div id="back-name" style="font-size:1.4rem;color:#9ae672;font-weight:700;margin-bottom:6px;">${r.name}</div>
+          <div id="back-sound" style="font-size:1rem;color:#b9f5a0;margin-bottom:4px;">${r.sound}</div>
+          <div id="back-type" style="font-size:0.82rem;color:#6abf45;font-style:italic;margin-bottom:4px;">${r.type}</div>
+          <div id="back-example" style="font-size:0.85rem;color:#88d68a;margin-top:4px;">${r.example}</div>
+        `;
+      }
+      // Multiple readings — render each in a labelled block
+      return card.readings.map((r, i) => `
+        <div style="
+          border:1px solid rgba(106,191,69,0.3);
+          border-radius:10px;
+          padding:8px 12px;
+          margin-bottom:8px;
+          width:100%;
+          text-align:center;
+          background:rgba(106,191,69,0.05);
+        ">
+          <div style="font-size:0.7rem;color:#6abf45;letter-spacing:1px;margin-bottom:3px;">READING ${i+1} — ${r.type.toUpperCase()}</div>
+          <div style="font-size:1.15rem;color:#9ae672;font-weight:700;margin-bottom:2px;">${r.name}</div>
+          <div style="font-size:0.88rem;color:#b9f5a0;margin-bottom:2px;">${r.sound}</div>
+          <div style="font-size:0.78rem;color:#88d68a;">${r.example}</div>
+        </div>
+      `).join('');
+    }
+
+    function buildBackHTMLNameMode(card, font) {
+      // name→symbol mode: front shows name(s), back shows symbol + readings
+      const symHTML = `<div style="font-size:5rem;color:#9ae672;line-height:1.3;direction:rtl;font-family:${font};margin-bottom:10px;">${card.symbol}</div>`;
+      const readingsHTML = card.readings.map(r =>
+        `<div style="font-size:0.88rem;color:#b9f5a0;margin-bottom:2px;">${r.sound}</div>`
+      ).join('');
+      return symHTML + readingsHTML;
+    }
+
+    function frontNamesText(card) {
+      return card.readings.map(r => r.name).join(' / ');
+    }
+
+    function render() {
+      const card = deck[index];
+      const total = deck.length;
+      const font = currentFont();
+
+      document.getElementById('counter').textContent = `Card ${index + 1} of ${total}`;
+      document.getElementById('progress-fill').style.width = `${((index + 1) / total) * 100}%`;
+
+      const cardEl = document.getElementById('card');
+      cardEl.classList.toggle('flipped', flipped);
+
+      const frontEl  = document.getElementById('card-front');
+      const backEl   = document.getElementById('card-back');
+      const frontSym = document.getElementById('front-symbol');
+
+      if (mode === 'symbol') {
+        frontSym.textContent = card.symbol;
+        frontSym.style.fontFamily = font;
+        frontSym.style.fontSize = '6rem';
+        frontSym.style.direction = 'rtl';
+        frontSym.style.fontWeight = 'normal';
+        frontSym.classList.remove('name-mode');
+        backEl.innerHTML = buildBackHTML(card, font);
+      } else {
+        frontSym.textContent = frontNamesText(card);
+        frontSym.style.fontFamily = "'Segoe UI', sans-serif";
+        frontSym.style.fontSize = card.readings.length > 1 ? '1.4rem' : '2rem';
+        frontSym.style.direction = 'ltr';
+        frontSym.style.fontWeight = '600';
+        frontSym.classList.add('name-mode');
+        backEl.innerHTML = buildBackHTMLNameMode(card, font);
+      }
+
+      document.getElementById('btn-mode-symbol').classList.toggle('active', mode === 'symbol');
+      document.getElementById('btn-mode-name').classList.toggle('active', mode === 'name');
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${currentFilter}'`));
+      });
+    }
+
+    function toggleFlip() {
+      flipped = !flipped;
+      render();
+    }
+
+    function navigate(dir) {
+      flipped = false;
+      render();
+      setTimeout(() => {
+        index = (index + dir + deck.length) % deck.length;
+        render();
+      }, 150);
+    }
+
+    function setMode(m) {
+      mode = m;
+      flipped = false;
+      render();
+    }
+
+    function setFilter(f) {
+      currentFilter = f;
+      deck = filteredVowels();
+      index = 0;
+      flipped = false;
+      render();
+    }
+
+    function shuffleDeck() {
+      deck = shuffle(filteredVowels());
+      index = 0;
+      flipped = false;
+      render();
+    }
+
+    function resetDeck() {
+      deck = filteredVowels();
+      index = 0;
+      flipped = false;
+      render();
+    }
+
+    document.getElementById('font-select').addEventListener('change', render);
+
+    render();
+  </script>
+</body>
+</html>
