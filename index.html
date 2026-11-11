@@ -338,6 +338,87 @@ const SITE = {
     }
   ],
 
+  /* Shown above the list on the Projects page. Set to "" to omit. */
+  projectsIntro: "These are projects I've made with the help from Large Language Models. Each are open source and totally free to use and modify. I've been a big fan of open source software for years, and I think that one of the most ethicak uses of AI is to produce software free of charge. If you find any erorrs, or would like to contribute, reach out!",
+
+  projects: [
+  
+    {
+      title: "Web Utilities",
+      note: "",
+      venue: "",
+      description: "Web utilities provides basic tools for internet users",
+      link: "https://hyrumhendrickson.github.io/WebUtilities/",
+      linkText: "View"
+    },
+    {
+      title: "Clover",
+      note: "",
+      venue: "",
+      description: "Clover is a website that helps students visualize mathematics",
+      link: "https://hyrumhendrickson.github.io/Clover/",
+      linkText: "View"
+    },
+    {
+      title: "Axis",
+      note: "",
+      venue: "",
+      description: "Axis is a lightweight and quick application for managing AI agents",
+      link: "https://github.com/HyrumHendrickson/Axis",
+      linkText: "View"
+    },
+    {
+      title: "Redwood",
+      note: "",
+      venue: "",
+      description: "Redwood is a C application to study and model the behavior of cryptocurrency networks",
+      link: "https://github.com/HyrumHendrickson/Redwood",
+      linkText: "View"
+    },
+    {
+      title: "Willow",
+      note: "",
+      venue: "",
+      description: "Willow is a Rust app that allows users to create and edit HTML websites.",
+      link: "https://github.com/HyrumHendrickson/Willow",
+      linkText: "View"
+    },
+    {
+      title: "Chrysanthemum",
+      note: "",
+      venue: "",
+      description: "Chrysanthemum is a Rust app that complies Latex code, it allows users on the same WiFi network to work together on the same document.",
+      link: "https://github.com/HyrumHendrickson/Chrysanthemum",
+      linkText: "View"
+    },
+    {
+      title: "WikiForge",
+      note: "",
+      venue: "",
+      description: "WikiForge is a Rust app that helps users make Wiki pages quickly",
+      link: "https://github.com/HyrumHendrickson/WikiForge",
+      linkText: "View"
+    },
+    {
+      title: "FolkCraft",
+      note: "",
+      venue: "",
+      description: "FolkCraft is a small adventure game built in Rust.",
+      link: "https://github.com/HyrumHendrickson/FolkCraft",
+      linkText: "View"
+    }
+    /* Copy the block above (with a comma between entries) to add more:
+    {
+      title: "Project Name",
+      note: "2026",
+      venue: "Tools or context, e.g. Python, Course Project",
+      description: "What it does.",
+      link: "https://github.com/HyrumHendrickson/RepoName",
+      linkText: "View"
+    }
+    */
+  ],
+
   publications: [
     /*
     {
@@ -381,6 +462,7 @@ const SITE = {
   tabs: [
     { id: "home",         label: "Home" },
     { id: "resume",       label: "Resume" },
+    { id: "projects",     label: "Projects" },
     { id: "publications", label: "Publications" },
     { id: "contact",      label: "Contact" }
   ]
@@ -471,6 +553,16 @@ function renderPanel(id){
         <section class="section">
           <h2>Certifications</h2>
           ${SITE.certifications.map(position).join("")}
+        </section>`;
+
+    case "projects":
+      return `
+        <section class="section">
+          <h2>Projects</h2>
+          ${SITE.projectsIntro ? `<p>${esc(SITE.projectsIntro)}</p>` : ""}
+        </section>
+        <section class="section">
+          ${SITE.projects.map(entry).join("")}
         </section>`;
 
     case "publications":
