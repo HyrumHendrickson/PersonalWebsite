@@ -1,414 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hebrew Alphabet Flashcards</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=Noto+Serif+Hebrew:wght@400;700&family=Noto+Sans+Hebrew:wght@400;700&family=Miriam+Libre:wght@400;700&display=swap" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 20px;
-    }
-
-    h1 {
-      color: #e2b96f;
-      font-size: 1.6rem;
-      margin-bottom: 6px;
-      letter-spacing: 2px;
-    }
-
-    #counter {
-      color: #a0aec0;
-      margin-bottom: 16px;
-      font-size: 0.9rem;
-    }
-
-    /* Font selector */
-    #font-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    #font-row label {
-      color: #a0aec0;
-      font-size: 0.85rem;
-    }
-
-    #font-select {
-      padding: 6px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(226,185,111,0.3);
-      background: rgba(255,255,255,0.08);
-      color: #e2b96f;
-      font-size: 0.85rem;
-      cursor: pointer;
-      outline: none;
-    }
-
-    /* Mode toggle */
-    #mode-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    .mode-btn {
-      padding: 8px 20px;
-      border-radius: 20px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
-      background: rgba(255,255,255,0.1);
-      color: #e2e8f0;
-      transition: all 0.2s;
-    }
-
-    .mode-btn.active {
-      background: #e2b96f;
-      color: #1a1a2e;
-    }
-
-    /* Card */
-    #card {
-      width: 320px;
-      height: 220px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #2a2a5a, #1a1a4a);
-      border: 2px solid #e2b96f;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      transition: all 0.3s ease;
-      user-select: none;
-      padding: 20px;
-      text-align: center;
-    }
-
-    #card.flipped {
-      background: linear-gradient(135deg, #2d4a22, #1a3a12);
-      border-color: #6abf45;
-    }
-
-    #card-front, #card-back {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-    }
-
-    #card-back { display: none; }
-
-    #card.flipped #card-front { display: none; }
-    #card.flipped #card-back  { display: flex; }
-
-    #front-text {
-      font-size: 5rem;
-      color: #e2b96f;
-      line-height: 1.1;
-      direction: rtl;
-    }
-
-    #front-text.name-mode {
-      font-size: 2rem;
-      font-weight: 600;
-      direction: ltr;
-      font-family: 'Segoe UI', sans-serif !important;
-    }
-
-    #front-hint {
-      color: #718096;
-      font-size: 0.8rem;
-      margin-top: 16px;
-    }
-
-    #back-top {
-      font-size: 1.6rem;
-      color: #9ae672;
-      font-weight: 700;
-      margin-bottom: 10px;
-      direction: ltr;
-    }
-
-    #back-top.letter-mode {
-      font-size: 4rem;
-      direction: rtl;
-    }
-
-    #back-bottom {
-      font-size: 0.95rem;
-      color: #b9f5a0;
-      line-height: 1.5;
-    }
-
-    /* Navigation */
-    #nav-row {
-      display: flex;
-      gap: 16px;
-      margin-top: 28px;
-      align-items: center;
-    }
-
-    .nav-btn {
-      padding: 12px 28px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: 600;
-      background: rgba(255,255,255,0.1);
-      color: #e2e8f0;
-      transition: all 0.2s;
-    }
-
-    #btn-next {
-      background: #e2b96f;
-      color: #1a1a2e;
-    }
-
-    /* Shuffle / Reset */
-    #utility-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .small-btn {
-      padding: 8px 18px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.15);
-      cursor: pointer;
-      font-size: 0.85rem;
-      background: transparent;
-      color: #a0aec0;
-      transition: all 0.2s;
-    }
-
-    /* Progress bar */
-    #progress-track {
-      width: 320px;
-      height: 4px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 2px;
-      margin-top: 24px;
-      overflow: hidden;
-    }
-
-    #progress-fill {
-      height: 100%;
-      background: #e2b96f;
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hebrew Alphabet · Hebrew · Lingua Antiqua</title>
+<meta name="description" content="Flashcards for the twenty-two letters of the Hebrew alef-bet, with names, sounds, and final forms.">
+<meta name="theme-color" content="#1a1410">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Frank+Ruhl+Libre:wght@400;500;700&family=Noto+Serif+Hebrew:wght@400;600&family=Noto+Sans+Hebrew:wght@400;700&family=Miriam+Libre:wght@400;700&display=swap" rel="stylesheet">
+<script>try{var t=JSON.parse(localStorage.getItem('lingua:theme'));if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="stylesheet" href="assets/lingua.css">
 </head>
-<body>
+<body data-section="hebrew" data-app="HebrewLetters">
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="site-header"></div>
+<nav id="site-breadcrumb" class="breadcrumb" aria-label="Breadcrumb"></nav>
+<script src="assets/lingua.js"></script>
+<noscript><p class="noscript-note">This application needs JavaScript to run. Please enable it and reload the page.</p></noscript>
+<main id="main" class="container app-shell">
+  <header class="masthead">
+    <div class="eyebrow">Alef-Bet · Biblical Hebrew</div>
+    <h1>The Hebrew <em>Alphabet</em></h1>
+    <p class="subtitle">Twenty-two letters, with their names, sounds, and final forms</p>
+  </header>
 
-  <h1>Hebrew Alphabet</h1>
-  <p id="counter">Card 1 of 22</p>
-
-  <div id="font-row">
-    <label for="font-select">Letter font:</label>
-    <select id="font-select">
-      <option value="'Frank Ruhl Libre', 'Times New Roman', serif">Frank Rühl (Classic Print)</option>
-      <option value="'Noto Serif Hebrew', 'David', serif">Noto Serif Hebrew</option>
-      <option value="'Noto Sans Hebrew', 'Arial Hebrew', sans-serif">Noto Sans Hebrew</option>
-      <option value="'Miriam Libre', 'Courier New', monospace">Miriam (Block)</option>
-      <option value="'Arial Hebrew', 'Helvetica', sans-serif">System Default</option>
-    </select>
-  </div>
-
-  <div id="mode-row">
-    <button class="mode-btn active" id="btn-mode-letter" onclick="setMode('letter')">Letter → Name</button>
-    <button class="mode-btn"        id="btn-mode-name"   onclick="setMode('name')">Name → Letter</button>
-  </div>
-
-  <div id="card" onclick="toggleFlip()">
-    <div id="card-front">
-      <div id="front-text"></div>
-      <div id="front-hint">tap to reveal</div>
+  <section class="panel" aria-labelledby="panel-title">
+    <div class="panel-header">
+      <h2 class="panel-title" id="panel-title">Flashcards</h2>
+      <div class="panel-meta">22 letters</div>
     </div>
-    <div id="card-back">
-      <div id="back-top"></div>
-      <div id="back-bottom"></div>
+    <div class="controls">
+      <div class="control-group">
+        <span class="label" id="lbl-dir">Direction</span>
+        <div class="seg" id="dir" role="group" aria-labelledby="lbl-dir">
+          <button type="button" data-mode="letter" aria-pressed="true">Letter → Name</button>
+          <button type="button" data-mode="name" aria-pressed="false">Name → Letter</button>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="label" for="font-select">Letter font</label>
+        <select id="font-select" class="field field--select">
+          <option value="'Frank Ruhl Libre', 'Times New Roman', serif">Frank Rühl (classic print)</option>
+          <option value="'Noto Serif Hebrew', 'David', serif">Noto Serif Hebrew</option>
+          <option value="'Noto Sans Hebrew', 'Arial Hebrew', sans-serif">Noto Sans Hebrew</option>
+          <option value="'Miriam Libre', 'Courier New', monospace">Miriam (block)</option>
+          <option value="'Arial Hebrew', 'Helvetica', sans-serif">System default</option>
+        </select>
+      </div>
     </div>
-  </div>
+    <div id="deck"></div>
+  </section>
+</main>
+<div id="site-footer"></div>
+<script src="assets/flashdeck.js"></script>
+<script>
+(function () {
+  'use strict';
+  var L = window.Lingua, h = L.h;
+  var FONT_KEY = 'lingua:hebrew-font';
+  var deckEl = document.getElementById('deck');
+  var fontSel = document.getElementById('font-select');
+  var savedFont = L.store.get(FONT_KEY, null);
+  if (savedFont) {
+    for (var i = 0; i < fontSel.options.length; i++) if (fontSel.options[i].value === savedFont) fontSel.value = savedFont;
+  }
+  function applyFont() { deckEl.style.setProperty('--font-hebrew', fontSel.value); }
+  applyFont();
+  fontSel.addEventListener('change', function () { applyFont(); L.store.set(FONT_KEY, fontSel.value); });
 
-  <div id="nav-row">
-    <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">← Prev</button>
-    <button class="nav-btn" id="btn-next" onclick="navigate(1)">Next →</button>
-  </div>
+  var LETTERS = [
+    { forms: ["א"], name: "Alef", sound: "Silent (glottal stop)" },
+    { forms: ["ב"], name: "Bet", sound: "B (or V without dagesh)" },
+    { forms: ["ג"], name: "Gimel", sound: "G (hard, as in \"go\")" },
+    { forms: ["ד"], name: "Dalet", sound: "D" },
+    { forms: ["ה"], name: "He", sound: "H" },
+    { forms: ["ו"], name: "Vav", sound: "V (or W in some traditions)" },
+    { forms: ["ז"], name: "Zayin", sound: "Z" },
+    { forms: ["ח"], name: "Chet", sound: "Ch (guttural, like Scottish \"loch\")" },
+    { forms: ["ט"], name: "Tet", sound: "T" },
+    { forms: ["י"], name: "Yod", sound: "Y" },
+    { forms: ["כ", "ך"], name: "Kaf", sound: "K (or Kh without dagesh); ך is final form" },
+    { forms: ["ל"], name: "Lamed", sound: "L" },
+    { forms: ["מ", "ם"], name: "Mem", sound: "M; ם is final form" },
+    { forms: ["נ", "ן"], name: "Nun", sound: "N; ן is final form" },
+    { forms: ["ס"], name: "Samek", sound: "S" },
+    { forms: ["ע"], name: "Ayin", sound: "Silent (guttural, distinct from Alef)" },
+    { forms: ["פ", "ף"], name: "Pe", sound: "P (or F without dagesh); ף is final form" },
+    { forms: ["צ", "ץ"], name: "Tsadi", sound: "Ts (as in \"cats\"); ץ is final form" },
+    { forms: ["ק"], name: "Qof", sound: "Q (deep K sound)" },
+    { forms: ["ר"], name: "Resh", sound: "R (slightly guttural)" },
+    { forms: ["שׁ", "שׂ"], name: "Shin / Sin", sound: "Sh (dot on right) / S (dot on left)" },
+    { forms: ["ת"], name: "Tav", sound: "T" }
+  ];
 
-  <div id="utility-row">
-    <button class="small-btn" onclick="shuffleDeck()">🔀 Shuffle</button>
-    <button class="small-btn" onclick="resetDeck()">↺ Reset Order</button>
-  </div>
+  var mode = 'letter';
+  var glyphs = function (it) { return it.forms.join('\u2002'); };
 
-  <div id="progress-track">
-    <div id="progress-fill"></div>
-  </div>
-
-  <script>
-    const LETTERS = [
-      { letter: "א", name: "Alef",      pronunciation: "Silent (glottal stop)" },
-      { letter: "ב", name: "Bet",       pronunciation: "B (or V without dagesh)" },
-      { letter: "ג", name: "Gimel",     pronunciation: 'G (hard, as in "go")' },
-      { letter: "ד", name: "Dalet",     pronunciation: "D" },
-      { letter: "ה", name: "He",        pronunciation: "H" },
-      { letter: "ו", name: "Vav",       pronunciation: "V (or W in some traditions)" },
-      { letter: "ז", name: "Zayin",     pronunciation: "Z" },
-      { letter: "ח", name: "Chet",      pronunciation: 'Ch (guttural, like Scottish "loch")' },
-      { letter: "ט", name: "Tet",       pronunciation: "T" },
-      { letter: "י", name: "Yod",       pronunciation: "Y" },
-      { letter: "כ / ך", name: "Kaf",  pronunciation: "K (or Kh without dagesh); ך is final form" },
-      { letter: "ל", name: "Lamed",     pronunciation: "L" },
-      { letter: "מ / ם", name: "Mem",  pronunciation: "M; ם is final form" },
-      { letter: "נ / ן", name: "Nun",  pronunciation: "N; ן is final form" },
-      { letter: "ס", name: "Samek",     pronunciation: "S" },
-      { letter: "ע", name: "Ayin",      pronunciation: "Silent (guttural, distinct from Alef)" },
-      { letter: "פ / ף", name: "Pe",   pronunciation: "P (or F without dagesh); ף is final form" },
-      { letter: "צ / ץ", name: "Tsadi",pronunciation: 'Ts (as in "cats"); ץ is final form' },
-      { letter: "ק", name: "Qof",       pronunciation: "Q (deep K sound)" },
-      { letter: "ר", name: "Resh",      pronunciation: "R (slightly guttural)" },
-      { letter: "ש", name: "Shin / Sin",pronunciation: "Sh (dot on right) / S (dot on left)" },
-      { letter: "ת", name: "Tav",       pronunciation: "T" },
-    ];
-
-    let deck = [...LETTERS];
-    let index = 0;
-    let flipped = false;
-    let mode = "letter"; // "letter" | "name"
-
-    function shuffle(arr) {
-      const a = [...arr];
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
+  var deck = L.flashDeck({
+    root: '#deck',
+    items: LETTERS,
+    renderFront: function (it) {
+      return mode === 'letter'
+        ? h('span', { class: 'fc-form', lang: 'he' }, [glyphs(it)])
+        : h('span', { class: 'fc-title' }, [it.name]);
+    },
+    renderBack: function (it) {
+      return mode === 'letter'
+        ? [h('span', { class: 'fc-back-top' }, [it.name]), h('span', { class: 'fc-back-detail' }, [it.sound])]
+        : [h('span', { class: 'fc-form fc-form--md', lang: 'he' }, [glyphs(it)]), h('span', { class: 'fc-back-detail' }, [it.sound])];
     }
+  });
 
-    function currentFont() {
-      return document.getElementById('font-select').value;
-    }
-
-    function render() {
-      const card = deck[index];
-      const total = deck.length;
-      const font = currentFont();
-
-      // Counter
-      document.getElementById('counter').textContent = `Card ${index + 1} of ${total}`;
-
-      // Progress bar
-      document.getElementById('progress-fill').style.width = `${((index + 1) / total) * 100}%`;
-
-      // Card flip state
-      const cardEl = document.getElementById('card');
-      if (flipped) {
-        cardEl.classList.add('flipped');
-      } else {
-        cardEl.classList.remove('flipped');
-      }
-
-      // Front
-      const frontText = document.getElementById('front-text');
-      if (mode === 'letter') {
-        frontText.textContent = card.letter;
-        frontText.style.fontFamily = font;
-        frontText.style.fontSize = '5rem';
-        frontText.style.direction = 'rtl';
-        frontText.style.fontWeight = 'normal';
-        frontText.classList.remove('name-mode');
-      } else {
-        frontText.textContent = card.name;
-        frontText.style.fontFamily = "'Segoe UI', sans-serif";
-        frontText.style.fontSize = '2rem';
-        frontText.style.direction = 'ltr';
-        frontText.style.fontWeight = '600';
-        frontText.classList.add('name-mode');
-      }
-
-      // Back top
-      const backTop = document.getElementById('back-top');
-      if (mode === 'letter') {
-        backTop.textContent = card.name;
-        backTop.style.fontFamily = "'Segoe UI', sans-serif";
-        backTop.style.fontSize = '1.6rem';
-        backTop.style.direction = 'ltr';
-        backTop.classList.remove('letter-mode');
-      } else {
-        backTop.textContent = card.letter;
-        backTop.style.fontFamily = font;
-        backTop.style.fontSize = '4rem';
-        backTop.style.direction = 'rtl';
-        backTop.classList.add('letter-mode');
-      }
-
-      // Back bottom
-      document.getElementById('back-bottom').textContent = card.pronunciation;
-
-      // Mode buttons
-      document.getElementById('btn-mode-letter').classList.toggle('active', mode === 'letter');
-      document.getElementById('btn-mode-name').classList.toggle('active', mode === 'name');
-    }
-
-    function toggleFlip() {
-      flipped = !flipped;
-      render();
-    }
-
-    function navigate(dir) {
-      flipped = false;
-      const total = deck.length;
-      // Brief delay to let unflip render before changing card
-      render();
-      setTimeout(() => {
-        index = (index + dir + total) % total;
-        render();
-      }, 150);
-    }
-
-    function setMode(m) {
-      mode = m;
-      flipped = false;
-      render();
-    }
-
-    function shuffleDeck() {
-      deck = shuffle(LETTERS);
-      index = 0;
-      flipped = false;
-      render();
-    }
-
-    function resetDeck() {
-      deck = [...LETTERS];
-      index = 0;
-      flipped = false;
-      render();
-    }
-
-    // Re-render when font changes
-    document.getElementById('font-select').addEventListener('change', render);
-
-    // Initial render
-    render();
-  </script>
+  Array.prototype.forEach.call(document.querySelectorAll('#dir button'), function (b) {
+    b.addEventListener('click', function () {
+      mode = b.getAttribute('data-mode');
+      Array.prototype.forEach.call(document.querySelectorAll('#dir button'), function (x) {
+        x.setAttribute('aria-pressed', String(x === b));
+      });
+      deck.setItems(LETTERS);
+    });
+  });
+})();
+</script>
 </body>
 </html>

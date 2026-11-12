@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vocabulary · Hebrew · Lingua Antiqua</title>
+<meta name="description" content="Biblical Hebrew vocabulary: flashcards, a multiple-choice quiz, and a searchable word list, with progress saved on your device.">
+<meta name="theme-color" content="#1a1410">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Frank+Ruhl+Libre:wght@400;500;700&family=Noto+Serif+Hebrew:wght@400;600&display=swap" rel="stylesheet">
+<script>try{var t=JSON.parse(localStorage.getItem('lingua:theme'));if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="stylesheet" href="assets/lingua.css">
+</head>
+<body data-section="hebrew" data-app="HebrewVocab">
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="site-header"></div>
+<nav id="site-breadcrumb" class="breadcrumb" aria-label="Breadcrumb"></nav>
+<script src="assets/lingua.js"></script>
+<noscript><p class="noscript-note">This application needs JavaScript to run. Please enable it and reload the page.</p></noscript>
+<main id="main" class="container app-shell">
+  <header class="masthead">
+    <div class="eyebrow">Lexicon · Biblical Hebrew</div>
+    <h1>Hebrew <em>Vocabulary</em></h1>
+    <p class="subtitle"><span id="sub-count">191</span> vocabulary words in graded lists, from <cite>Learn Biblical Hebrew Easier and Faster</cite></p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Study modes">
+    <button class="tab" role="tab" id="tab-study" aria-selected="true" data-view="study"><span class="tab-num" aria-hidden="true">I</span>Flashcards</button>
+    <button class="tab" role="tab" id="tab-quiz" aria-selected="false" data-view="quiz"><span class="tab-num" aria-hidden="true">II</span>Quiz</button>
+    <button class="tab" role="tab" id="tab-vocab" aria-selected="false" data-view="vocab"><span class="tab-num" aria-hidden="true">III</span>Vocabulary</button>
+  </div>
+
+  <div class="controls">
+    <div class="control-group" style="flex:1 1 100%">
+      <span class="label" id="lbl-lists">Lists (select any number)</span>
+      <div class="chips" id="chips" role="group" aria-labelledby="lbl-lists"></div>
+    </div>
+    <div class="control-group" id="seg-dir-wrap">
+      <span class="label" id="lbl-dir">Direction</span>
+      <div class="seg" id="seg-dir" role="group" aria-labelledby="lbl-dir">
+        <button type="button" data-v="he" aria-pressed="true">Hebrew to English</button>
+        <button type="button" data-v="en" aria-pressed="false">English to Hebrew</button>
+      </div>
+    </div>
+    <label class="switch" id="hide-wrap">
+      <input type="checkbox" id="hide-known">
+      <span class="switch-track" aria-hidden="true"></span>
+      <span class="switch-text">Hide known cards</span>
+    </label>
+  </div>
+
+  <section id="study" class="panel panel--plain" aria-labelledby="tab-study"></section>
+  <section id="quiz" class="panel panel--plain" aria-labelledby="tab-quiz" hidden></section>
+  <section id="vocab" class="panel panel--plain" aria-labelledby="tab-vocab" hidden>
+    <input type="search" class="field" id="search" placeholder="Search Hebrew, pronunciation, or English" aria-label="Search vocabulary" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div class="progress-meta mt-1" id="vcount" aria-live="polite"></div>
+    <ul class="vocab-list" id="vlist"></ul>
+  </section>
+
+  <p class="text-center mt-2"><button type="button" class="btn btn--ghost btn--sm" id="reset">Clear saved progress</button></p>
+</main>
+<div id="site-footer"></div>
+<script>
+(function () {
+  var WORDS = [
+    { id: 'bayit', he: 'בַּיִת', tr: 'bayit', en: 'house', note: 'Masculine', list: 1 },
+    { id: 'ben', he: 'בֵּן', tr: 'ben', en: 'son', list: 1 },
+    { id: 'em', he: 'אֵם', tr: 'em', en: 'mother', note: 'Feminine', list: 1 },
+    { id: 'melekh', he: 'מֶלֶךְ', tr: 'melekh', en: 'king', list: 1 },
+    { id: 'shem', he: 'שֵׁם', tr: 'shem', en: 'name, reputation', note: 'Feminine', list: 1 },
+    { id: 'erets', he: 'אֶרֶץ', tr: 'erets', en: 'ground, earth, country', note: 'Feminine', list: 1 },
+    { id: 'bat', he: 'בַּת', tr: 'bat', en: 'daughter', pl: { he: 'בָּנוֹת', tr: 'banot' }, list: 1 },
+    { id: 'av', he: 'אָב', tr: 'av', en: 'father', pl: { he: 'אָבוֹת', tr: 'avot' }, list: 1 },
+    { id: 'ish', he: 'אִישׁ', tr: 'ish', en: 'man, husband, each', pl: { he: 'אֲנָשִׁים', tr: 'anashim' }, list: 1 },
+    { id: 'ishah', he: 'אִשָּׁה', tr: 'ishah', en: 'woman, wife', pl: { he: 'נָשִׁים', tr: 'nashim' }, list: 1 },
+    { id: 'rut', he: 'רוּת', tr: 'rut', en: 'Ruth', note: 'Proper name', list: 1 },
+    { id: 'david', he: 'דָּוִד', tr: 'david', en: 'David', note: 'Proper name', list: 1 },
+    { id: 'yhwh', he: 'יְהוָה', tr: 'Yahweh', en: 'Yahweh (LORD)', note: 'Proper name. Traditionally read aloud as Adonai.', list: 1 },
+
+    { id: 'ir', he: 'עִיר', tr: 'ir', en: 'city', pl: { he: 'עָרִים', tr: 'arim' }, list: 2 },
+    { id: 'eved', he: 'עֶבֶד', tr: 'eved', en: 'slave, servant', list: 2 },
+    { id: 'shaar', he: 'שַׁעַר', tr: 'sha\u2019ar', en: 'gate', list: 2 },
+    { id: 'akh', he: 'אָח', tr: 'akh', en: 'brother', list: 2 },
+    { id: 'akhot', he: 'אָחוֹת', tr: 'akhot', en: 'sister', list: 2 },
+    { id: 'am', he: 'עַם', tr: 'am', en: 'people', list: 2 },
+    { id: 'naar', he: 'נַעַר', tr: 'na\u2019ar', en: 'young man', list: 2 },
+    { id: 'yom', he: 'יוֹם', tr: 'yom', en: 'day', pl: { he: 'יָמִים', tr: 'yamim' }, list: 2 },
+    { id: 'davar', he: 'דָּבָר', tr: 'davar', en: 'word, matter, thing', list: 2 },
+    { id: 'adonai', he: 'אֲדֹנָי / אָדוֹן', tr: 'adonai / adon', en: 'lord, Lord, master', list: 2, small: true },
+    { id: 'devorah', he: 'דְּבוֹרָה', tr: 'devorah', en: 'Deborah', note: 'Proper name', list: 2 },
+    { id: 'yisrael', he: 'יִשְׂרָאֵל', tr: 'yisra\u2019el', en: 'Israel', note: 'Proper name', list: 2 },
+    { id: 'elohim', he: 'אֱלֹהִים', tr: 'elohim', en: 'God, gods', note: 'Plural in form. Context decides whether it means God or gods.', list: 2 },
+
+    { id: 've', he: 'וְ', tr: 've', en: 'and, but', note: 'Conjunction, attached to the front of the next word. Its vowel changes with context (qamets, hireq, patakh, segol, or shureq).', list: 3 },
+    { id: 'ki', he: 'כִּי', tr: 'ki', en: 'because, since, that', note: 'Conjunction', list: 3 },
+    { id: 'sar', he: 'שַׂר', tr: 'sar', en: 'official, prince', list: 3 },
+    { id: 'nefesh', he: 'נֶפֶשׁ', tr: 'nefesh', en: 'soul, breath, living being', list: 3 },
+    { id: 'kohen', he: 'כֹּהֵן', tr: 'kohen', en: 'priest', list: 3 },
+    { id: 'rosh', he: 'רֹאשׁ', tr: 'rosh', en: 'head, beginning', list: 3 },
+    { id: 'mayim', he: 'מַיִם', tr: 'mayim', en: 'water', list: 3 },
+    { id: 'goy', he: 'גּוֹי', tr: 'goy', en: 'people, nation', list: 3 },
+    { id: 'har', he: 'הַר', tr: 'har', en: 'mountain', list: 3 },
+    { id: 'raah', he: 'רָעָה', tr: 'ra\u2019ah', en: 'evil', list: 3 },
+    { id: 'rasha', he: 'רָשָׁע', tr: 'rasha', en: 'guilty, wicked person', list: 3 },
+    { id: 'mosheh', he: 'מֹשֶׁה', tr: 'mosheh', en: 'Moses', note: 'Proper name', list: 3 },
+    { id: 'yerushalayim', he: 'יְרוּשָׁלַיִם', tr: 'yerushalayim', en: 'Jerusalem', note: 'Proper name. Also spelled <span class="hebrew-inline" lang="he" dir="rtl">יְרוּשָׁלַם</span> (yerushalam).', list: 3, small: true },
+    { id: 'aharon', he: 'אַהֲרֹן', tr: 'aharon', en: 'Aaron', note: 'Proper name', list: 3 },
+
+    { id: 'le', he: 'לְ', tr: 'le', en: 'to, for', note: 'Preposition, attached to the front of the next word.', list: 5 },
+    { id: 'be', he: 'בְּ', tr: 'be', en: 'in, at, with, against, when', note: 'Preposition, attached to the front of the next word.', list: 5 },
+    { id: 'ke', he: 'כְּ / כְּמוֹ', tr: 'ke / kemo', en: 'like, as, according to', note: 'Preposition. The short form is attached to the next word.', list: 5, small: true },
+    { id: 'ad', he: 'עַד', tr: 'ad', en: 'until, as far as', note: 'Preposition', list: 5 },
+    { id: 'im', he: 'עִם', tr: 'im', en: 'with', note: 'Preposition', list: 5 },
+    { id: 'et', he: 'אֵת', tr: 'et', en: 'with', note: 'Preposition', list: 5 },
+    { id: 'akhar', he: 'אַחַר', tr: 'akhar', en: 'after, behind', note: 'Preposition', list: 5 },
+    { id: 'takhat', he: 'תַּחַת', tr: 'takhat', en: 'underneath, below, instead of', note: 'Preposition', list: 5 },
+    { id: 'kol', he: 'כֹּל', tr: 'kol', en: 'all, every, each', list: 5 },
+    { id: 'lifnei', he: 'לִפְנֵי', tr: 'lifnei', en: 'in the presence of, before', note: 'Preposition. Literally \u201cto the face of.\u201d', list: 5 },
+    { id: 'mipnei', he: 'מִלִּפְנֵי / מִפְּנֵי', tr: 'milifnei / mipnei', en: 'from the presence of, because of', note: 'Preposition', list: 5, small: true },
+    { id: 'alpnei', he: 'עַל־פְּנֵי', tr: 'al-pnei', en: 'on the surface of, up against, in the face of, before', note: 'Preposition', list: 5, small: true },
+    { id: 'betokh', he: 'בְּתוֹךְ', tr: 'betokh', en: 'midst, in, in the middle of', note: 'Preposition', list: 5 },
+    { id: 'mitokh', he: 'מִתּוֹךְ', tr: 'mitokh', en: 'from the midst of', note: 'Preposition', list: 5 },
+    { id: 'paneh', he: 'פָּנֶה / פָּנִים', tr: 'paneh / panim', en: 'face', note: 'Two forms are listed: paneh and panim.', list: 5, small: true },
+    { id: 'tavekh', he: 'תָּוֶךְ', tr: 'tavekh', en: 'midst', list: 5 },
+    { id: 'mitsrayim', he: 'מִצְרַיִם', tr: 'mitsrayim', en: 'Egypt, Egyptians', note: 'Proper name', list: 5 },
+    { id: 'paroh', he: 'פַּרְעֹה', tr: 'par\u2019oh', en: 'Pharaoh', note: 'Proper name', list: 5 },
+
+    { id: 'ha', he: 'הַ◌ּ', tr: 'ha', en: 'the', note: 'Definite article. Attached directly to the noun, with a dagesh in the noun\u2019s first consonant. The vowel often changes before a guttural or resh.', list: 4 },
+    { id: 'el', he: 'אֶל', tr: 'el', en: 'to, toward', note: 'Particle', list: 4 },
+    { id: 'lemaan', he: 'לְמַעַן', tr: 'lema\u2019an', en: 'for the sake of, on account of', note: 'Particle', list: 4 },
+    { id: 'al', he: 'עַל', tr: 'al', en: 'on, over, concerning, against', note: 'Particle', list: 4 },
+    { id: 'shanah', he: 'שָׁנָה', tr: 'shanah', en: 'year', list: 4 },
+    { id: 'shamayim', he: 'שָׁמַיִם', tr: 'shamayim', en: 'heaven, sky', list: 4 },
+    { id: 'derekh', he: 'דֶּרֶךְ', tr: 'derekh', en: 'way, road', list: 4 },
+    { id: 'qol', he: 'קוֹל', tr: 'qol', en: 'noise, human voice', list: 4 },
+    { id: 'mishpat', he: 'מִשְׁפָּט', tr: 'mishpat', en: 'legal judgment, decision, case', list: 4 },
+    { id: 'adam-n', he: 'אָדָם', tr: 'adam', en: 'humankind, man', note: 'Same spelling as the proper name Adam.', list: 4 },
+    { id: 'adam-p', he: 'אָדָם', tr: 'adam', en: 'Adam', note: 'Proper name. Same spelling as the noun for humankind.', list: 4 },
+    { id: 'chavah', he: 'חַוָּה', tr: 'khavah', en: 'Eve', note: 'Proper name', list: 4 },
+
+    { id: 'tov', he: 'טוֹב', tr: 'tov', en: 'good, pleasant', note: 'Adjective, masculine singular', list: 6 },
+    { id: 'gadol', he: 'גָּדוֹל', tr: 'gadol', en: 'great', note: 'Adjective, masculine singular', list: 6 },
+    { id: 'qadosh', he: 'קָדוֹשׁ', tr: 'qadosh', en: 'sacred, holy', note: 'Adjective, masculine singular', list: 6 },
+    { id: 'rav', he: 'רַב', tr: 'rav', en: 'great, many', note: 'Adjective, masculine singular', list: 6 },
+    { id: 'ra', he: 'רַע', tr: 'ra', en: 'evil', note: 'Adjective, masculine singular', list: 6 },
+    { id: 'qaton', he: 'קָטֹן', tr: 'qaton', en: 'small, young, unimportant', note: 'Adjective, masculine singular', list: 6 },
+    { id: 'ekhad', he: 'אֶחָד', tr: 'ekhad', en: 'one', note: 'Adjective, masculine singular', list: 6 },
+    { id: 'tsaddiq', he: 'צַדִּיק', tr: 'tsaddiq', en: 'righteous, just', note: 'Adjective, masculine singular', list: 6 },
+    { id: 'gam', he: 'גַּם', tr: 'gam', en: 'also, even', note: 'Adverb', list: 6 },
+    { id: 'meod', he: 'מְאֹד', tr: 'me\u2019od', en: 'very', note: 'Adverb', list: 6 },
+    { id: 'rakhel', he: 'רָחֵל', tr: 'rakhel', en: 'Rachel', note: 'Proper name', list: 6 },
+
+    { id: 'asher', he: 'אֲשֶׁר', tr: 'asher', en: 'that, who, which', note: 'Relative pronoun', list: 7 },
+    { id: 'kolasher', he: 'כָּל־אֲשֶׁר', tr: 'kol-asher', en: 'everything that/which', note: 'Relative pronoun phrase', list: 7, small: true },
+    { id: 'hu', he: 'הוּא', tr: 'hu', en: 'that; he, it', note: 'Demonstrative pronoun. 3ms (third person masculine singular).', list: 7 },
+    { id: 'hi', he: 'הִיא', tr: 'hi', en: 'that; she, it', note: 'Demonstrative pronoun. 3fs (third person feminine singular).', list: 7 },
+    { id: 'hem', he: 'הֵם', tr: 'hem', en: 'those; they', note: 'Demonstrative pronoun. 3mp (third person masculine plural).', list: 7 },
+    { id: 'hennah', he: 'הֵנָּה', tr: 'hennah', en: 'those; they', note: 'Demonstrative pronoun. 3fp (third person feminine plural).', list: 7 },
+    { id: 'zeh', he: 'זֶה', tr: 'zeh', en: 'this (m)', note: 'Demonstrative pronoun, masculine', list: 7 },
+    { id: 'zot', he: 'זֹאת', tr: 'zot', en: 'this (f)', note: 'Demonstrative pronoun, feminine', list: 7 },
+    { id: 'elleh', he: 'אֵלֶּה', tr: 'elleh', en: 'these', note: 'Demonstrative pronoun', list: 7 },
+    { id: 'sham', he: 'שָׁם', tr: 'sham', en: 'there', note: 'Adverb', list: 7 },
+    { id: 'yaaqov', he: 'יַעֲקֹב', tr: 'ya\u2019aqov', en: 'Jacob', note: 'Proper name', list: 7 },
+    { id: 'yehudah', he: 'יְהוּדָה', tr: 'yehudah', en: 'Judah', note: 'Proper name', list: 7 },
+    { id: 'yehoshua', he: 'יְהוֹשֻׁעַ', tr: 'yehoshua', en: 'Joshua', note: 'Proper name', list: 7 },
+
+    { id: 'min', he: 'מִן', tr: 'min', en: 'from, more than', note: 'Preposition. Usually \u201cfrom,\u201d sometimes comparative (\u201cmore than\u201d) or partitive (\u201cof\u201d). Can attach to the next word as <span class="hebrew-inline" lang="he" dir="rtl">מִּ</span> or <span class="hebrew-inline" lang="he" dir="rtl">מֵ</span>.', list: 8 },
+    { id: 'bein', he: 'בֵּין', tr: 'bein', en: 'between', note: 'Preposition', list: 8 },
+    { id: 'even', he: 'אֶבֶן', tr: 'even', en: 'stone', list: 8 },
+    { id: 'tson', he: 'צֹאן', tr: 'tson', en: 'flock, flocks (of sheep and goats)', list: 8 },
+    { id: 'basar', he: 'בָּשָׂר', tr: 'basar', en: 'flesh, meat', list: 8 },
+    { id: 'khayil', he: 'חַיִל', tr: 'khayil', en: 'strength, wealth, army', list: 8 },
+    { id: 'matteh', he: 'מַטֶּה', tr: 'matteh', en: 'staff, tribe', list: 8 },
+    { id: 'khodesh', he: 'חֹדֶשׁ', tr: 'khodesh', en: 'new moon, month', list: 8 },
+    { id: 'mishpakhah', he: 'מִשְׁפָּחָה', tr: 'mishpakhah', en: 'family', list: 8 },
+    { id: 'midbar', he: 'מִדְבָּר', tr: 'midbar', en: 'wilderness, desert', list: 8 },
+    { id: 'shomron', he: 'שֹׁמְרוֹן', tr: 'shomron', en: 'Samaria', note: 'Proper name', list: 8 },
+    { id: 'ashur', he: 'אַשּׁוּר', tr: 'ashshur', en: 'Assyria, Assyrians', note: 'Proper name', list: 8 },
+
+    { id: 'shamar', he: 'שמר', tr: 'shamar', en: 'to keep, watch', note: 'Verb (Qal). Listed as the root. Qal perfect 3ms: <span class="hebrew-inline" lang="he" dir="rtl">שָׁמַר</span> (shamar).', list: 9 },
+    { id: 'halakh', he: 'הלך', tr: 'halakh', en: 'to go, walk', note: 'Verb (Qal). Listed as the root. Qal perfect 3ms: <span class="hebrew-inline" lang="he" dir="rtl">הָלַךְ</span> (halakh).', list: 9 },
+    { id: 'yashav', he: 'ישב', tr: 'yashav', en: 'to sit, dwell', note: 'Verb (Qal). Listed as the root. Qal perfect 3ms: <span class="hebrew-inline" lang="he" dir="rtl">יָשַׁב</span> (yashav).', list: 9 },
+    { id: 'laqakh', he: 'לקח', tr: 'laqakh', en: 'to take', note: 'Verb (Qal). Listed as the root. Qal perfect 3ms: <span class="hebrew-inline" lang="he" dir="rtl">לָקַח</span> (laqakh).', list: 9 },
+    { id: 'shalakh', he: 'שלח', tr: 'shalakh', en: 'to send', note: 'Verb (Qal). Listed as the root. Qal perfect 3ms: <span class="hebrew-inline" lang="he" dir="rtl">שָׁלַח</span> (shalakh).', list: 9 },
+    { id: 'harag', he: 'הרג', tr: 'harag', en: 'to kill, slay', note: 'Verb (Qal). Listed as the root. Qal perfect 3ms: <span class="hebrew-inline" lang="he" dir="rtl">הָרַג</span> (harag).', list: 9 },
+    { id: 'malakh', he: 'מלך', tr: 'malakh', en: 'to be king, reign', note: 'Verb (Qal). Listed as the root. Qal perfect 3ms: <span class="hebrew-inline" lang="he" dir="rtl">מָלַךְ</span> (malakh).', list: 9 },
+    { id: 'yalad', he: 'ילד', tr: 'yalad', en: 'to bear, beget', note: 'Verb (Qal). Listed as the root. Qal perfect 3ms: <span class="hebrew-inline" lang="he" dir="rtl">יָלַד</span> (yalad).', list: 9 },
+    { id: 'darash', he: 'דרש', tr: 'darash', en: 'to seek, examine, interpret', note: 'Verb (Qal). Listed as the root. Qal perfect 3ms: <span class="hebrew-inline" lang="he" dir="rtl">דָּרַשׁ</span> (darash).', list: 9 },
+    { id: 'katav', he: 'כתב', tr: 'katav', en: 'to write', note: 'Verb (Qal). Listed as the root. Qal perfect 3ms: <span class="hebrew-inline" lang="he" dir="rtl">כָּתַב</span> (katav).', list: 9 },
+    { id: 'lo', he: 'לֹא', tr: 'lo', en: 'no, not', note: 'Particle', list: 9 },
+    { id: 'avraham', he: 'אַבְרָהָם', tr: 'avraham', en: 'Abraham', note: 'Proper name', list: 9 },
+    { id: 'sarah', he: 'שָׂרָה', tr: 'sarah', en: 'Sarah', note: 'Proper name', list: 9 },
+    { id: 'negev', he: 'נֶגֶב', tr: 'negev', en: 'Negev, the south', note: 'Proper name', list: 9 },
+    { id: 'lot', he: 'לוֹט', tr: 'lot', en: 'Lot', note: 'Proper name', list: 9 },
+    { id: 'kenaan', he: 'כְּנַעַן', tr: 'kena\u2019an', en: 'Canaan', note: 'Proper name', list: 9 },
+
+    { id: "sn-3ms", he: "־וֹ", tr: "-o", en: "his (3ms)", note: "Pronominal suffix on nouns. Attaches to the end of the noun.", list: 10 },
+    { id: "sn-3fs", he: "־הָ / ־◌ֶהָ", tr: "-ah / -ehah", en: "her (3fs)", note: "Pronominal suffix on nouns. Attaches to the end of the noun.", list: 10, small: true },
+    { id: "sn-2ms", he: "־ךָ", tr: "-kha", en: "your (2ms)", note: "Pronominal suffix on nouns. Attaches to the end of the noun.", list: 10 },
+    { id: "sn-2fs", he: "־ךְ", tr: "-kh", en: "your (2fs)", note: "Pronominal suffix on nouns. Attaches to the end of the noun.", list: 10 },
+    { id: "sn-1cs", he: "־◌ִי", tr: "-i", en: "my (1cs)", note: "Pronominal suffix on nouns. Attaches to the end of the noun.", list: 10 },
+    { id: "sn-3mp", he: "־הֶם / ־◌ָם", tr: "-hem / -am", en: "their (3mp)", note: "Pronominal suffix on nouns. Attaches to the end of the noun.", list: 10, small: true },
+    { id: "sn-3fp", he: "־הֶן / ־◌ָן", tr: "-hen / -an", en: "their (3fp)", note: "Pronominal suffix on nouns. Attaches to the end of the noun.", list: 10, small: true },
+    { id: "sn-2mp", he: "־כֶם", tr: "-khem", en: "your (2mp)", note: "Pronominal suffix on nouns. Attaches to the end of the noun.", list: 10 },
+    { id: "sn-2fp", he: "־כֶן", tr: "-khen", en: "your (2fp)", note: "Pronominal suffix on nouns. Attaches to the end of the noun.", list: 10 },
+    { id: "sn-1cp", he: "־נוּ", tr: "-nu", en: "our (1cp)", note: "Pronominal suffix on nouns. Attaches to the end of the noun.", list: 10 },
+    { id: "poh", he: "פֹּה", tr: "poh", en: "here", note: "Adverb", list: 11 },
+    { id: "od", he: "עוֹד", tr: "od", en: "still, yet, again", note: "Adverb", list: 11 },
+    { id: "attah", he: "עַתָּה", tr: "attah", en: "now", note: "Adverb", list: 11 },
+    { id: "ken", he: "כֵּן", tr: "ken", en: "so, thus", note: "Adverb", list: 11 },
+    { id: "koh", he: "כֹּה", tr: "koh", en: "thus, here", note: "Adverb", list: 11 },
+    { id: "lev", he: "לֵבָב, לֵב", tr: "levav, lev", en: "heart", list: 11, small: true },
+    { id: "regel", he: "רֶגֶל", tr: "regel", en: "foot, leg", list: 11 },
+    { id: "yad", he: "יָד", tr: "yad", en: "hand, power", list: 11 },
+    { id: "kaf", he: "כַּף", tr: "kaf", en: "hollow (of the hand), palm, sole of the foot", list: 11 },
+    { id: "keli", he: "כְּלִי", tr: "keli", en: "vessel, utensil, instrument", list: 11 },
+    { id: "peh", he: "פֶּה", tr: "peh", en: "mouth", list: 11 },
+    { id: "shaul", he: "שָׁאוּל", tr: "sha’ul", en: "Saul", note: "Proper name", list: 11 },
+    { id: "levi", he: "לֵוִי", tr: "levi", en: "Levi, Levite", note: "Proper name", list: 11 },
+    { id: "et-dobj", he: "אֶת־", tr: "et", en: "definite direct object marker", note: "Marks the definite direct object of a verb. Usually has no English equivalent.", list: 12 },
+    { id: "nafal", he: "נפל", tr: "nafal", en: "to fall", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">נָפַל</span> (nafal).", list: 12 },
+    { id: "amad", he: "עמד", tr: "amad", en: "to stand", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">עָמַד</span> (amad).", list: 12 },
+    { id: "akhal", he: "אכל", tr: "akhal", en: "to eat", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">אָכַל</span> (akhal).", list: 12 },
+    { id: "qara", he: "קרא", tr: "qara", en: "to name, call, read", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">קָרָא</span> (qara).", list: 12 },
+    { id: "nasa", he: "נשא", tr: "nasa", en: "to carry, lift", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">נָשָׂא</span> (nasa).", list: 12 },
+    { id: "yatsa", he: "יצא", tr: "yatsa", en: "to go out", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">יָצָא</span> (yatsa).", list: 12 },
+    { id: "matsa", he: "מצא", tr: "matsa", en: "to find", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">מָצָא</span> (matsa).", list: 12 },
+    { id: "yada", he: "ידע", tr: "yada", en: "to know", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">יָדַע</span> (yada).", list: 12 },
+    { id: "shama", he: "שמע", tr: "shama", en: "to hear, obey", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">שָׁמַע</span> (shama).", list: 12 },
+    { id: "moav", he: "מוֹאָב", tr: "mo’av", en: "Moab", note: "Proper name", list: 12 },
+    { id: "tsiyon", he: "צִיּוֹן", tr: "tsiyon", en: "Zion", note: "Proper name", list: 12 },
+    { id: "sp-3ms", he: "־וֹ", tr: "-o", en: "him", note: "Pronominal suffix on prepositions (for example, “to him”). Attaches to the end of the preposition.", list: 13 },
+    { id: "sp-3fs", he: "־◌ֶהָ / ־הָ", tr: "-ehah / -ah", en: "her", note: "Pronominal suffix on prepositions (for example, “to him”). Attaches to the end of the preposition.", list: 13, small: true },
+    { id: "sp-2ms", he: "־ךָ", tr: "-kha", en: "you (2ms)", note: "Pronominal suffix on prepositions (for example, “to him”). Attaches to the end of the preposition.", list: 13 },
+    { id: "sp-2fs", he: "־ךְ", tr: "-kh", en: "you (2fs)", note: "Pronominal suffix on prepositions (for example, “to him”). Attaches to the end of the preposition.", list: 13 },
+    { id: "sp-1cs", he: "־◌ִי", tr: "-i", en: "me", note: "Pronominal suffix on prepositions (for example, “to him”). Attaches to the end of the preposition.", list: 13 },
+    { id: "sp-3mp", he: "־הֶם", tr: "-hem", en: "them (3mp)", note: "Pronominal suffix on prepositions (for example, “to him”). Attaches to the end of the preposition.", list: 13 },
+    { id: "sp-3fp", he: "־הֶן", tr: "-hen", en: "them (3fp)", note: "Pronominal suffix on prepositions (for example, “to him”). Attaches to the end of the preposition.", list: 13 },
+    { id: "sp-2mp", he: "־כֶם", tr: "-khem", en: "you (2mp)", note: "Pronominal suffix on prepositions (for example, “to him”). Attaches to the end of the preposition.", list: 13 },
+    { id: "sp-2fp", he: "־כֶן", tr: "-khen", en: "you (2fp)", note: "Pronominal suffix on prepositions (for example, “to him”). Attaches to the end of the preposition.", list: 13 },
+    { id: "sp-1cp", he: "־נוּ", tr: "-nu", en: "us", note: "Pronominal suffix on prepositions (for example, “to him”). Attaches to the end of the preposition.", list: 13 },
+    { id: "hayah", he: "היה", tr: "hayah", en: "to be", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">הָיָה</span> (hayah).", list: 14 },
+    { id: "alah", he: "עלה", tr: "alah", en: "to ascend, go up", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">עָלָה</span> (alah).", list: 14 },
+    { id: "asah", he: "עשה", tr: "asah", en: "to do, make", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">עָשָׂה</span> (asah).", list: 14 },
+    { id: "amar", he: "אמר", tr: "amar", en: "to say", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">אָמַר</span> (amar).", list: 14 },
+    { id: "avar", he: "עבר", tr: "avar", en: "to pass over, go over", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">עָבַר</span> (avar).", list: 14 },
+    { id: "avad", he: "עבד", tr: "avad", en: "to work, serve", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">עָבַד</span> (avad).", list: 14 },
+    { id: "ahav", he: "אהב", tr: "ahav", en: "to love", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">אָהַב</span> (ahav).", list: 14 },
+    { id: "banah", he: "בנה", tr: "banah", en: "to build", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">בָּנָה</span> (banah).", list: 14 },
+    { id: "anah", he: "ענה", tr: "anah", en: "to answer", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">עָנָה</span> (anah).", list: 14 },
+    { id: "raah-v", he: "ראה", tr: "ra’ah", en: "to see", note: "Verb (Qal). Listed as the root. Qal perfect 3ms: <span class=\"hs\" lang=\"he\" dir=\"rtl\">רָאָה</span> (ra’ah).", list: 14 },
+    { id: "binyamin", he: "בִּנְיָמִן", tr: "binyamin", en: "Benjamin", note: "Proper name. Also spelled <span class=\"hs\" lang=\"he\" dir=\"rtl\">בִּנְיָמִין</span>.", list: 14 },
+    { id: "avimelekh", he: "אֲבִימֶלֶךְ", tr: "avimelekh", en: "Abimelech", note: "Proper name", list: 14 },
+    { id: "im-if", he: "אִם", tr: "im", en: "if", note: "Particle", list: 15 },
+    { id: "hineh", he: "הִנֵּה", tr: "hineh", en: "behold", note: "Particle", list: 15 },
+    { id: "o", he: "אוֹ", tr: "o", en: "or", note: "Particle", list: 15 },
+    { id: "akh-p", he: "אַךְ", tr: "akh", en: "surely, however, only", note: "Particle", list: 15 },
+    { id: "az", he: "אָז", tr: "az", en: "then, before, since", note: "Particle", list: 15 },
+    { id: "kesef", he: "כֶּסֶף", tr: "kesef", en: "silver, money", list: 15 },
+    { id: "mizbeakh", he: "מִזְבֵּחַ", tr: "mizbeakh", en: "altar", list: 15 },
+    { id: "maqom", he: "מָקוֹם", tr: "maqom", en: "place", list: 15 },
+    { id: "ruakh", he: "רוּחַ", tr: "ruakh", en: "spirit, wind, breath", list: 15 },
+    { id: "tsava", he: "צָבָא", tr: "tsava", en: "host, army, heavenly bodies", list: 15 },
+    { id: "yosef", he: "יוֹסֵף", tr: "yosef", en: "Joseph", note: "Proper name", list: 15 },
+    { id: "shelomoh", he: "שְׁלֹמֹה", tr: "shelomoh", en: "Solomon", note: "Proper name", list: 15 }
+  ];
+  WORDS = WORDS.map(function (w, i) { return { w: w, i: i }; })
+    .sort(function (x, y) { return x.w.list - y.w.list || x.i - y.i; })
+    .map(function (x) { return x.w; });
+  var BY_ID = {};
+  WORDS.forEach(function (w) { BY_ID[w.id] = w; });
+
+  var KEY = 'hebvocab:known';
+  function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
+  var known = new Set();
+  try { (JSON.parse(lsGet(KEY) || '[]') || []).forEach(function (id) { if (BY_ID[id]) known.add(id); }); } catch (e) {}
+  function saveKnown() { lsSet(KEY, JSON.stringify(Array.from(known))); }
+
+  var state = {
+    view: 'study', lists: [], dir: 'he', hideKnown: false,
+    order: WORDS.map(function (w) { return w.id; }),
+    idx: 0, flipped: false, quiz: null
+  };
+
+  function $(s) { return document.querySelector(s); }
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function inList(w) { return !state.lists.length || state.lists.indexOf(w.list) !== -1; }
+  function pool() { return WORDS.filter(inList); }
+  function getDeck() {
+    return state.order.map(function (id) { return BY_ID[id]; }).filter(function (w) {
+      return inList(w) && !(state.hideKnown && known.has(w.id));
+    });
+  }
+  function hebrew(w, cls) {
+    return '<div class="fc-form' + (w.small ? ' fc-form--md' : '') + (cls ? ' ' + cls : '') + '" lang="he" dir="rtl">' + w.he + '</div>';
+  }
+  function extra(w) {
+    var parts = [];
+    if (w.note) parts.push(w.note);
+    if (w.pl) parts.push('Plural: <span class="hebrew-inline" lang="he" dir="rtl">' + w.pl.he + '</span> (' + w.pl.tr + ')');
+    return parts.length ? '<div class="fc-note">' + parts.join('<br>') + '</div>' : '';
+  }
+
+  /* ---------- Flashcards ---------- */
+  function renderStudy() {
+    var el = $('#study');
+    var deck = getDeck();
+    var p = pool();
+    var knownCount = p.filter(function (w) { return known.has(w.id); }).length;
+    if (!deck.length) {
+      el.innerHTML = '<div class="empty-state"><strong>Every card here is marked known</strong>' +
+        'Turn off \u201cHide known cards\u201d to review them again, or clear your saved progress.</div>';
+      return;
+    }
+    if (state.idx >= deck.length) state.idx = 0;
+    if (state.idx < 0) state.idx = deck.length - 1;
+    var w = deck[state.idx];
+    var frontHe = state.dir === 'he';
+    var front = frontHe ? hebrew(w) : '<div class="fc-title">' + w.en + '</div>';
+    var back = (frontHe ? '<div class="fc-title">' + w.en + '</div>' : hebrew(w)) +
+      '<div class="fc-translit">' + w.tr + '</div>' + extra(w);
+    var pct = Math.round((knownCount / p.length) * 100);
+
+    el.innerHTML =
+      '<div class="progress-meta"><span>Card ' + (state.idx + 1) + ' of ' + deck.length + '</span>' +
+      '<span>' + knownCount + ' of ' + p.length + ' known</span></div>' +
+      '<div class="progress-bar" aria-hidden="true"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+      '<div class="fcard fcard--tall" id="card" role="button" tabindex="0" aria-label="Flashcard. Press Space or Enter to flip."><div class="fcard-inner">' +
+        '<div class="fcard-face">' + (known.has(w.id) ? '<span class="tag tag--good fcard-badge">Known</span>' : '') + front + '<span class="fcard-hint">Tap to reveal</span></div>' +
+        '<div class="fcard-face fcard-face--back">' + (known.has(w.id) ? '<span class="tag tag--good fcard-badge">Known</span>' : '') + back + '</div>' +
+      '</div></div>' +
+      '<div class="btn-row mt-1">' +
+        '<button class="btn" id="again">Review again</button>' +
+        '<button class="btn btn--primary" id="know">Know it</button>' +
+      '</div>' +
+      '<div class="btn-row">' +
+        '<button class="btn btn--ghost btn--sm" id="prev" aria-label="Previous card">Previous</button>' +
+        '<button class="btn btn--ghost btn--sm" id="shuffle">Shuffle</button>' +
+        '<button class="btn btn--ghost btn--sm" id="next" aria-label="Next card">Next</button>' +
+      '</div>' +
+      '<p class="kbd-hint"><kbd>Space</kbd> flips the card \u00b7 <kbd>\u2190</kbd> <kbd>\u2192</kbd> move between cards</p>';
+
+    var card = $('#card');
+    card.classList.toggle('is-flipped', state.flipped);
+    card.addEventListener('click', flip);
+    card.addEventListener('keydown', function (e) { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flip(); } });
+    $('#know').addEventListener('click', function () { mark(true); });
+    $('#again').addEventListener('click', function () { mark(false); });
+    $('#prev').addEventListener('click', function () { go(-1); });
+    $('#next').addEventListener('click', function () { go(1); });
+    $('#shuffle').addEventListener('click', function () { state.order = shuffle(state.order); state.idx = 0; state.flipped = false; renderStudy(); });
+  }
+  function flip() {
+    var c = $('#card');
+    if (!c) return;
+    state.flipped = !state.flipped;
+    c.classList.toggle('is-flipped', state.flipped);
+  }
+  function go(d) {
+    state.idx += d; state.flipped = false; renderStudy();
+  }
+  function mark(isKnown) {
+    var deck = getDeck();
+    var w = deck[state.idx];
+    if (!w) return;
+    if (isKnown) known.add(w.id); else known.delete(w.id);
+    saveKnown();
+    state.flipped = false;
+    if (!(isKnown && state.hideKnown)) state.idx += 1;
+    renderStudy();
+  }
+
+  /* ---------- Quiz ---------- */
+  function glosses(w) {
+    return w.en.toLowerCase().replace(/\(.*?\)/g, '').split(/[,;]/).map(function (g) { return g.trim(); }).filter(Boolean);
+  }
+  function overlaps(a, b) {
+    if (a.he === b.he) return true;
+    var ga = glosses(a), gb = glosses(b);
+    return ga.some(function (g) { return gb.indexOf(g) !== -1; });
+  }
+  function makeQ(w) {
+    var others = shuffle(WORDS.filter(function (o) { return o.id !== w.id && !overlaps(o, w); })).slice(0, 3);
+    return { w: w, opts: shuffle([w].concat(others)), picked: null };
+  }
+  function startQuiz() {
+    var words = shuffle(pool());
+    var qs = words.map(makeQ);
+    state.quiz = { qs: qs, i: 0, score: 0, missed: [], done: false };
+    renderQuiz();
+  }
+  function optText(o) {
+    return state.dir === 'he' ? '<span class="option-text">' + o.en + '</span>'
+      : '<span class="option-text hebrew" lang="he" dir="rtl">' + o.he + '</span>';
+  }
+  function renderQuiz() {
+    var el = $('#quiz');
+    var q = state.quiz;
+    if (!q) {
+      var n = pool().length;
+      el.innerHTML = '<div class="results"><h2>Multiple-choice quiz</h2>' +
+        '<p>' + n + ' questions, one for each word in the selected lists.</p>' +
+        '<p>' + (state.dir === 'he' ? 'Choose the English meaning of each Hebrew word.' : 'Choose the Hebrew word for each English meaning.') + '</p>' +
+        '<div class="btn-row"><button class="btn btn--primary" id="start">Start quiz</button></div></div>';
+      $('#start').addEventListener('click', startQuiz);
+      return;
+    }
+    if (q.done) {
+      var total = q.qs.length;
+      var pct = Math.round((q.score / total) * 100);
+      var missedHtml = q.missed.length
+        ? '<div class="missed"><div class="missed-title">Missed words</div><ul>' + q.missed.map(function (w) {
+            return '<li><span class="m-form hebrew" lang="he" dir="rtl">' + w.he + '</span><span class="m-gloss">' + w.en +
+              '</span><span class="m-tr">' + w.tr + '</span></li>';
+          }).join('') + '</ul></div>'
+        : '<p class="mt-1">No missed words.</p>';
+      el.innerHTML = '<div class="results"><h2>Quiz complete</h2><div class="results-score">' + q.score + ' <small>/ ' + total +
+        '</small></div><p>' + pct + '% correct</p>' + missedHtml +
+        '<div class="btn-row">' +
+        (q.missed.length ? '<button class="btn" id="retry">Retry missed words</button>' : '') +
+        '<button class="btn btn--primary" id="again-q">New quiz</button></div></div>';
+      var r = $('#retry');
+      if (r) r.addEventListener('click', function () {
+        var ws = shuffle(q.missed);
+        state.quiz = {
+          qs: ws.map(makeQ), i: 0, score: 0, missed: [], done: false
+        };
+        renderQuiz();
+      });
+      $('#again-q').addEventListener('click', startQuiz);
+      return;
+    }
+    var cur = q.qs[q.i];
+    var w = cur.w;
+    var answered = cur.picked !== null;
+    var prompt = state.dir === 'he' ? hebrew(w) : '<div class="fc-title">' + w.en + '</div>';
+    var opts = cur.opts.map(function (o, k) {
+      var cls = 'option';
+      if (answered) {
+        if (o.id === w.id) cls += ' is-correct';
+        else if (o.id === cur.picked) cls += ' is-wrong';
+      }
+      return '<button class="' + cls + '" data-id="' + o.id + '"' + (answered ? ' disabled' : '') + '>' +
+        '<span class="option-key" aria-hidden="true">' + (k + 1) + '</span>' + optText(o) + '</button>';
+    }).join('');
+    var fb = '';
+    if (answered) {
+      var ok = cur.picked === w.id;
+      fb = '<div class="feedback ' + (ok ? 'is-correct' : 'is-wrong') + '" role="status"><strong>' + (ok ? 'Correct.' : 'Incorrect.') + '</strong> ' +
+        '<span class="hebrew-inline" lang="he" dir="rtl">' + w.he + '</span> (' + w.tr + '): ' + w.en +
+        (w.note ? '<br>' + w.note : '') +
+        (w.pl ? '<br>Plural: <span class="hebrew-inline" lang="he" dir="rtl">' + w.pl.he + '</span> (' + w.pl.tr + ')' : '') +
+        '</div><div class="btn-row mt-1"><button class="btn btn--primary" id="nextq">' +
+        (q.i === q.qs.length - 1 ? 'See results' : 'Next question') + '</button></div>';
+    }
+    el.innerHTML =
+      '<div class="progress-meta"><span>Question ' + (q.i + 1) + ' of ' + q.qs.length + '</span><span>Score ' + q.score + '</span></div>' +
+      '<div class="progress-bar" aria-hidden="true"><div class="progress-fill" style="width:' + Math.round((q.i / q.qs.length) * 100) + '%"></div></div>' +
+      '<div class="prompt prompt--card">' + prompt + '</div>' +
+      '<div class="options options--stack">' + opts + '</div>' + fb;
+    Array.prototype.forEach.call(el.querySelectorAll('.option'), function (b) {
+      b.addEventListener('click', function () { answer(b.getAttribute('data-id')); });
+    });
+    var nb = $('#nextq');
+    if (nb) {
+      nb.addEventListener('click', nextQ);
+      nb.focus();
+    }
+  }
+  function answer(id) {
+    var q = state.quiz; var cur = q.qs[q.i];
+    if (cur.picked !== null) return;
+    cur.picked = id;
+    if (id === cur.w.id) q.score += 1; else q.missed.push(cur.w);
+    renderQuiz();
+  }
+  function nextQ() {
+    var q = state.quiz;
+    if (q.i === q.qs.length - 1) q.done = true; else q.i += 1;
+    renderQuiz();
+  }
+
+  /* ---------- Chrome ---------- */
+  /* ---------- Lists, search, vocabulary tab ---------- */
+  var LIST_NUMS = Array.from(new Set(WORDS.map(function (w) { return w.list; }))).sort(function (a, b) { return a - b; });
+  try {
+    var savedLists = JSON.parse(lsGet('hebvocab:lists') || '[]');
+    if (Array.isArray(savedLists)) state.lists = savedLists.filter(function (n) { return LIST_NUMS.indexOf(n) !== -1; });
+  } catch (e) {}
+  function saveLists() { lsSet('hebvocab:lists', JSON.stringify(state.lists)); }
+
+  function renderChips() {
+    var el = $('#chips');
+    var html = '<button class="chip" data-l="all">All (' + WORDS.length + ')</button>';
+    LIST_NUMS.forEach(function (n) {
+      var c = WORDS.filter(function (w) { return w.list === n; }).length;
+      html += '<button class="chip" data-l="' + n + '" aria-label="List ' + n + ', ' + c + ' words">List ' + n + '</button>';
+    });
+    el.innerHTML = html;
+    el.addEventListener('click', function (e) {
+      var b = e.target.closest('.chip');
+      if (!b) return;
+      var v = b.getAttribute('data-l');
+      if (v === 'all') {
+        state.lists = [];
+      } else {
+        var n = parseInt(v, 10);
+        var i = state.lists.indexOf(n);
+        if (i === -1) state.lists.push(n); else state.lists.splice(i, 1);
+        if (state.lists.length === LIST_NUMS.length) state.lists = [];
+      }
+      saveLists();
+      state.idx = 0; state.flipped = false; state.quiz = null;
+      renderAll();
+    });
+  }
+
+  function norm(str) {
+    return String(str || '').replace(/[\u0591-\u05C7\u25CC]/g, '').replace(/<[^>]*>/g, ' ')
+      .toLowerCase().replace(/[\u2019']/g, '').replace(/\s+/g, ' ').trim();
+  }
+  function haystack(w) {
+    if (!w._h) {
+      w._h = [norm(w.he), norm(w.tr), norm(w.en), w.pl ? norm(w.pl.he) + ' ' + norm(w.pl.tr) : '', norm(w.note)].join(' ');
+    }
+    return w._h;
+  }
+  function renderVocab() {
+    var terms = norm($('#search').value).split(' ').filter(Boolean);
+    var p = pool();
+    var rows = p.filter(function (w) {
+      if (!terms.length) return true;
+      var h = haystack(w);
+      return terms.every(function (t) { return h.indexOf(t) !== -1; });
+    });
+    var knownIn = p.filter(function (w) { return known.has(w.id); }).length;
+    $('#vcount').textContent = rows.length + ' of ' + p.length + ' words shown \u00b7 ' + knownIn + ' known';
+    $('#vlist').innerHTML = rows.length ? rows.map(function (w) {
+      var ex = extra(w).replace('class="fc-note"', 'class="v-note"');
+      return '<li class="vocab-row">' +
+        '<div class="v-he' + (w.small ? ' is-small' : '') + '" lang="he" dir="rtl">' + w.he + '</div>' +
+        '<div class="vmain"><div class="v-meaning">' + w.en + '</div><div class="v-translit">' + w.tr + '</div>' + ex + '</div>' +
+        '<div class="v-side"><span class="tag">List ' + w.list + '</span>' +
+        '<button type="button" class="btn btn--ghost btn--sm kn" data-id="' + w.id + '" aria-pressed="' + known.has(w.id) + '">Known</button></div></li>';
+    }).join('') : '<li class="empty-state">No words match your search.</li>';
+  }
+  $('#search').addEventListener('input', renderVocab);
+  $('#vlist').addEventListener('click', function (e) {
+    var b = e.target.closest('.kn');
+    if (!b) return;
+    var id = b.getAttribute('data-id');
+    if (known.has(id)) known.delete(id); else known.add(id);
+    saveKnown();
+    b.setAttribute('aria-pressed', String(known.has(id)));
+    var p = pool();
+    var knownIn = p.filter(function (w) { return known.has(w.id); }).length;
+    var c = $('#vcount').textContent.split(' \u00b7 ')[0];
+    $('#vcount').textContent = c + ' \u00b7 ' + knownIn + ' known';
+  });
+  renderChips();
+
+  function syncControls() {
+    Array.prototype.forEach.call(document.querySelectorAll('#chips .chip'), function (b) {
+      var v = b.getAttribute('data-l');
+      var on = v === 'all' ? !state.lists.length : state.lists.indexOf(parseInt(v, 10)) !== -1;
+      b.setAttribute('aria-pressed', String(on));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#seg-dir button'), function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === state.dir));
+    });
+    $('#seg-dir-wrap').hidden = state.view === 'vocab';
+    $('#hide-wrap').hidden = state.view !== 'study';
+    $('#hide-known').checked = state.hideKnown;
+    ['study', 'quiz', 'vocab'].forEach(function (v) {
+      $('#tab-' + v).setAttribute('aria-selected', String(state.view === v));
+      $('#' + v).hidden = state.view !== v;
+    });
+  }
+  function renderAll() {
+    syncControls();
+    if (state.view === 'study') renderStudy();
+    else if (state.view === 'quiz') renderQuiz();
+    else renderVocab();
+  }
+
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () { state.view = t.getAttribute('data-view'); renderAll(); });
+  });
+  document.querySelectorAll('#seg-dir button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.dir = b.getAttribute('data-v'); state.flipped = false; state.quiz = null; renderAll();
+    });
+  });
+  $('#hide-known').addEventListener('change', function (e) {
+    state.hideKnown = e.target.checked; state.idx = 0; state.flipped = false; renderAll();
+  });
+  $('#reset').addEventListener('click', function () {
+    known.clear(); saveKnown(); state.idx = 0; state.flipped = false; renderAll();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'SELECT' || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (state.view === 'study') {
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+      else if (e.key === ' ' && document.activeElement === document.body) { e.preventDefault(); flip(); }
+    } else if (state.view === 'quiz' && state.quiz && !state.quiz.done) {
+      var cur = state.quiz.qs[state.quiz.i];
+      var n = parseInt(e.key, 10);
+      if (cur.picked === null && n >= 1 && n <= cur.opts.length) answer(cur.opts[n - 1].id);
+    }
+  });
+
+  $('#sub-count').textContent = WORDS.length;
+  renderAll();
+})();
+</script>
+</body>
+</html>
