@@ -145,6 +145,38 @@
   .facts li{display:grid;grid-template-columns:110px 1fr;gap:24px;padding:10px 0;border-top:1px solid var(--rule);}
   .facts li:last-child{border-bottom:1px solid var(--rule);}
 
+  /* Recommendations dropdowns */
+  details.rec{border-top:1px solid var(--rule);}
+  details.rec:last-child{border-bottom:1px solid var(--rule);}
+  details.rec summary{
+    cursor:pointer;
+    list-style:none;
+    padding:16px 0;
+    font-size:1.05rem;
+    font-weight:600;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+  }
+  details.rec summary::-webkit-details-marker{display:none;}
+  details.rec summary::after{
+    content:"+";
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    color:var(--green-mid);
+  }
+  details.rec[open] summary::after{content:"\2212";}
+  details.rec summary:hover{color:var(--green);}
+  ul.rec-links{margin:0;padding:0 0 16px;list-style:none;}
+  ul.rec-links li{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:16px;
+    padding:6px 0;
+    max-width:var(--measure);
+  }
+
   footer{border-top:1px solid var(--rule);padding:24px 0 40px;color:var(--ink-soft);font-size:.9rem;}
   .colophon{margin:0;}
 
@@ -457,12 +489,115 @@ const SITE = {
       
   ],
 
+  /* Shown above the dropdowns on the Recommendations page. Set to "" to omit. */
+  recommendationsIntro: "These are lists of open source, open license, or otherwise free products that I recommend.",
+
+  /* Each category renders as a dropdown. To add a link, copy a
+     { title, url } line; to add a category, copy a whole block. */
+  recommendations: [
+    {
+      heading: "Courses and Open Textbooks",
+      links: [
+        { title: "OpenStax",                   url: "https://openstax.org/" },
+        { title: "Open Textbook Library",      url: "https://open.umn.edu/opentextbooks" },
+        { title: "OER Commons",                url: "https://oercommons.org/" },
+        { title: "LibreTexts",                 url: "https://www.libretexts.org/" },
+        { title: "MIT OpenCourseWare",         url: "https://ocw.mit.edu/" },
+        { title: "Open Yale Courses",          url: "https://oyc.yale.edu/" },
+        { title: "Khan Academy",               url: "https://www.khanacademy.org/" },
+        { title: "Saylor Academy",             url: "https://www.saylor.org/" },
+        { title: "3Blue1Brown",                url: "https://www.3blue1brown.com/" }
+      ]
+    },
+    {
+      heading: "Libraries and Archives",
+      links: [
+        { title: "Project Gutenberg",                      url: "https://www.gutenberg.org/" },
+        { title: "Standard Ebooks",                        url: "https://standardebooks.org/" },
+        { title: "LibriVox",                               url: "https://librivox.org/" },
+        { title: "Christian Classics Ethereal Library",    url: "https://www.ccel.org/" }
+      ]
+    },
+    {
+      heading: "Classics and Languages",
+      links: [
+        { title: "Perseus Digital Library",                url: "https://www.perseus.tufts.edu/hopper/" },
+        { title: "Scaife Viewer",                          url: "https://scaife.perseus.org/" },
+        { title: "Open Greek and Latin",                   url: "https://www.opengreekandlatin.org/" },
+        { title: "Dickinson College Commentaries",         url: "https://dcc.dickinson.edu/" }
+      ]
+    },
+    {
+      heading: "Mathematics, Logic, and Philosophy",
+      links: [
+        { title: "Open Logic Project",                     url: "https://openlogicproject.org/" },
+        { title: "ProofWiki",                              url: "https://www.proofwiki.org/" },
+        { title: "On-Line Encyclopedia of Integer Sequences", url: "https://oeis.org/" }
+      ]
+    },
+    {
+      heading: "Wiki",
+      links: [
+        { title: "Wikipedia",                              url: "https://www.wikipedia.org/" },
+        { title: "Wikiversity",                            url: "https://www.wikiversity.org/" },
+        { title: "Wikibooks",                              url: "https://en.wikibooks.org/wiki/Main_Page" },
+        { title: "Wikisource",                             url: "https://www.wikisource.org/" },
+        { title: "Wiktionary",                             url: "https://www.wiktionary.org/" }
+      ]
+    },
+    {
+      heading: "Programming Languages and Documentation",
+      links: [
+        { title: "Python",                                 url: "https://www.python.org/" },
+        { title: "Rust",                                   url: "https://rust-lang.org/" },
+        { title: "Lean",                                   url: "https://lean-lang.org/" }
+      ]
+    },
+    {
+      heading: "Developer Tools",
+      links: [
+        { title: "Git",                                    url: "https://git-scm.com/" },
+        { title: "VSCodium",                               url: "https://vscodium.com/" }
+      ]
+    },
+    {
+      heading: "Operating Systems",
+      links: [
+        { title: "Debian",                                 url: "https://www.debian.org/" },
+        { title: "The Linux Kernel Archives",              url: "https://www.kernel.org/" },
+        { title: "GNU Project",                            url: "https://www.gnu.org/" }
+      ]
+    },
+    {
+      heading: "AI",
+      links: [
+        { title: "Ollama",                                 url: "https://ollama.com/" }
+      ]
+    },
+    {
+      heading: "Productivity",
+      links: [
+        { title: "ArtCraft Crafting Apps",                 url: "https://getartcraft.com/apps" },
+        { title: "LibreOffice",                            url: "https://www.libreoffice.org/" },
+        { title: "KDE",                                    url: "https://kde.org/" }
+      ]
+    },
+    {
+      heading: "Browsers",
+      links: [
+        { title: "Firefox",                                url: "https://www.firefox.com/en-US/" },
+        { title: "Brave",                                  url: "https://brave.com/" }
+      ]
+    }
+  ],
+
   /* Tab order. To add a tab: add an id/label here and a matching
      case in renderPanel() below. */
   tabs: [
     { id: "home",         label: "Home" },
     { id: "resume",       label: "Resume" },
     { id: "projects",     label: "Projects" },
+    { id: "recommendations", label: "Recommendations" },
     /* REMOVE THESE COMMENTS WHEN PUBLICATIONS ARE DONE
     { id: "publications", label: "Publications" },
     */
@@ -567,6 +702,26 @@ function renderPanel(id){
           ${SITE.projects.map(entry).join("")}
         </section>`;
 
+
+    case "recommendations":
+      return `
+        <section class="section">
+          <h2>Recommendations</h2>
+          ${SITE.recommendationsIntro ? `<p>${esc(SITE.recommendationsIntro)}</p>` : ""}
+        </section>
+        <section class="section">
+          ${SITE.recommendations.map(cat => `
+            <details class="rec">
+              <summary>${esc(cat.heading)}</summary>
+              <ul class="rec-links">
+                ${cat.links.map(l => `
+                  <li>
+                    <a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.title)}</a>
+                    <span class="label">${esc(new URL(l.url).hostname.replace(/^www\./, ""))}</span>
+                  </li>`).join("")}
+              </ul>
+            </details>`).join("")}
+        </section>`;
 
     case "publications":
       return `
